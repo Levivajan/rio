@@ -1,0 +1,298 @@
+/* Site tweaks surfaces: the editor docked over the page and the Site controls section. */
+.clu-tweak-editor {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  padding: 14px;
+  gap: 10px;
+  border-radius: var(--card-r);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-2);
+  font-family: var(--font);
+  font-size: var(--fs-row);
+}
+.clu-tweak-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.clu-tweak-head > div {
+  flex: 1;
+  min-width: 0;
+}
+.clu-tweak-head h2 {
+  margin: 0;
+  font-size: var(--fs-cmd);
+}
+.clu-tweak-site {
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-tweak-tabs {
+  display: flex;
+  gap: 4px;
+}
+.clu-tweak-tabs [role='tab'] {
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+}
+.clu-tweak-tabs [role='tab'][aria-selected='true'] {
+  background: var(--hover-ink);
+  color: var(--ink);
+  font-weight: 600;
+}
+.clu-tweak-panel {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.clu-tweak-code {
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--hover-ink);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: var(--fs-2);
+  line-height: 1.5;
+  resize: none;
+  tab-size: 2;
+}
+.clu-tweak-hint {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-tweak-error {
+  margin: 0;
+  color: #c4211b;
+  font-size: var(--fs-2);
+}
+.clu-tweak-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clu-tweak-foot > span {
+  flex: 1;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+
+.clu-tweaks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-size: var(--fs-row);
+}
+.clu-tweaks-section > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.clu-tweaks-section > div > div {
+  flex: 1;
+  min-width: 0;
+}
+.clu-tweaks-section h3 {
+  margin: 0;
+  font-size: var(--fs-row);
+  font-weight: 600;
+}
+.clu-tweaks-section p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-tweaks-section .clu-tweaks-actions {
+  gap: 6px;
+}
+.clu-tweaks-section .clu-tweaks-zaps {
+  gap: 4px;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+}
+.clu-link-button:hover {
+  text-decoration: underline;
+}
+.clu-tweak-save {
+  font-weight: 600;
+}
+
+.clu-tweak-zaps {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+.clu-tweak-zaps ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.clu-tweak-zaps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px 6px 8px;
+  border-radius: 6px;
+}
+.clu-tweak-zaps li:hover {
+  background: var(--hover-ink);
+}
+.clu-tweak-zaps li > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.clu-tweak-zap-label,
+.clu-tweak-zaps code {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-tweak-zaps code {
+  color: var(--ink-2);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: var(--fs-label);
+}
+.clu-tweak-zaps li > button {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1;
+}
+.clu-tweak-zaps li > button:hover {
+  background: var(--hover-ink);
+  color: var(--ink);
+}
+
+/* Style tab: no-code controls. */
+.clu-style-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.clu-style-panel section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.clu-style-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.clu-style-head h3 {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* Ink, not accent: the accent is too light for 12 px text on the light surface. */
+.clu-style-head .clu-link-button {
+  color: var(--ink);
+  font-size: var(--fs-2);
+}
+.clu-style-head .clu-link-button:disabled {
+  color: var(--ink-2);
+  opacity: 0.6;
+  text-decoration: none;
+}
+.clu-style-slider {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 6px;
+}
+.clu-style-slider output {
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}
+.clu-style-slider input {
+  grid-column: 1 / -1;
+  --track: linear-gradient(to right, var(--accent) var(--fill), var(--surface-2) var(--fill));
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+}
+.clu-style-slider[data-control='hue'] input {
+  /* What the slider does to red: blue and magenta to the left, red in the middle, yellow and green to the right. */
+  --track: linear-gradient(to right, #00d5ff, #4f6bff, #d04bff, #ff3b3b, #ffd400, #3ddc5a, #00d5ff);
+}
+.clu-style-slider input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px var(--hover-ink);
+}
+.clu-style-slider input::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 12%), var(--shadow-1);
+  appearance: none;
+}
+.clu-style-slider input:focus-visible {
+  outline: none;
+}
+.clu-style-slider input:focus-visible::-webkit-slider-thumb {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+.clu-style-toggle,
+.clu-style-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}

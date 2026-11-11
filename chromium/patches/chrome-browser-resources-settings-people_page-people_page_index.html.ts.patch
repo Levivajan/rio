@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/resources/settings/people_page/people_page_index.html.ts b/chrome/browser/resources/settings/people_page/people_page_index.html.ts
+index 06356e33789142252d22d95c0f6ba5849b3e86a5..3da4d18f478385a434370189229c9d90da3384be 100644
+--- a/chrome/browser/resources/settings/people_page/people_page_index.html.ts
++++ b/chrome/browser/resources/settings/people_page/people_page_index.html.ts
+@@ -14,33 +14,12 @@ export function getHtml(this: SettingsPeoplePageIndexElement) {
+       route-path="${this.routes_.PEOPLE.path}">
+   </settings-people-page>
+ 
+-  <settings-sync-page slot="view" id="sync"
+-      data-parent-view-id="parent"
+-      route-path="${this.routes_.SYNC.path}">
+-  </settings-sync-page>
+-
+-  <settings-sync-controls-page slot="view" id="syncControls"
+-      data-parent-view-id="parent"
+-      route-path="${this.routes_.SYNC_ADVANCED.path}">
+-  </settings-sync-controls-page>
+-
+ <if expr="not is_chromeos">
+    <settings-manage-profile slot="view" id="manageProfile"
+        data-parent-view-id="parent"
+        route-path="${this.routes_.MANAGE_PROFILE.path}">
+    </settings-manage-profile>
+ </if>
+-
+-  ${this.replaceSyncPromosWithSignInPromos_ ? html`
+-    <settings-account-page slot="view" id="account"
+-        data-parent-view-id="parent"
+-        route-path="${this.routes_.ACCOUNT.path}">
+-    </settings-account-page>
+-    <settings-google-services-page slot="view" id="googleServices"
+-        data-parent-view-id="parent"
+-        route-path="${this.routes_.GOOGLE_SERVICES.path}">
+-    </settings-google-services-page>
+-  ` : ''}
+ </cr-view-manager>
+ <!--_html_template_end_-->`;
+ }

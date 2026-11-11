@@ -1,0 +1,115 @@
+diff --git a/chrome/browser/app_controller_mac.mm b/chrome/browser/app_controller_mac.mm
+index f251259..863a970 100644
+--- a/chrome/browser/app_controller_mac.mm
++++ b/chrome/browser/app_controller_mac.mm
+@@ -101,6 +101,7 @@
+ #include "chrome/browser/ui/startup/google_chrome_scheme_util.h"
+ #include "chrome/browser/ui/startup/startup_browser_creator.h"
+ #include "chrome/browser/ui/startup/startup_browser_creator_impl.h"
++#include "clu/browser/multitask/clu_multitask_hooks.h"
+ #include "chrome/browser/ui/startup/startup_tab.h"
+ #include "chrome/browser/ui/startup/startup_types.h"
+ #include "chrome/browser/ui/startup/url_util.h"
+@@ -122,6 +123,8 @@
+ #include "chrome/common/webui_url_constants.h"
+ #include "chrome/grit/branded_strings.h"
+ #include "chrome/grit/generated_resources.h"
++#include "clu/browser/settings/clu_settings_hooks.h"
++#include "clu/browser/ui/cocoa/clu_main_menu.h"
+ #include "components/enterprise/browser/controller/chrome_browser_cloud_management_controller.h"
+ #include "components/handoff/handoff_manager.h"
+ #include "components/handoff/handoff_utility.h"
+@@ -814,6 +817,8 @@ - (instancetype)init {
+       // delegate as that can be slow. Instead, we update the relevant
+       // NSMenuItems.
+       [AppController.sharedController updateMenuItemKeyEquivalents];
++      // Clu: -[NSMenu update] validates no submenu items (docs/chromium/m5.md).
++      clu::UpdateMenuItems(NSApp.mainMenu);
+     }];
+ 
+     // Create a keep-alive to keep the application running so it doesn't go away
+@@ -1022,7 +1027,11 @@ - (ConfirmQuitResult)confirmQuitIfNeeded {
+ 
+   NSEvent* event = [NSApp currentEvent];
+   // Run only for keyboard-initiated quits.
+-  if (!event || CommandForKeyEvent(event).chrome_command != IDC_EXIT) {
++  // Clu: during an Apple event quit (Dock, AppleScript, logout) the current
++  // event is the last one AppKit took, which can be an old Cmd+Q; such a quit
++  // never asks.
++  if (!event || CommandForKeyEvent(event).chrome_command != IDC_EXIT ||
++      clu::QuitCameFromAppleEvent()) {
+     return ConfirmQuitResultNotPrompted;
+   }
+ 
+@@ -1187,7 +1196,10 @@ - (void)onVerticalTabStripModeChanged:
+ 
+     // There are 2 copies of "New Tab to Right" and "Close Tabs to Right"
+     // for horizontal and vertical tab modes.
+-    CHECK_EQ(matchingItems.count, 2u);
++    // Clu: its Tabs menu has neither (docs/chromium/m5.md).
++    if (matchingItems.count != 2u) {
++      return;
++    }
+ 
+     NSMenuItem* horizontalItem = matchingItems[0];
+     NSMenuItem* verticalItem = matchingItems[1];
+@@ -1265,6 +1277,15 @@ - (void)openStartupTabsReplacingNTP:(StartupTabs)tabs {
+     return;
+   }
+ 
++  // Clu: links from other apps open in Mini windows (docs/chromium/m6.md).
++  std::vector<GURL> cluUrls;
++  for (const auto& tab : tabs) {
++    cluUrls.push_back(tab.url);
++  }
++  if (clu::OpenUrlsFromOtherApp(cluUrls)) {
++    return;
++  }
++
+   OpenStartupTabsInBrowser(std::move(tabs));
+ }
+ 
+@@ -1750,7 +1771,10 @@ - (void)executeCommand:(id)sender withProfile:(Profile*)profile {
+         chrome::ExecuteCommand(browser, IDC_NEW_TAB);
+         break;
+       }
+-      [[fallthrough]];  // To create new window.
++      // Clu: the new window opens on the command bar, as Cmd+T in a window does (docs/chromium/m5.md).
++      chrome::ExecuteCommand(CreateBrowser(profile->GetOriginalProfile()),
++                             IDC_NEW_TAB);
++      break;
+     case IDC_NEW_WINDOW:
+       CreateBrowser(profile->GetOriginalProfile());
+       break;
+@@ -1767,7 +1791,10 @@ - (void)executeCommand:(id)sender withProfile:(Profile*)profile {
+       CreateBrowser(profile->GetPrimaryOTRProfile(/*create_if_needed=*/true));
+       break;
+     case IDC_RESTORE_TAB:
+-      app_controller_mac::TabRestorer::RestoreMostRecent(profile);
++      // Clu: the closed window's rows stay in Clu's model, and a new window
++      // shows them; Chromium's restore would add each as a second row
++      // (docs/chromium/m5.md).
++      CreateBrowser(profile->GetOriginalProfile());
+       break;
+     case IDC_OPEN_FILE:
+       chrome::ExecuteCommand(CreateBrowser(profile), IDC_OPEN_FILE);
+@@ -1933,6 +1960,8 @@ - (BOOL)applicationShouldHandleReopen:(NSApplication*)theApplication
+ - (void)initMenuState {
+   _menuState = std::make_unique<CommandUpdaterImpl>(nullptr);
+   _menuState->UpdateCommandEnabled(IDC_NEW_TAB, true);
++  // Clu: Settings… is a commandDispatch: item (docs/chromium/m5.md).
++  _menuState->UpdateCommandEnabled(IDC_OPTIONS, true);
+   _menuState->UpdateCommandEnabled(IDC_NEW_WINDOW, true);
+   _menuState->UpdateCommandEnabled(IDC_NEW_INCOGNITO_WINDOW, true);
+   _menuState->UpdateCommandEnabled(IDC_NEW_ISOLATED_WINDOW, true);
+@@ -2099,6 +2128,10 @@ - (IBAction)showPreferencesForProfile:(Profile*)profile {
+     // Failed to load profile, show Profile Picker instead.
+     return;
+   }
++  // Clu: Settings… opens Rio's app settings window (docs/chromium/parity-settings.md).
++  if (clu::ShowAppSettingsForProfile(profile)) {
++    return;
++  }
+   // Re-use an existing browser, or create a new one.
+   if (BrowserWindowInterface* browser = ActivateBrowser(profile)) {
+     chrome::ShowSettings(browser);

@@ -1,0 +1,52 @@
+diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.cc b/chrome/browser/ui/views/toolbar/toolbar_view.cc
+index 7f404c6864ec9434f14400daddbd571ae18c617c..21d449ed24e6950266299b0fdc0488bd7ab09327 100644
+--- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
++++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
+@@ -183,6 +183,16 @@
+ #include "ui/aura/window_occlusion_tracker.h"
+ #endif
+ 
++// Clu: declared here, not included, so this target needs no dependency on
++// Clu's hooks (patch budget); defined in clu/browser/ui/views/frame.
++class BrowserWindowInterface;
++namespace views {
++class View;
++}  // namespace views
++namespace clu {
++views::View* GetBubbleAnchorView(BrowserWindowInterface* browser);
++}  // namespace clu
++
+ using base::UserMetricsAction;
+ using content::WebContents;
+ 
+@@ -1940,6 +1950,10 @@ gfx::Size ToolbarView::GetToolbarButtonSize() const {
+ }
+ 
+ views::BubbleAnchor ToolbarView::GetDefaultExtensionDialogAnchor() {
++  // Clu: the toolbar is hidden, so its bubbles hang from CluAnchorView.
++  if (views::View* clu_anchor = clu::GetBubbleAnchorView(browser_)) {
++    return views::BubbleAnchor(clu_anchor);
++  }
+   ExtensionsContainerViews* extensions_container =
+       GetExtensionsContainerViews();
+   if (extensions_container && extensions_container->IsVisible()) {
+@@ -2011,6 +2025,9 @@ views::AccessiblePaneView* ToolbarView::GetAsAccessiblePaneView() {
+ 
+ views::BubbleAnchor ToolbarView::GetBubbleAnchor(
+     std::optional<actions::ActionId> action_id) {
++  if (views::View* clu_anchor = clu::GetBubbleAnchorView(browser_)) {
++    return views::BubbleAnchor(clu_anchor);
++  }
+   // If a pinned toolbar actions button exists for the action_id, return that.
+   if (pinned_toolbar_actions_ && action_id.has_value() &&
+       pinned_toolbar_actions_->IsActionPinnedOrPoppedOut(action_id.value())) {
+@@ -2043,6 +2060,9 @@ views::BubbleAnchor ToolbarView::GetBubbleAnchor(
+ 
+ views::BubbleAnchor ToolbarView::GetPageActionBubbleAnchor(
+     actions::ActionId action_id) {
++  if (views::View* clu_anchor = clu::GetBubbleAnchorView(browser_)) {
++    return views::BubbleAnchor(clu_anchor);
++  }
+   page_actions::PageActionViewInterface* view =
+       GetPageActionViewInterface(action_id);
+   if (view) {

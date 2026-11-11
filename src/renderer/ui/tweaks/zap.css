@@ -1,0 +1,41 @@
+/* Zap banner: pinned to the bottom of the sidebar while the active tab is in zap mode. */
+.clu-zap-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+  padding: 10px;
+  border-radius: var(--card-r);
+  background: var(--surface);
+  box-shadow: var(--shadow-1), inset 0 0 0 1.5px #f43f5e;
+  color: var(--ink);
+  font-size: var(--fs-row);
+  -webkit-app-region: no-drag;
+}
+.clu-zap-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.clu-zap-text strong {
+  font-weight: 600;
+}
+.clu-zap-text span {
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-zap-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.clu-zap-count {
+  flex: 1;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}

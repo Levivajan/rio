@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/resources/settings/settings_menu/settings_menu.html b/chrome/browser/resources/settings/settings_menu/settings_menu.html
+index c35c985ddf3447612e803fc595cdae2b514953a7..f24e9200d84faa60433137603c40f33b532f4b30 100644
+--- a/chrome/browser/resources/settings/settings_menu/settings_menu.html
++++ b/chrome/browser/resources/settings/settings_menu/settings_menu.html
+@@ -1,5 +1,9 @@
+     <div role="navigation">
+-      <cr-menu-selector id="menu" selectable="a:not(#extensionsLink)"
++      <!-- Clu: Rio's logo as an outline glyph like the other entries. -->
++      <cr-iconset name="rio" size="24"><svg><defs>
++        <g id="logo" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"></circle><path d="M3.6 10.7L5.0 11.2L6.5 11.3L7.9 11.0L9.4 10.4L10.8 9.6L12.2 8.8L13.7 8.2L15.1 7.9L16.6 8.0L18.0 8.5L19.4 9.2L20.2 9.6M3.6 13.6L5.0 13.5L6.5 13.7L7.9 14.3L9.4 14.9L10.8 15.7L12.2 16.2L13.7 16.5L15.1 16.4L16.6 16.0L18.0 15.4L19.4 14.7L20.2 14.3"></path></g>
++      </defs></svg></cr-iconset>
++      <cr-menu-selector id="menu" selectable="a:not(#extensionsLink):not(#rioAi)"
+           attr-for-selected="href" @iron-activate="${this.onIronActivate_}"
+           @click="${this.onLinkClick_}" selected-attribute="selected">
+         <a role="menuitem"
+@@ -44,6 +48,13 @@
+           <span class="menu-label">$i18n{aiPageTitle}</span>
+           <cr-ripple></cr-ripple>
+         </a>
++        <!-- Clu: Rio's AI features live in its app settings. -->
++        <a role="menuitem" id="rioAi" class="cr-nav-menu-item"
++            href="chrome://settings/ai-features" target="_blank">
++          <cr-icon icon="settings20:button-magic"></cr-icon>
++          <span class="menu-label">$i18n{rioAiInnovationsTitle}</span>
++          <cr-ripple></cr-ripple>
++        </a>
+         <a role="menuitem" id="appearance" href="/appearance"
+             ?hidden="${this.shouldHideMenuItem_(this.pageVisibility_?.appearance)}"
+             class="cr-nav-menu-item">
+@@ -123,7 +134,7 @@
+         </a>
+         <a role="menuitem" id="about-menu" href="/help"
+             class="cr-nav-menu-item">
+-          <cr-icon icon="cr:chrome-product"></cr-icon>
++          <cr-icon icon="rio:logo"></cr-icon>
+           <span class="menu-label">$i18n{aboutPageTitle}</span>
+           <cr-ripple></cr-ripple>
+         </a>

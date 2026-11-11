@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Downloads fixture</title>
+<h1>Downloads</h1>
+<p><a id="same" href="#">Attachment in this tab</a></p>
+<p><a id="blank" href="#" target="_blank">Attachment in a new tab</a></p>
+<script>
+  // Links take their target from the page query: ?same=<url>&blank=<url>.
+  const q = new URLSearchParams(location.search)
+  if (q.get('same')) document.getElementById('same').href = q.get('same')
+  if (q.get('blank')) document.getElementById('blank').href = q.get('blank')
+  /** Starts n downloads from script, with no user input. */
+  window.burst = (n, key) => {
+    for (let i = 0; i < n; i++) {
+      const a = document.createElement('a')
+      a.href = `/capabilities/attachment?key=${key}&name=burst-${i}.bin&size=2000`
+      a.download = `burst-${i}.bin`
+      document.body.appendChild(a)
+      a.click()
+    }
+  }
+</script>

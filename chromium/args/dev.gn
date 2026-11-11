@@ -1,0 +1,13 @@
+# Fast incremental Clu builds (docs/chromium/PLAN.md 3.3). Used by scripts/chromium/build.sh dev -> out/Dev.
+target_cpu = "arm64"
+is_debug = false
+is_component_build = true
+symbol_level = 0
+blink_symbol_level = 0
+v8_symbol_level = 0
+dcheck_always_on = true
+use_lld = false  # ld-prime, faster links on Arm Macs (158 docs)
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+enable_widevine = true  # CDM via the component updater; an unsigned host is fine in dev
+enable_updater = false

@@ -1,0 +1,75 @@
+/* Ctrl+Tab switcher. The passive view is the surface's rect and clips anything outside it, so the
+   panel's shadow stays inside the 8 px transparent margin. Card width and gap match switcherRect in
+   src/main/archive/switcher.ts. */
+.clu-switcher {
+  position: fixed;
+  inset: 8px;
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border: var(--cmd-border);
+  border-radius: var(--cmd-r);
+  background: var(--cmd-bg);
+  box-shadow: var(--shadow-tip);
+  color: var(--cmd-text);
+  font-size: var(--fs-2);
+  overflow: hidden;
+}
+.clu-switcher-card {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  max-width: 176px;
+  padding: 4px;
+  border-radius: var(--cmd-row-r);
+  cursor: default;
+}
+/* The selection is the command bar's: the space accent with white text. */
+.clu-switcher-card[aria-selected='true'] {
+  background: var(--accent);
+  color: #fff;
+}
+.clu-switcher-preview {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  place-items: center;
+  border-radius: var(--card-r);
+  background: var(--page-bg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.clu-switcher-preview > img:not(.clu-switcher-favicon-large) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.clu-switcher-favicon-large {
+  width: 40px;
+  height: 40px;
+}
+.clu-switcher-label {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  padding: 0 2px;
+  min-width: 0;
+}
+.clu-switcher-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-switcher-favicon {
+  width: var(--fav);
+  height: var(--fav);
+  flex: none;
+  border-radius: 3px;
+}

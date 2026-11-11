@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The six alternate app icons (docs/chromium/icons.md), 512 px PNGs rendered by scripts/chromium/make-branding.mjs. -->
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/clu_app_icon_resources.h" type="rc_header">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="clu_app_icon_resources.pak" type="data_package" />
+  </outputs>
+  <release seq="1">
+    <includes>
+      <include name="IDR_CLU_APP_ICON_AIRY_SUN" file="icons/airySun.png" type="BINDATA" />
+      <include name="IDR_CLU_APP_ICON_OCEAN" file="icons/ocean.png" type="BINDATA" />
+      <include name="IDR_CLU_APP_ICON_FLAT_BLUE" file="icons/flatBlue.png" type="BINDATA" />
+      <include name="IDR_CLU_APP_ICON_SUNSET" file="icons/sunset.png" type="BINDATA" />
+      <include name="IDR_CLU_APP_ICON_WARM" file="icons/warm.png" type="BINDATA" />
+      <include name="IDR_CLU_APP_ICON_DUSK" file="icons/dusk.png" type="BINDATA" />
+    </includes>
+  </release>
+</grit>

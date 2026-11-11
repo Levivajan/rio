@@ -1,0 +1,46 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Space themes and appearance (docs/chromium/m8.md). `:core` is pure: the theme model and math ported from
+# src/shared/theme, and the store of committed themes and previews. CluAppSettings (//clu/browser/settings:service)
+# keeps them in Local State; the window applies the accent to its widget.
+
+source_set("core") {
+  sources = [
+    "clu_space_themes.cc",
+    "clu_space_themes.h",
+    "clu_theme_math.cc",
+    "clu_theme_math.h",
+  ]
+  public_deps = [
+    "//base",
+    "//skia",
+  ]
+  deps = [ "//clu/browser/spaces:core" ]
+}
+
+# Overlay scrollbars everywhere: Rio's answer to macOS's scroller style question.
+source_set("overlay_scrollbars") {
+  sources = [
+    "clu_overlay_scrollbars.cc",
+    "clu_overlay_scrollbars.h",
+  ]
+  public_deps = [ "//ui/native_theme" ]
+  deps = [ "//base" ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_overlay_scrollbars_unittest.cc",
+    "clu_space_themes_unittest.cc",
+    "clu_theme_math_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    ":overlay_scrollbars",
+    "//base",
+    "//testing/gtest",
+    "//ui/native_theme",
+    "//ui/native_theme:test_support",
+  ]
+}

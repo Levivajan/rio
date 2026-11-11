@@ -1,0 +1,44 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Clear browsing data (docs/chromium/m8.md, docs/plan/07-data.md). `:plan` is pure (the boxes and ranges as
+# BrowsingDataRemover types); `:browsing_data` runs a plan on a profile's remover and model.
+
+source_set("plan") {
+  sources = [
+    "clu_clear_plan.cc",
+    "clu_clear_plan.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//chrome/browser/browsing_data:constants",
+    "//content/public/browser",
+  ]
+}
+
+source_set("browsing_data") {
+  sources = [
+    "clu_browsing_data.cc",
+    "clu_browsing_data.h",
+  ]
+  public_deps = [ ":plan" ]
+  deps = [
+    "//base",
+    "//chrome/browser/profiles:profile",
+    "//clu/browser/model:service",
+    "//content/public/browser",
+    "//net",
+    "//url",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [ "clu_clear_plan_unittest.cc" ]
+  deps = [
+    ":plan",
+    "//base",
+    "//chrome/browser/browsing_data:constants",
+    "//content/public/browser",
+    "//testing/gtest",
+  ]
+}

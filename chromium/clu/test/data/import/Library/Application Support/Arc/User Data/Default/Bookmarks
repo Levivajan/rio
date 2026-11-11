@@ -1,0 +1,35 @@
+{
+  "checksum": "00000000000000000000000000000000",
+  "roots": {
+    "bookmark_bar": {
+      "children": [
+        { "guid": "6a1f0c3e-0001-4000-8000-000000000001", "id": "5", "name": "Fixture docs", "type": "url", "url": "https://example.com/docs" },
+        {
+          "children": [
+            { "guid": "6a1f0c3e-0003-4000-8000-000000000003", "id": "7", "name": "Fixture recipes", "type": "url", "url": "https://example.org/recipes" }
+          ],
+          "guid": "6a1f0c3e-0002-4000-8000-000000000002",
+          "id": "6",
+          "name": "Fixture folder",
+          "type": "folder"
+        }
+      ],
+      "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+      "id": "1",
+      "name": "Bookmarks bar",
+      "type": "folder"
+    },
+    "other": {
+      "children": [
+        { "guid": "6a1f0c3e-0004-4000-8000-000000000004", "id": "8", "name": "Fixture news", "type": "url", "url": "https://example.net/news" },
+        { "guid": "6a1f0c3e-0005-4000-8000-000000000005", "id": "9", "name": "Not a web page", "type": "url", "url": "javascript:alert(1)" }
+      ],
+      "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+      "id": "2",
+      "name": "Other bookmarks",
+      "type": "folder"
+    },
+    "synced": { "children": [], "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f", "id": "3", "name": "Mobile bookmarks", "type": "folder" }
+  },
+  "version": 1
+}

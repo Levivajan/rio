@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Unsaved</title>
+<h1>Unsaved work</h1>
+<input id="draft" aria-label="Draft" />
+<script>
+  window.addEventListener('beforeunload', (e) => {
+    e.preventDefault()
+    e.returnValue = ''
+  })
+</script>

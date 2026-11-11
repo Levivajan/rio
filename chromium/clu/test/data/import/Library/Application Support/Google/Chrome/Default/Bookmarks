@@ -1,0 +1,39 @@
+{
+   "checksum": "0",
+   "roots": {
+      "bookmark_bar": {
+         "children": [
+            {
+               "date_added": "13400000000000000",
+               "id": "1001",
+               "name": "Personal mail",
+               "type": "url",
+               "url": "https://mail.example/",
+               "guid": "00000000-0000-4000-8000-000000000401"
+            }
+         ],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "1002",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "1003",
+         "name": "Other bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "1004",
+         "name": "Mobile bookmarks",
+         "type": "folder"
+      }
+   },
+   "version": 1
+}

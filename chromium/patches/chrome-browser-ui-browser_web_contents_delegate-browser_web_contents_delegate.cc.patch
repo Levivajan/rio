@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/browser_web_contents_delegate/browser_web_contents_delegate.cc b/chrome/browser/ui/browser_web_contents_delegate/browser_web_contents_delegate.cc
+index 3c3aaff..f4fae82 100644
+--- a/chrome/browser/ui/browser_web_contents_delegate/browser_web_contents_delegate.cc
++++ b/chrome/browser/ui/browser_web_contents_delegate/browser_web_contents_delegate.cc
+@@ -54,6 +54,7 @@
+ #include "chrome/browser/ui/views/frame/browser_view.h"
+ #include "chrome/browser/ui/views/frame/contents_web_view.h"
+ #include "chrome/browser/ui/views/status_bubble_views.h"
++#include "clu/browser/ai/clu_link_hover.h"
+ #include "chrome/browser/ui/web_applications/app_browser_controller.h"
+ #include "chrome/browser/web_applications/web_app_provider.h"
+ #include "chrome/browser/web_applications/web_app_registrar.h"
+@@ -843,6 +844,8 @@ void BrowserWebContentsDelegate::SetContentsBounds(content::WebContents* source,
+ 
+ void BrowserWebContentsDelegate::UpdateTargetURL(content::WebContents* source,
+                                                  const GURL& url) {
++  // Clu: the link under the pointer, for hover previews.
++  clu::OnTargetUrl(source, url);
+   std::vector<StatusBubble*> status_bubbles =
+       browser_ui_controller_->GetStatusBubbles();
+   for (StatusBubble* status_bubble : status_bubbles) {

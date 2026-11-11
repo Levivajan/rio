@@ -1,0 +1,115 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The native Chrome layer's Clu side (docs/chromium/m9.md): the downloads rows of state and Clu's exemptions from
+# Memory Saver. `:core` is pure, so its unit tests need no profile; `:capabilities` watches Chromium's download
+# manager and tab strips, and only //clu/browser/ui/webui depends on it.
+source_set("core") {
+  sources = [
+    "clu_download_rows.cc",
+    "clu_download_rows.h",
+    "clu_keep_live_rules.cc",
+    "clu_keep_live_rules.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//clu/browser/ui/webui:bridge" ]
+}
+
+# Site permissions over Chromium's HostContentSettingsMap (permission.*), for the handler and its unit tests.
+source_set("site_permissions") {
+  sources = [
+    "clu_site_permissions.cc",
+    "clu_site_permissions.h",
+  ]
+  public_deps = [
+    "//base",
+    "//components/content_settings/core/common",
+    "//url",
+  ]
+  deps = [ "//components/content_settings/core/browser" ]
+}
+
+# The Library's folders: the Mac's Downloads and screenshot folders, listed for download.files, and their
+# QuickLook thumbnails for download.thumb.
+source_set("library_files") {
+  sources = [
+    "clu_library_file_ops_mac.mm",
+    "clu_library_files.cc",
+    "clu_library_files.h",
+    "clu_library_thumbs.h",
+    "clu_library_thumbs_mac.mm",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//chrome/common:constants",
+    "//skia",
+    "//ui/gfx/codec",
+  ]
+  frameworks = [
+    "AppKit.framework",
+    "CoreGraphics.framework",
+    "Foundation.framework",
+    "QuickLookThumbnailing.framework",
+  ]
+}
+
+source_set("capabilities") {
+  sources = [
+    "clu_downloads.cc",
+    "clu_downloads.h",
+    "clu_keep_live.cc",
+    "clu_keep_live.h",
+    "clu_screenshot_watcher.cc",
+    "clu_screenshot_watcher.h",
+  ]
+  public_deps = [
+    ":core",
+    ":library_files",
+    "//base",
+    "//chrome/browser/ui/browser_window",
+    "//chrome/browser/ui/tabs:tab_strip_model_observer",
+    "//components/download/content/public",
+  ]
+  deps = [
+    "//chrome/browser:browser_process",
+    "//chrome/browser:primitives",
+    "//chrome/browser/download",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/resource_coordinator",
+    "//chrome/browser/ui:chrome_pages",
+    "//chrome/browser/ui/tabs:tab_strip",
+    "//chrome/browser/ui/views/download",
+    "//clu/browser/ai",
+    "//clu/browser/model:core",
+    "//clu/browser/settings:service",
+    "//clu/browser/ui/webui:url_policy",
+    "//components/download/public/common:public",
+    "//components/performance_manager",
+    "//components/prefs",
+    "//components/sessions:session_id",
+    "//components/tabs:public",
+    "//content/public/browser",
+    "//content/public/common",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_download_rows_unittest.cc",
+    "clu_keep_live_rules_unittest.cc",
+    "clu_library_files_unittest.cc",
+    "clu_site_permissions_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    ":library_files",
+    ":site_permissions",
+    "//base",
+    "//base/test:test_support",
+    "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
+    "//components/sync_preferences:test_support",
+    "//testing/gtest",
+    "//url",
+  ]
+}

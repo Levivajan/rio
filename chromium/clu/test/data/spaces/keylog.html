@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Keylog</title>
+
+  </head>
+  <body>
+    <pre id="log"></pre>
+    <script>
+      // ?prevent=Meta+Shift+KeyC makes the page claim that chord.
+      const prevent = new URLSearchParams(location.search).get("prevent")
+      window.__keys = []
+      window.addEventListener("keydown", (e) => {
+        const chord = [e.metaKey && "Meta", e.ctrlKey && "Control", e.altKey && "Alt", e.shiftKey && "Shift", e.code].filter(Boolean).join("+")
+        window.__keys.push(chord)
+        if (chord === prevent) e.preventDefault()
+        document.getElementById("log").textContent = window.__keys.join("\n")
+      })
+    </script>
+  </body>
+</html>

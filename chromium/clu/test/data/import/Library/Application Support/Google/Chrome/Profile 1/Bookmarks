@@ -1,0 +1,255 @@
+{
+   "checksum": "0",
+   "roots": {
+      "bookmark_bar": {
+         "children": [
+            {
+               "date_added": "13400000000000000",
+               "id": "121",
+               "name": "Harbor",
+               "type": "url",
+               "url": "https://harbor.example/",
+               "guid": "00000000-0000-4000-8000-000000000201"
+            },
+            {
+               "date_added": "13400000000000000",
+               "id": "122",
+               "name": "",
+               "type": "url",
+               "url": "https://kettle.example/notes",
+               "guid": "00000000-0000-4000-8000-000000000202"
+            },
+            {
+               "date_added": "13400000000000000",
+               "id": "123",
+               "name": "Bad script",
+               "type": "url",
+               "url": "javascript:alert(1)",
+               "guid": "00000000-0000-4000-8000-000000000203"
+            },
+            {
+               "children": [
+                  {
+                     "date_added": "13400000000000000",
+                     "id": "119",
+                     "name": "Page 1",
+                     "type": "url",
+                     "url": "https://levels.example/1",
+                     "guid": "00000000-0000-4000-8000-000000000001"
+                  },
+                  {
+                     "children": [
+                        {
+                           "date_added": "13400000000000000",
+                           "id": "117",
+                           "name": "Page 2",
+                           "type": "url",
+                           "url": "https://levels.example/2",
+                           "guid": "00000000-0000-4000-8000-000000000002"
+                        },
+                        {
+                           "children": [
+                              {
+                                 "date_added": "13400000000000000",
+                                 "id": "115",
+                                 "name": "Page 3",
+                                 "type": "url",
+                                 "url": "https://levels.example/3",
+                                 "guid": "00000000-0000-4000-8000-000000000003"
+                              },
+                              {
+                                 "children": [
+                                    {
+                                       "date_added": "13400000000000000",
+                                       "id": "113",
+                                       "name": "Page 4",
+                                       "type": "url",
+                                       "url": "https://levels.example/4",
+                                       "guid": "00000000-0000-4000-8000-000000000004"
+                                    },
+                                    {
+                                       "children": [
+                                          {
+                                             "date_added": "13400000000000000",
+                                             "id": "111",
+                                             "name": "Page 5",
+                                             "type": "url",
+                                             "url": "https://levels.example/5",
+                                             "guid": "00000000-0000-4000-8000-000000000005"
+                                          },
+                                          {
+                                             "children": [
+                                                {
+                                                   "date_added": "13400000000000000",
+                                                   "id": "109",
+                                                   "name": "Page 6",
+                                                   "type": "url",
+                                                   "url": "https://levels.example/6",
+                                                   "guid": "00000000-0000-4000-8000-000000000006"
+                                                },
+                                                {
+                                                   "children": [
+                                                      {
+                                                         "date_added": "13400000000000000",
+                                                         "id": "107",
+                                                         "name": "Page 7",
+                                                         "type": "url",
+                                                         "url": "https://levels.example/7",
+                                                         "guid": "00000000-0000-4000-8000-000000000007"
+                                                      },
+                                                      {
+                                                         "children": [
+                                                            {
+                                                               "date_added": "13400000000000000",
+                                                               "id": "105",
+                                                               "name": "Page 8",
+                                                               "type": "url",
+                                                               "url": "https://levels.example/8",
+                                                               "guid": "00000000-0000-4000-8000-000000000008"
+                                                            },
+                                                            {
+                                                               "children": [
+                                                                  {
+                                                                     "date_added": "13400000000000000",
+                                                                     "id": "103",
+                                                                     "name": "Page 9",
+                                                                     "type": "url",
+                                                                     "url": "https://levels.example/9",
+                                                                     "guid": "00000000-0000-4000-8000-000000000009"
+                                                                  },
+                                                                  {
+                                                                     "children": [
+                                                                        {
+                                                                           "date_added": "13400000000000000",
+                                                                           "id": "101",
+                                                                           "name": "Page 10",
+                                                                           "type": "url",
+                                                                           "url": "https://levels.example/10",
+                                                                           "guid": "00000000-0000-4000-8000-000000000010"
+                                                                        }
+                                                                     ],
+                                                                     "date_added": "13400000000000000",
+                                                                     "date_modified": "13400000000000000",
+                                                                     "id": "102",
+                                                                     "name": "Level 10",
+                                                                     "type": "folder",
+                                                                     "guid": "00000000-0000-4000-8000-000000000110"
+                                                                  }
+                                                               ],
+                                                               "date_added": "13400000000000000",
+                                                               "date_modified": "13400000000000000",
+                                                               "id": "104",
+                                                               "name": "Level 9",
+                                                               "type": "folder",
+                                                               "guid": "00000000-0000-4000-8000-000000000109"
+                                                            }
+                                                         ],
+                                                         "date_added": "13400000000000000",
+                                                         "date_modified": "13400000000000000",
+                                                         "id": "106",
+                                                         "name": "Level 8",
+                                                         "type": "folder",
+                                                         "guid": "00000000-0000-4000-8000-000000000108"
+                                                      }
+                                                   ],
+                                                   "date_added": "13400000000000000",
+                                                   "date_modified": "13400000000000000",
+                                                   "id": "108",
+                                                   "name": "Level 7",
+                                                   "type": "folder",
+                                                   "guid": "00000000-0000-4000-8000-000000000107"
+                                                }
+                                             ],
+                                             "date_added": "13400000000000000",
+                                             "date_modified": "13400000000000000",
+                                             "id": "110",
+                                             "name": "Level 6",
+                                             "type": "folder",
+                                             "guid": "00000000-0000-4000-8000-000000000106"
+                                          }
+                                       ],
+                                       "date_added": "13400000000000000",
+                                       "date_modified": "13400000000000000",
+                                       "id": "112",
+                                       "name": "Level 5",
+                                       "type": "folder",
+                                       "guid": "00000000-0000-4000-8000-000000000105"
+                                    }
+                                 ],
+                                 "date_added": "13400000000000000",
+                                 "date_modified": "13400000000000000",
+                                 "id": "114",
+                                 "name": "Level 4",
+                                 "type": "folder",
+                                 "guid": "00000000-0000-4000-8000-000000000104"
+                              }
+                           ],
+                           "date_added": "13400000000000000",
+                           "date_modified": "13400000000000000",
+                           "id": "116",
+                           "name": "Level 3",
+                           "type": "folder",
+                           "guid": "00000000-0000-4000-8000-000000000103"
+                        }
+                     ],
+                     "date_added": "13400000000000000",
+                     "date_modified": "13400000000000000",
+                     "id": "118",
+                     "name": "Level 2",
+                     "type": "folder",
+                     "guid": "00000000-0000-4000-8000-000000000102"
+                  }
+               ],
+               "date_added": "13400000000000000",
+               "date_modified": "13400000000000000",
+               "id": "120",
+               "name": "Level 1",
+               "type": "folder",
+               "guid": "00000000-0000-4000-8000-000000000101"
+            }
+         ],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "126",
+         "name": "Bookmarks bar",
+         "type": "folder",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908"
+      },
+      "other": {
+         "children": [
+            {
+               "date_added": "13400000000000000",
+               "id": "124",
+               "name": "Chrome settings",
+               "type": "url",
+               "url": "chrome://settings/",
+               "guid": "00000000-0000-4000-8000-000000000301"
+            },
+            {
+               "date_added": "13400000000000000",
+               "id": "125",
+               "name": "Docs",
+               "type": "url",
+               "url": "https://docs.example/guide",
+               "guid": "00000000-0000-4000-8000-000000000302"
+            }
+         ],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "127",
+         "name": "Other bookmarks",
+         "type": "folder",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd"
+      },
+      "synced": {
+         "children": [],
+         "date_added": "13400000000000000",
+         "date_modified": "13400000000000000",
+         "id": "128",
+         "name": "Mobile bookmarks",
+         "type": "folder",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f"
+      }
+   },
+   "version": 1
+}

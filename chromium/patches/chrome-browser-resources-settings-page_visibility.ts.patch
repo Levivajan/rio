@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/resources/settings/page_visibility.ts b/chrome/browser/resources/settings/page_visibility.ts
+index feff9bd..1019ef1 100644
+--- a/chrome/browser/resources/settings/page_visibility.ts
++++ b/chrome/browser/resources/settings/page_visibility.ts
+@@ -44,7 +44,9 @@ export interface PrivacyPageVisibility {
+ 
+ function createPageVisibility(): PageVisibility|undefined {
+   if (!loadTimeData.getBoolean('isGuest')) {
+-    return undefined;
++    // Clu: Rio restores its own windows and spaces, so there is no On startup
++    // page.
++    return {onStartup: false};
+   }
+ 
+   // <if expr="not is_chromeos">

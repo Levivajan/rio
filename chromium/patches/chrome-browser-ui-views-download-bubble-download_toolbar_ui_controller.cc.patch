@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/ui/views/download/bubble/download_toolbar_ui_controller.cc b/chrome/browser/ui/views/download/bubble/download_toolbar_ui_controller.cc
+index 10b7682418b0d6084a65a5fa40b7f96ad3191557..c1bd3835d3c76dbf8845273ef46d6113dbc1b264 100644
+--- a/chrome/browser/ui/views/download/bubble/download_toolbar_ui_controller.cc
++++ b/chrome/browser/ui/views/download/bubble/download_toolbar_ui_controller.cc
+@@ -68,6 +68,16 @@ DEFINE_USER_DATA(DownloadToolbarUIController);
+ #include "chrome/browser/ui/fullscreen_util_mac.h"
+ #endif
+ 
++// Clu: declared here, not included, so this target needs no dependency on
++// Clu's hooks (patch budget); defined in clu/browser/ui/views/frame.
++class BrowserWindowInterface;
++namespace views {
++class View;
++}  // namespace views
++namespace clu {
++views::View* GetDownloadBubbleAnchorView(BrowserWindowInterface* browser);
++}  // namespace clu
++
+ namespace {
+ 
+ // Close the partial bubble after 5 seconds if the user doesn't interact with
+@@ -609,6 +619,16 @@ void DownloadToolbarUIController::ShowBubble(
+     return;
+   }
+ 
++  // Clu: the toolbar is hidden, so the bubble hangs from the sidebar's
++  // downloads button while it shows, else from CluAnchorView.
++  if (views::View* anchor = browser_view_ ? clu::GetDownloadBubbleAnchorView(
++                                                browser_view_->browser())
++                                          : nullptr) {
++    pending_bubble_ = true;
++    OnBubbleAnchorAssembled(views::BubbleAnchor(anchor));
++    return;
++  }
++
+   auto* container = GetPinnedToolbarActions(browser_view_);
+   if (!container) {
+     return;

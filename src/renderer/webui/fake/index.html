@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rio WebUI harness</title>
+  </head>
+  <body>
+    <main id="window" aria-label="Rio window">
+      <iframe id="frame" title="Rio frame" src="./frame/index.html"></iframe>
+      <iframe id="under-peek" title="Rio Peek overlay" src="./overlay/index.html?layer=under-peek"></iframe>
+      <iframe id="overlay" title="Rio overlay" src="./overlay/index.html?layer=top"></iframe>
+    </main>
+    <script type="module" src="./harness.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/resources/settings/settings_menu/settings_menu.ts b/chrome/browser/resources/settings/settings_menu/settings_menu.ts
+index 931eefe24e39355e12ee80ce97d30d31918c630c..86599c964645e39b7d45e9c937eea3db0c872fbc 100644
+--- a/chrome/browser/resources/settings/settings_menu/settings_menu.ts
++++ b/chrome/browser/resources/settings/settings_menu/settings_menu.ts
+@@ -10,6 +10,8 @@ import 'chrome://resources/cr_elements/cr_menu_selector/cr_menu_selector.js';
+ import 'chrome://resources/cr_elements/cr_ripple/cr_ripple.js';
+ import 'chrome://resources/cr_elements/icons.html.js';
+ import 'chrome://resources/cr_elements/cr_icon/cr_icon.js';
++// Clu: the About entry's Rio glyph is an iconset in the template.
++import 'chrome://resources/cr_elements/cr_icon/cr_iconset.js';
+ import '../icons.html.js';
+ // <if expr="_google_chrome">
+ import '../internal/icons.html.js';
+@@ -133,7 +135,9 @@ export class SettingsMenuElement extends SettingsMenuElementBase {
+    * accessibility purposes, taps are handled separately.
+    */
+   protected onLinkClick_(event: Event) {
+-    if ((event.target as HTMLElement).matches('a:not(#extensionsLink)')) {
++    // Clu: #rioAi opens Rio's app settings, like the extensions link.
++    if ((event.target as HTMLElement)
++            .matches('a:not(#extensionsLink):not(#rioAi)')) {
+       event.preventDefault();
+     }
+   }

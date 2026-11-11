@@ -1,0 +1,12 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Navan Itinerary - Example Travel</title>
+<h1>Trip</h1>
+<p><a id="file" href="#">Itinerary</a></p>
+<script>
+  // The link's file name comes from the page query: ?name=<file>. The file comes from 127.0.0.1 on the same test
+  // server: Chromium holds an http download from any other host as insecure, and the page's own host stays the one
+  // the tidy rule reads.
+  const name = new URLSearchParams(location.search).get('name') || 'file.bin'
+  document.getElementById('file').href = `http://127.0.0.1:${location.port}/ai/attachment?name=${encodeURIComponent(name)}`
+</script>

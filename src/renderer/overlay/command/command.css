@@ -1,0 +1,455 @@
+/* Command bar (04-command "Views and z-order", design.md 1 and 2; M11 geometry and colors): centered on
+   the window 29% down, a neutral panel with a hairline border and a deep shadow. It opens and closes in one
+   frame; only the selected row takes the space accent. */
+/* The bar is a modal surface: the transparent scrim catches the click that closes it, and only the page card under it
+   dims; the sidebar stays as it is. */
+.clu-overlay-root[data-scrim='modal']:has(> [data-surface='command']) {
+  background: transparent;
+}
+.clu-cmd-scrim {
+  position: fixed;
+  inset: 0;
+}
+.clu-cmd-dim {
+  position: absolute;
+  background: var(--scrim);
+  pointer-events: none;
+}
+.clu-cmd-frame {
+  position: fixed;
+  top: var(--cmd-top);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.clu-cmd {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(var(--cmd-w), calc(100% - 48px));
+  max-height: calc(100vh - 24px);
+  border: var(--cmd-border);
+  border-radius: var(--cmd-r);
+  background: var(--cmd-bg);
+  color: var(--cmd-text);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+  pointer-events: auto;
+}
+/* The Mini window's empty prompt is the whole 490 x 329 window. */
+/* Frosted, not the opaque #f8f9f9: the panel lets about 11% of the page through (89%, in light and in dark),
+   so the page's card shows softly through and the panel reads light gray over a dark page. */
+.clu-cmd:not([data-command-mode='mini']) {
+  background: color-mix(in srgb, var(--cmd-bg) 89%, transparent);
+  backdrop-filter: blur(30px) saturate(1.4);
+}
+.clu-cmd-frame:has(> .clu-cmd[data-command-mode='mini']) {
+  top: 0;
+  bottom: 0;
+}
+.clu-cmd[data-command-mode='mini'] {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: var(--mini-r);
+  box-shadow: none;
+}
+.clu-cmd[data-closing] {
+  pointer-events: none;
+}
+
+.clu-cmd-field {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--cmd-icon-gap);
+  height: var(--cmd-input-h);
+  padding: 0 20px 0 var(--cmd-icon-x);
+}
+/* The magnifier sits where the rows' icons do (centered 32 in), the text where their titles start (53 in). */
+.clu-cmd-field-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+  color: var(--cmd-text);
+}
+.clu-cmd-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--close-box);
+  height: var(--close-box);
+  border: 0;
+  border-radius: var(--cmd-close-r);
+  background: var(--cmd-close-bg);
+  color: var(--cmd-accessory-ink);
+}
+.clu-cmd-field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--cmd-text);
+  font: inherit;
+  font-size: var(--fs-cmd);
+  /* The typed text: 17 pt at weight 500. */
+  font-weight: 500;
+}
+.clu-cmd-field input::placeholder {
+  color: var(--cmd-placeholder);
+}
+/* The inline completion: the accent at 60% over the panel (#d89ca5 on pink). */
+.clu-cmd-field input::selection {
+  background: color-mix(in srgb, var(--accent) 60%, var(--cmd-bg));
+  color: var(--cmd-text);
+}
+.clu-cmd-chip {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  color: var(--ink);
+  font-size: var(--fs-2);
+  font-weight: 600;
+}
+
+.clu-cmd-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--cmd-row-gap);
+  min-height: 0;
+  /* At most five rows (MAX_ROWS) and no scrolling: with the input row the panel is 328.5 pt. */
+  padding: 6px 0 var(--cmd-row-x);
+  border-top: 0.5px solid var(--cmd-hairline);
+  overflow: hidden;
+}
+.clu-cmd-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmd-row-gap);
+}
+/* No group headings: the label stays for assistive tech only. */
+.clu-cmd-group-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.clu-cmd-row {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--cmd-icon-gap);
+  height: var(--cmd-row-h);
+  margin: 0 var(--cmd-row-x);
+  padding: 0 12px 0 calc(var(--cmd-icon-x) - var(--cmd-row-x));
+  border-radius: var(--cmd-row-r);
+  color: var(--cmd-text);
+  font-size: var(--fs-cmd-row);
+  cursor: default;
+}
+.clu-cmd-row:hover {
+  background: var(--cmd-accessory);
+}
+/* The selection is the space's main color as a muted mid tone with white text (--accent-select, useSpaceColors.ts), as
+   the design draws it: #dd808d on a pink space, never the neon a saturated accent gives. */
+.clu-cmd-row[aria-selected='true'] {
+  background: var(--accent-select, var(--accent));
+  color: #fff;
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-url {
+  color: rgb(255 255 255 / 70%);
+}
+/* A selected row's own glyph (the search magnifier, an action's) is full white. */
+.clu-cmd-row[aria-selected='true'] .clu-cmd-icon:not([data-tile]) {
+  color: #fff;
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-badge {
+  color: #fff;
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-arrow {
+  background: #fff;
+  color: var(--accent-select, var(--accent));
+}
+/* A selected tab's favicon sits on a white rounded tile. */
+.clu-cmd-row[aria-selected='true'] .clu-cmd-icon[data-tile] {
+  border-radius: var(--cmd-tile-r);
+  background: #fff;
+  box-shadow: 0 0 0 3px #fff;
+}
+.clu-cmd-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+  color: var(--cmd-text);
+}
+/* Contact the Team: a chat bubble on a grey rounded tile (the help row). */
+.clu-cmd-icon[data-help] {
+  border-radius: var(--cmd-tile-r);
+  background: var(--cmd-accessory);
+  box-shadow: 0 0 0 4px var(--cmd-accessory);
+  color: var(--cmd-accessory-ink);
+}
+.clu-cmd-favicon {
+  width: var(--fav);
+  height: var(--fav);
+  border-radius: 3px;
+  object-fit: contain;
+}
+/* Switch to <space>: the space's emoji at favicon size, or its symbol in the row's ink. */
+.clu-cmd-space-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+  font-size: 14px;
+  line-height: 1;
+}
+/* Row titles and their " — host" are regular, 13.5 pt. */
+.clu-cmd-text {
+  flex: 1 1 0;
+  min-width: 0;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+/* The title takes the end ellipsis; the address keeps its own (middle-cut) width, so its host never disappears. */
+.clu-cmd-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clu-cmd-url {
+  flex: 0 0 auto;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--cmd-text2);
+  white-space: pre;
+}
+.clu-cmd-path {
+  flex: none;
+}
+.clu-cmd-url::before {
+  content: ' \2014  ';
+}
+/* A contextual row's path chip ("Rio test / Rio folder" on a grey plate, a space dot for Move to Today). */
+.clu-cmd-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--cmd-accessory);
+  color: var(--cmd-text2);
+  vertical-align: middle;
+}
+.clu-cmd-path-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 60%);
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-path {
+  background: rgb(255 255 255 / 18%);
+  color: #fff;
+}
+/* Matches are not bolded: titles stay plain and the input completes instead. */
+.clu-cmd-title strong,
+.clu-cmd-url strong {
+  color: inherit;
+  font-weight: inherit;
+}
+.clu-cmd-end {
+  display: inline-flex;
+  font-weight: 600;
+  flex: none;
+  align-items: center;
+  gap: var(--cmd-badge-gap);
+  margin-left: auto;
+  color: var(--cmd-text2);
+  font-size: var(--fs-2);
+}
+/* The shortcut sits in a rounded keycap: grey on a plain row, white with accent ink on the selected one. */
+.clu-cmd-keys {
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: var(--cmd-accessory);
+  color: var(--cmd-accessory-ink);
+  font: inherit;
+  letter-spacing: 0.04em;
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-keys {
+  background: #fff;
+  color: var(--accent-select, var(--accent));
+}
+/* "Switch to Tab" and its arrow pill (a 24 pt pill, 23 in from the panel's right edge). */
+.clu-cmd-badge {
+  color: var(--cmd-text2);
+  font-size: var(--fs-cmd-badge);
+  font-weight: 600;
+}
+.clu-cmd-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--close-box);
+  height: var(--close-box);
+  border-radius: var(--cmd-arrow-r);
+  background: var(--cmd-accessory);
+  color: var(--cmd-accessory-ink);
+}
+.clu-cmd-remove {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--ink-2);
+}
+.clu-cmd-row:hover .clu-cmd-remove {
+  display: inline-flex;
+}
+.clu-cmd-remove:hover {
+  background: var(--hover-ink);
+  color: var(--ink);
+}
+
+/* The Ask row (docs/chromium/parity-command.md): the assistant's glyph, the typed text, then "Ask ChatGPT" with a
+   chevron (the assistant menu) and the arrow pill, in the "Switch to Tab" badge's type and place. */
+.clu-cmd-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: -4px;
+  padding: 3px 4px;
+  border-radius: 5px;
+  color: var(--cmd-text2);
+  font-size: var(--fs-cmd-badge);
+  font-weight: 600;
+}
+.clu-cmd-ask:hover,
+.clu-cmd-ask[data-open] {
+  background: var(--cmd-accessory);
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-ask {
+  color: #fff;
+}
+.clu-cmd-row[aria-selected='true'] .clu-cmd-ask:is(:hover, [data-open]) {
+  background: rgb(255 255 255 / 18%);
+}
+/* On the selected row the glyph sits on the white tile, as a selected tab's favicon does; its ink turns dark there. */
+.clu-cmd-row[aria-selected='true'] .clu-cmd-icon[data-assistant] {
+  color: rgb(0 0 0 / 80%);
+}
+
+/* The right-side hint: "Ask Claude" and a "Tab" keycap. */
+.clu-cmd-hint {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--cmd-text2);
+  font-size: var(--fs-cmd-row);
+}
+.clu-cmd-hint kbd {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--cmd-accessory);
+  color: var(--cmd-accessory-ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+/* The assistant prompt's chip: the service's own color, white text. */
+.clu-cmd-chip[data-assistant] {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 6px;
+  color: #fff;
+}
+.clu-cmd-chip[data-assistant] svg {
+  width: 13px;
+  height: 13px;
+}
+.clu-cmd-chip[data-assistant='chatgpt'] {
+  background: #10a37f;
+}
+.clu-cmd-chip[data-assistant='claude'] {
+  background: #c96442;
+}
+.clu-cmd-chip[data-assistant='claude'] svg {
+  stroke: #fff;
+}
+.clu-cmd-chip[data-assistant='grok'] {
+  background: var(--cmd-text);
+  color: var(--cmd-bg);
+}
+
+/* The assistant menu: a small popover under the label, rows 28 tall, the space accent on the highlighted one. */
+.clu-cmd-picker {
+  position: fixed;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 5px;
+  border: var(--cmd-border);
+  border-radius: 10px;
+  background: var(--cmd-bg);
+  color: var(--cmd-text);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 22%);
+}
+.clu-cmd-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: var(--fs-cmd-row);
+  cursor: default;
+}
+.clu-cmd-picker-item[data-active] {
+  background: var(--accent-select, var(--accent));
+  color: #fff;
+}
+.clu-cmd-picker-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+.clu-cmd-picker-name {
+  flex: 1;
+}
+.clu-cmd-picker-check {
+  display: inline-flex;
+  width: 12px;
+}
+
+/* Dark: the typed text (#e5e7e9) is brighter than the rows' titles (#d3d3d3). */
+:root[data-theme='dark'] .clu-cmd-field input {
+  color: #e5e7e9;
+}

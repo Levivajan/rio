@@ -1,0 +1,51 @@
+diff --git a/chrome/browser/ui/views/frame/BUILD.gn b/chrome/browser/ui/views/frame/BUILD.gn
+--- a/chrome/browser/ui/views/frame/BUILD.gn
++++ b/chrome/browser/ui/views/frame/BUILD.gn
+@@ -753,6 +753,7 @@
+   sources = [ "browser_view.cc" ]
+   public_deps = [ ":browser_view_header" ]
+   deps = [
++    "//clu/browser/ui/views/frame:hooks",
+     ":app_menu_button",
+     ":browser_frame_view",
+     ":browser_native_widget",
+@@ -1563,6 +1564,7 @@
+   sources = [ "tab_modal_dialog_host.cc" ]
+   public_deps = [ ":tab_modal_dialog_host" ]
+   deps = [
++    "//clu/browser/ui/views/frame:hooks",
+     ":contents_container_view",
+     ":multi_contents_resize_area",
+     ":multi_contents_view",
+@@ -1986,6 +1988,7 @@
+     sources = [ "browser_native_widget_mac.mm" ]
+     public_deps = [ ":browser_native_widget_mac" ]
+     deps = [
++      "//clu/browser/ui/views/frame:hooks",
+       ":browser_frame_view",
+       ":browser_widget",
+       ":glass_frame_service",
+@@ -2887,6 +2890,7 @@
+     "//chrome/browser/ui/browser_window",
+     "//chrome/browser/ui/views/exclusive_access",
+     "//chrome/browser/ui/web_applications",
++    "//clu/browser/ui/views/frame",
+     "//components/web_modal",
+     "//ui/views",
+   ]
+@@ -3143,6 +3147,7 @@
+   sources = [ "contents_container_view.cc" ]
+   public_deps = [ ":contents_container_view" ]
+   deps = [
++    "//clu/browser/ui/views/frame:hooks",
+     ":browser_view_header",
+     ":contents_capture_border_view",
+     ":contents_container_outline",
+@@ -3283,6 +3288,7 @@
+   sources = [ "browser_widget.cc" ]
+   public_deps = [ ":browser_widget" ]
+   deps = [
++    "//clu/browser/ui/views/frame:hooks",
+     ":browser_frame_view",
+     ":browser_native_widget",
+     ":browser_native_widget_factory",

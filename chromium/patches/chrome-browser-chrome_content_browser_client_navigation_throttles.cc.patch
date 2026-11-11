@@ -1,0 +1,34 @@
+diff --git a/chrome/browser/chrome_content_browser_client_navigation_throttles.cc b/chrome/browser/chrome_content_browser_client_navigation_throttles.cc
+index 1dc3fdf54fb9acdbba0450b349e3de3eb0ed3225..6c953d195db0f09f15783aa0b8ef516924ee0a2b 100644
+--- a/chrome/browser/chrome_content_browser_client_navigation_throttles.cc
++++ b/chrome/browser/chrome_content_browser_client_navigation_throttles.cc
+@@ -47,8 +47,10 @@
+ #include "chrome/browser/ui/passwords/well_known_change_password_navigation_throttle.h"
+ #include "chrome/browser/ui/web_applications/navigation_capturing_redirection_throttle.h"
+ #include "chrome/common/chrome_features.h"
++#include "clu/browser/multitask/clu_multitask_hooks.h"
+ #include "chrome/common/chrome_switches.h"
+ #include "chrome/common/pref_names.h"
++#include "clu/browser/site/clu_site_hooks.h"
+ #include "components/captive_portal/content/captive_portal_service.h"
+ #include "components/captive_portal/core/buildflags.h"
+ #include "components/contextual_tasks/public/features.h"
+@@ -388,6 +390,8 @@ void CreateAndAddChromeThrottlesForNavigation(
+     extensions::ExtensionsBrowserClient::Get()
+         ->GetUserScriptListener()
+         ->CreateAndAddNavigationThrottle(registry);
++    // Clu: the blocker holds a page until its rules are in place; Site tweaks attach.
++    clu::AddCluNavigationThrottles(registry);
+   }
+ 
+ #if BUILDFLAG(ENABLE_GUEST_VIEW)
+@@ -636,6 +640,9 @@ void CreateAndAddChromeThrottlesForNavigation(
+   glic::GlicGuestNavigationThrottle::MaybeCreateAndAdd(registry);
+ 
+   pwc::PwcNavigationThrottle::MaybeCreateAndAdd(registry);
++
++  // Clu: cross-host link clicks in pinned tabs open in Peek (docs/chromium/m6.md).
++  clu::MaybeAddPeekThrottle(registry);
+ }
+ 
+ void CreateAndAddChromeThrottlesForCommitWithoutUrlLoader(

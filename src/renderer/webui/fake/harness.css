@@ -1,0 +1,37 @@
+/* ui:fake harness (fake build only): the window both WebUIs fill, frame below, overlay above. */
+html {
+  color-scheme: light;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #1f2937;
+}
+#window {
+  position: fixed;
+  inset: 0;
+}
+#window iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+#overlay,
+#under-peek {
+  pointer-events: none;
+}
+#overlay[data-open='true'],
+#under-peek[data-open='true'] {
+  pointer-events: auto;
+}
+#window iframe.passive {
+  inset: auto;
+}
+#window iframe.passive[hidden] {
+  display: none;
+}

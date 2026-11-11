@@ -1,0 +1,107 @@
+/* Permission prompt, Site permissions panel and popover. Values come from tokens.css. */
+.clu-permission-prompt {
+  position: fixed;
+  inset: 4px;
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+  grid-template-rows: 1fr auto;
+  column-gap: 10px;
+  row-gap: 8px;
+  padding: 10px 8px 10px 12px;
+  border: 1px solid var(--hover-ink);
+  border-radius: var(--pop-r);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+}
+.clu-permission-prompt-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.clu-permission-prompt-text {
+  display: -webkit-box;
+  margin: 4px 0 0;
+  overflow: hidden;
+  font-size: var(--fs-row);
+  line-height: 18px;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.clu-permission-prompt-close {
+  align-self: start;
+}
+.clu-permission-prompt-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.clu-site-permissions-popover {
+  position: fixed;
+  width: 300px;
+  padding: 12px 12px 10px;
+  border-radius: var(--pop-r);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-2);
+}
+.clu-site-permissions-popover:focus {
+  outline: none;
+}
+.clu-site-permissions-popover h2 {
+  margin: 0 0 8px;
+  overflow: hidden;
+  font-size: var(--fs-row);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-site-permissions ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-site-permission {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  font-size: var(--fs-row);
+}
+.clu-site-permission .clu-select {
+  min-width: 0;
+  width: 112px;
+}
+.clu-link-button:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+.clu-site-permissions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+.clu-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--fs-2);
+}
+.clu-site-permissions-error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: var(--fs-2);
+}

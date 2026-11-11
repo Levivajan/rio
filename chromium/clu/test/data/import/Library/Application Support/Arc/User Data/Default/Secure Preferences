@@ -1,0 +1,8 @@
+{
+  "extensions": {
+    "settings": {
+      "bbbbccccddddeeeeffffgggghhhhiiii": { "from_webstore": true, "location": 1, "manifest": { "name": "Fixture Notes" } },
+      "aaaabbbbccccddddeeeeffffgggghhhh": { "from_webstore": true, "location": 1 }
+    }
+  }
+}

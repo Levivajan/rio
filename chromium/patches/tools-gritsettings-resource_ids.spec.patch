@@ -1,0 +1,33 @@
+diff --git a/tools/gritsettings/resource_ids.spec b/tools/gritsettings/resource_ids.spec
+index 3d8a3243322e2160ef29f062a6072ef0ce7094db..2cd432423c45eba789da8016affcf88e8ffe9a17 100644
+--- a/tools/gritsettings/resource_ids.spec
++++ b/tools/gritsettings/resource_ids.spec
+@@ -1803,6 +1803,28 @@
+     "includes": [10140],
+   },
+ 
++  # Clu: the frame, overlay and settings WebUI bundles and the bridge's mojom bindings.
++  "<(SHARED_INTERMEDIATE_DIR)/clu/resources/webui/clu_frame_resources.grd": {
++    "META": {"sizes": {"includes": [500]}},
++    "includes": [10160],
++  },
++  "<(SHARED_INTERMEDIATE_DIR)/clu/resources/webui/clu_overlay_resources.grd": {
++    "META": {"sizes": {"includes": [500]}},
++    "includes": [10180],
++  },
++  "<(SHARED_INTERMEDIATE_DIR)/clu/resources/mojom/resources.grd": {
++    "META": {"sizes": {"includes": [100]}},
++    "includes": [10200],
++  },
++  "<(SHARED_INTERMEDIATE_DIR)/clu/resources/webui/clu_settings_resources.grd": {
++    "META": {"sizes": {"includes": [500]}},
++    "includes": [10220],
++  },
++  # Clu: the alternate app icons (docs/chromium/icons.md).
++  "clu/browser/app_icon/clu_app_icon_resources.grd": {
++    "includes": [10240],
++  },
++
+   "<(SHARED_INTERMEDIATE_DIR)/THIS_IS_A_PLACEHOLDER.grd": {
+     "META": {"sizes": {"includes": [800]}},
+     "includes": [12000],

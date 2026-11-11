@@ -1,0 +1,22 @@
+diff --git a/ui/menus/cocoa/menu_controller.mm b/ui/menus/cocoa/menu_controller.mm
+index 5ba5bfb..464d898 100644
+--- a/ui/menus/cocoa/menu_controller.mm
++++ b/ui/menus/cocoa/menu_controller.mm
+@@ -415,6 +415,17 @@ - (void)addItemToMenu:(NSMenu*)menu
+     }
+   }
+ 
++  // Clu: an item whose accelerator is the Option key alone is the Option alternate of the item before it
++  // (docs/chromium/parity-sidebar.md).
++  ui::Accelerator clu_alternate;
++  if (type != ui::MenuModel::TYPE_SUBMENU &&
++      model->GetAcceleratorAt(index, &clu_alternate) &&
++      clu_alternate.key_code() == ui::VKEY_MENU) {
++    item.keyEquivalent = @"";
++    item.keyEquivalentModifierMask = NSEventModifierFlagOption;
++    item.alternate = YES;
++  }
++
+   if (_delegate) {
+     [_delegate controllerWillAddItem:item fromModel:model atIndex:index];
+   }

@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Permissions fixture</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 40px; }
+  #target { width: 240px; height: 120px; background: #eef; }
+</style>
+<h1>Permissions</h1>
+<div id="target">Click target</div>
+<button id="popup" type="button">Open pop-up</button>
+<script>
+  // Each ask* returns a plain result object so specs can read it through page.evaluate.
+  window.clicks = 0
+  document.addEventListener('click', () => { window.clicks += 1 })
+  window.askMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      const kinds = stream.getTracks().map((t) => t.kind).sort()
+      stream.getTracks().forEach((t) => t.stop())
+      return { ok: true, kinds }
+    } catch (err) {
+      return { ok: false, name: err.name }
+    }
+  }
+  // A scripted window.open returns null when Clu denies it (every popup becomes a tab or nothing).
+  window.openPopup = (url) => void window.open(url)
+  document.getElementById('popup').addEventListener('click', () => window.open(document.getElementById('popup').dataset.url))
+  window.askNotifications = async () => Notification.requestPermission()
+  window.askClipboard = async () => {
+    try {
+      return { ok: true, text: await navigator.clipboard.readText() }
+    } catch (err) {
+      return { ok: false, name: err.name, message: String(err.message) }
+    }
+  }
+  window.askLocation = () =>
+    new Promise((resolve) =>
+      navigator.geolocation.getCurrentPosition(
+        (p) => resolve({ ok: true, latitude: p.coords.latitude, longitude: p.coords.longitude }),
+        (e) => resolve({ ok: false, code: e.code }),
+        { timeout: 20000 }
+      )
+    )
+</script>

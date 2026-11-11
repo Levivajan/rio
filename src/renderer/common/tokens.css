@@ -1,0 +1,336 @@
+/* Visual tokens. Lanes use these variables and never hardcode
+   a size, color, radius, shadow or duration that has a token. M11 (docs/chromium/m11.md) set the values from the
+   design measurements; src/shared/look/tokens.ts is their source and tokens.test.ts keeps the two equal. Fills and
+   glyphs on the sidebar are black (white in dark mode) at an alpha, so they follow any space tint. */
+:root {
+  /* Sidebar rows: 36 high on a 41 pitch, favicon 10 in, title 11 after it, radius 14 active and 12.5 on hover */
+  --row-h: 36px;
+  --row-r: 14px;
+  --row-hover-r: 12.5px;
+  --row-px: 10px;
+  --fav: 16px;
+  --row-gap: 11px;
+  --row-pitch-gap: 5px;
+  --close-box: 24px;
+  --close-r: 7px;
+  --folder-indent: 16px;
+  --audio-shift: 25.5px;
+  --speaker-box: 23px;
+  --speaker-inset: 3px;
+  /* Sidebar frame: content inset, the top row on the traffic lights' center line, the URL pill */
+  --sidebar-inset: 8px;
+  --top-row-y: 7.5px;
+  --top-row-h: 32px;
+  --tool-pitch: 34px;
+  --tool-box: 32px;
+  /* The narrow top row's back, forward and "..." boxes, on their own 28 pitch */
+  --tool-box-compact: 28px;
+  --tool-r: 7.5px;
+  --pill-top: 45.5px;
+  --pill-h: 36.5px;
+  --pill-r: 13px;
+  --pill-inset: 7.5px;
+  --space-header-h: 36px;
+  --switch-pitch: 34px;
+  /* A space item's hit box: 2 wider than the pitch, so neighbors overlap by 2 */
+  --switch-hit: 36px;
+  --switch-icon: 15px;
+  --switch-dot: 8px;
+  --float-inset: 5px;
+  --float-r: 12px;
+  /* Favorites */
+  --tile-r: 12.5px;
+  --tile-h: 47px;
+  --tile-min-w: 60.5px;
+  --tile-gap: 8px;
+  /* Page card, popovers, panels */
+  --card-r: 6.5px;
+  --card-inset: 10px;
+  --pop-r: 13px;
+  --menu-item-h: 24px;
+  --menu-item-r: 6px;
+  --fs-menu: 13px;
+  --menu-pad-y: 5px;
+  --menu-tint: 20%;
+  --menu-outline: rgb(0 0 0 / 25%);
+  --menu-rim: rgb(255 255 255 / 50%);
+  --t-menu-out: 190ms;
+  --popover-r: 15px;
+  --lib-rail-w: 112px;
+  --lib-rail-item-h: 80px;
+  --lib-rail-item-r: 12px;
+  --fs-lib-rail: 11px;
+  --lib-search-h: 36px;
+  --lib-search-r: 10px;
+  --lib-row-h: 56px;
+  --lib-icon-x: 22px;
+  --lib-title-gap: 14px;
+  --fs-lib-title: 13.5px;
+  --fs-lib-sub: 11.5px;
+  --dialog-r: 16.5px;
+  --settings-card-r: 7.5px;
+  --split-r: 6px;
+  --split-gap: 10px;
+  --split-pill-h: 28px;
+  --split-pill-inset: 5px;
+  --split-pill-gap: 8.5px;
+  --split-pill-r: 9px;
+  --split-hairline-h: 16px;
+  --peek-r: 8px;
+  --peek-inset-y: 12px;
+  --peek-wash: 57%;
+  --shadow-peek: 0 2px 16px rgb(0 0 0 / 18%);
+  --shadow-peek-button: 0 1px 3px rgb(0 0 0 / 20%);
+  --mini-r: 17px;
+  /* Command bar: centered on the window, 29% down */
+  --cmd-w: 766px;
+  --cmd-r: 14px;
+  --cmd-top: 28.875%;
+  --cmd-input-h: 64px;
+  --cmd-row-h: 46px;
+  --cmd-row-gap: 4px;
+  --cmd-row-r: 7.5px;
+  --cmd-row-x: 10px;
+  --cmd-border: 0.5px solid rgb(0 0 0 / 34%);
+  --cmd-icon-x: 24px;
+  --cmd-icon-gap: 13px;
+  --cmd-arrow-r: 6px;
+  --cmd-badge-gap: 9px;
+  --cmd-tile-r: 5px;
+  --fs-cmd-badge: 12.5px;
+  --cmd-close-r: 6px;
+  /* Tooltips */
+  --tip-h: 28px;
+  --tip-r: 14px;
+  --tip-px: 11px;
+  --tip-corner: 4px;
+  --keycap: 19px;
+  --keycap-h: 19.5px;
+  --keycap-r: 4px;
+  --keycap-gap: 3.5px;
+  --keycap-label-gap: 6px;
+  /* Type */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --fs-row: 14px;
+  --fs-label: 11px;
+  --fs-header: 13px;
+  --fw-header: 590;
+  --fs-new-tab: 13.5px;
+  --fs-pill: 12.5px;
+  --fs-cmd: 17px;
+  --fs-cmd-row: 13.5px;
+  --fs-2: 12px;
+  /* Motion */
+  --t-fast: 100ms;
+  --t-base: 150ms;
+  --t-slow: 240ms;
+  --t-press: 75ms;
+  --t-fade: 120ms;
+  --t-hover-out: 33ms;
+  --t-close-hover: 85ms;
+  --t-hover-card-out: 90ms;
+  --tip-out: 280ms;
+  /* Hover reveals: the sidebar-hover fade brings "Clear" in over about 150 ms, both ways. */
+  --t-reveal: 150ms;
+  --reveal-settle: 0.06;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-tint: linear(0, 0.3 14.167%, 0.55 27.5%, 0.75 41.667%, 0.9 62.5%, 1);
+  --spring: linear(0, 0.28 6.667%, 0.62 20.833%, 0.85 37.917%, 0.95 52.083%, 0.99 79.583%, 1);
+  --press-scale: 0.985;
+  --tip-delay: 450ms;
+  --hover-card-delay: 1500ms;
+  /* Shadows */
+  --shadow-card: 0 1.5px 7px rgb(0 0 0 / 23%);
+  --shadow-row: 0 1px 1.5px rgb(0 0 0 / 15%);
+  --shadow-panel: 0 25px 96px rgb(0 0 0 / 45%);
+  --shadow-tip: 0 1px 8px rgb(0 0 0 / 25%);
+  /* Color, light set: fixed colors */
+  --accent: #9095fb;
+  --accent-strong: #2028f2;
+  --focus-ring: #458aff;
+  --page-bg: #ffffff;
+  --popover-bg: #fafbff;
+  --popover-shadow: rgb(21 28 50 / 30%);
+  --cmd-bg: #f8f9f9;
+  --cmd-text: rgb(0 0 0 / 80%);
+  --cmd-text2: rgb(0 0 0 / 33%);
+  --cmd-placeholder: rgb(0 0 0 / 50%);
+  --cmd-hairline: rgb(0 0 0 / 10%);
+  --cmd-accessory: rgb(0 0 0 / 5%);
+  --cmd-accessory-ink: rgb(0 0 0 / 50%);
+  --cmd-close-bg: #e6e6e8;
+  --peek-button-bg: #fdfdff;
+  --menu-highlight: #528ff2;
+  --split-pill: rgb(0 0 0 / 7%);
+  --split-hairline: rgb(0 0 0 / 12%);
+  --media-bar-bg: #fdfdff;
+  /* Color, light set: fills and glyphs over the space tint */
+  --item-bg: rgb(14 15 16 / 5%);
+  --item-hover: rgb(0 0 0 / 8.8%);
+  --favorite-hover: rgb(0 0 0 / 9.75%);
+  --pill-hover: rgb(0 0 0 / 8.5%);
+  --button-hover: rgb(0 0 0 / 7%);
+  --row-hover: rgb(0 0 0 / 5%);
+  --row-current: rgb(246 245 245 / 90%);
+  --row-pressed: rgb(14 15 16 / 6.5%);
+  --row-multi: rgb(0 0 0 / 10%);
+  --close-hover: rgb(0 0 0 / 8%);
+  --divider: rgb(0 0 0 / 5%);
+  --today-divider: rgb(0 0 0 / 7.5%);
+  /* The sidebar edge bar while resizing is the space's accent (#d0606e on a pink space, #8c8899 on a gray dark one) */
+  --resize-bar: var(--accent);
+  --separator: rgb(0 0 0 / 15%);
+  --glyph: rgb(0 0 0 / 57%);
+  --label: rgb(0 0 0 / 46%);
+  --ink3: rgb(0 0 0 / 31%);
+  --glyph-inactive: rgb(0 0 0 / 26.5%);
+  --glyph-disabled: rgb(0 0 0 / 22.5%);
+  --pill-text: rgb(0 0 0 / 63%);
+  --pill-placeholder: rgb(0 0 0 / 35%);
+  --drag-hint: rgb(0 0 0 / 20%);
+  --loading-ink: rgb(0 0 0 / 80%);
+  --loading-track: rgb(0 0 0 / 20%);
+  /* Text on the tint keeps contrast 4.5 (design.md section 4), except the secondary labels: the space
+     header (--label), New Tab (--ink3), the pill placeholder and Clear (--pill-placeholder) take softer grays. */
+  --text-on-tint: rgb(0 0 0 / 60%);
+  /* The empty card's grain opacity against the window's: overlay moves the near-white card far less than the tint, and
+     0.9 measures a third of the window's spread at 2x on the raised grain floor, sd 0.29 against 0.84 (shell.css,
+     pinned in parity-more.webui.ts). */
+  --card-grain-scale: 0.9;
+  /* The space tint the frame paints (ThemeBackground sets it per space) */
+  --tint: #dfddef;
+  /* Clu's own names, kept for every module */
+  --ink: #1d1d1f;
+  --ink-2: #5c5c63;
+  --surface: var(--popover-bg);
+  --surface-2: #ececec;
+  --hover-ink: var(--row-hover);
+  --active-surface: var(--row-current);
+  --shadow-1: var(--shadow-row);
+  --shadow-2: 0 8px 24px var(--popover-shadow);
+  --scrim: rgb(0 0 0 / 12%);
+  --focus: 2px solid var(--focus-ring);
+  /* Controls and Rio's own pages and dialogs (docs/chromium/ui-polish.md, macOS System Settings): one set per mode,
+     so a control, its card and the window always come from the same family. Buttons, selects and inputs share one
+     28 pt height and one hairline, carry no shadow, and nest their 7 pt radius inside the 10 pt card. */
+  --control-h: 28px;
+  --control-r: 7px;
+  --control-px: 10px;
+  --control-fs: 13px;
+  --group-r: 10px;
+  --hairline-w: 1px;
+  --fs-body: 13px;
+  --fs-hint: 11.5px;
+  --fs-page-title: 22px;
+  --window-bg: #f5f5f7;
+  --card-bg: #ffffff;
+  --card-border: rgb(0 0 0 / 9%);
+  --hairline: rgb(0 0 0 / 8%);
+  --control-bg: #ffffff;
+  --control-bg-hover: #f5f5f6;
+  --control-bg-press: #ebebed;
+  --control-border: rgb(0 0 0 / 17%);
+  --control-fill: rgb(0 0 0 / 5%);
+  --control-fill-strong: rgb(0 0 0 / 11%);
+  --segment-on: #ffffff;
+  --primary: #2a6fdb;
+  --danger: #d93025;
+  --control-focus: 3px solid color-mix(in srgb, var(--focus-ring) 50%, transparent);
+  color-scheme: light;
+}
+
+/* Dark set: the named colors of the dark theme. */
+:root[data-theme='dark'] {
+  --accent: #9095fb;
+  --accent-strong: #6a70ff;
+  --focus-ring: #458aff;
+  --page-bg: #212222;
+  --popover-bg: #2a2a2d;
+  --popover-shadow: rgb(0 0 0 / 50%);
+  --cmd-bg: #2a2a2d;
+  --cmd-text: rgb(255 255 255 / 80%);
+  --cmd-text2: rgb(255 255 255 / 33%);
+  --cmd-placeholder: rgb(255 255 255 / 60%);
+  --cmd-hairline: rgb(255 255 255 / 10%);
+  --cmd-accessory: rgb(255 255 255 / 5%);
+  --cmd-accessory-ink: rgb(255 255 255 / 66%);
+  --cmd-close-bg: rgb(255 255 255 / 10%);
+  --peek-button-bg: #2a2a2d;
+  --menu-highlight: #528ff2;
+  --split-pill: rgb(255 255 255 / 10%);
+  --split-hairline: rgb(255 255 255 / 15%);
+  --media-bar-bg: rgb(250 251 255 / 10%);
+  --item-bg: rgb(250 251 255 / 10%);
+  --item-hover: rgb(250 251 255 / 15%);
+  --favorite-hover: rgb(250 251 255 / 15%);
+  --pill-hover: rgb(250 251 255 / 15%);
+  --button-hover: rgb(250 251 255 / 12%);
+  --row-hover: rgb(250 251 255 / 5%);
+  --row-current: rgb(250 251 255 / 20%);
+  --row-pressed: rgb(250 251 255 / 6.5%);
+  --row-multi: rgb(250 251 255 / 10%);
+  --close-hover: rgb(250 251 255 / 12%);
+  --divider: rgb(255 255 255 / 5%);
+  --today-divider: rgb(255 255 255 / 7.5%);
+  --resize-bar: var(--accent);
+  --separator: rgb(255 255 255 / 15%);
+  --glyph: rgb(255 255 255 / 55%);
+  --label: rgb(255 255 255 / 45%);
+  --ink3: rgb(255 255 255 / 33%);
+  --glyph-inactive: rgb(255 255 255 / 30%);
+  --glyph-disabled: rgb(255 255 255 / 25%);
+  --pill-text: rgb(255 255 255 / 66%);
+  --pill-placeholder: rgb(255 255 255 / 30%);
+  --drag-hint: rgb(255 255 255 / 20%);
+  --loading-ink: rgb(255 255 255 / 80%);
+  --loading-track: rgb(255 255 255 / 20%);
+  --text-on-tint: rgb(255 255 255 / 66%);
+  /* A dark card takes overlay about as strongly as the dark tint (an estimate: no dark capture). */
+  --card-grain-scale: 0.7;
+  --tint: #2c2b36;
+  --ink: #f2f2f7;
+  --surface-2: #1e1e1e;
+  --shadow-card: 0 1.5px 7px rgb(0 0 0 / 46%);
+  --shadow-row: 0 1px 1.5px rgb(0 0 0 / 30%);
+  --scrim: rgb(0 0 0 / 30%);
+  --ink-2: #a1a1a6;
+  --window-bg: #1e1e1f;
+  --card-bg: rgb(255 255 255 / 4%);
+  --card-border: rgb(255 255 255 / 8%);
+  --hairline: rgb(255 255 255 / 8%);
+  --control-bg: rgb(255 255 255 / 9%);
+  --control-bg-hover: rgb(255 255 255 / 13%);
+  --control-bg-press: rgb(255 255 255 / 17%);
+  --control-border: rgb(255 255 255 / 10%);
+  --control-fill: rgb(255 255 255 / 7%);
+  --control-fill-strong: rgb(255 255 255 / 17%);
+  --segment-on: rgb(255 255 255 / 18%);
+  /* The menu's rim and outline at the light set's strength draw a white ring on the dark material. */
+  --menu-outline: rgb(0 0 0 / 60%);
+  --menu-rim: rgb(255 255 255 / 10%);
+  color-scheme: dark;
+}
+
+/* Reduced motion: every duration becomes 0 except cross-fades, which become 120 ms. */
+:root[data-reduced-motion='true'] {
+  --t-fast: 0ms;
+  --t-base: 0ms;
+  --t-slow: 0ms;
+  --t-press: 0ms;
+  --t-fade: 120ms;
+  --t-hover-out: 0ms;
+  --t-close-hover: 0ms;
+  --t-hover-card-out: 0ms;
+  --tip-out: 0ms;
+  --t-reveal: 0ms;
+  --t-menu-out: 0ms;
+}
+
+*:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+*:focus:not(:focus-visible) {
+  outline: none;
+}

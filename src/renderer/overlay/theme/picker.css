@@ -1,0 +1,348 @@
+/* Space theme editor (docs/chromium/parity-theme.md). The popover is a solid neutral gray whatever the space's
+   colors: #5f5f5f in dark, #f3eae8 in light with dark glyphs. It stays opaque: at 90% the page's text would
+   show through the canvas, since the overlay has nothing behind it to blur. Its controls are the ink (--tp-ink) at alphas. */
+.clu-theme-picker {
+  --tp-ink: 255 255 255;
+  position: fixed;
+  box-sizing: border-box;
+  border-radius: 19px;
+  background: rgb(95 95 95);
+  /* 0.5 pt near-black outer line, 1 pt light inner line, soft drop shadow. */
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 12%),
+    0 0 0 0.5px rgb(0 0 0 / 70%),
+    0 8px 24px rgb(0 0 0 / 28%);
+  color: rgb(var(--tp-ink) / 62%);
+  font-size: var(--fs-row);
+  user-select: none;
+  /* Opening and closing are transitions, so Esc during the opening shrinks from wherever it is (docs/chromium/motion.md,
+     the theme editor). The whole popover scales up from its left middle out of 0.1 and fades in; the
+     scale is a spring, at full size at 183 ms, 1.5% over at 240 ms, settled at 440 ms; the fade ends at 180 ms. */
+  transform-origin: 0 50%;
+  transform: scale(0.1);
+  opacity: 0;
+  transition:
+    transform 440ms linear(0, 0.1 4%, 0.3 9%, 0.5 13%, 0.66 18%, 0.77 23%, 0.85 27%, 0.9 31%, 0.95 36%, 1 42%, 1.012 50%, 1.017 56%, 1.015 64%, 1.009 71%, 1.004 80%, 1.001 91%, 1),
+    opacity 180ms linear(0, 0.2 9%, 0.33 22%, 0.46 32%, 0.62 45%, 0.78 55%, 0.89 64%, 0.95 73%, 0.98 86%, 1);
+}
+.clu-theme-picker[data-shown] {
+  transform: none;
+  opacity: 1;
+}
+.clu-theme-picker[data-resolved='light'] {
+  --tp-ink: 0 0 0;
+  background: rgb(243 234 232);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 50%),
+    0 0 0 0.5px rgb(0 0 0 / 25%),
+    0 8px 24px rgb(0 0 0 / 18%);
+}
+/* Esc: back to scale 0.1 toward the same left middle in 150 ms, nearly linear, the fade a little ahead of it. */
+.clu-theme-picker[data-closing] {
+  transform: scale(0.1);
+  opacity: 0;
+  transition:
+    transform 150ms linear(0, 0.05 11%, 0.17 22%, 0.28 33%, 0.42 45%, 0.61 61%, 0.72 72%, 0.96 95%, 1),
+    opacity 150ms linear(0, 0.16 11%, 0.31 22%, 0.45 33%, 0.59 45%, 0.76 61%, 0.85 72%, 1);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .clu-theme-picker,
+  .clu-theme-picker[data-closing] {
+    transition: none;
+  }
+}
+
+.clu-theme-picker button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+.clu-theme-picker :focus-visible {
+  outline: 2px solid rgb(var(--tp-ink) / 70%);
+  outline-offset: 2px;
+}
+
+/* The dotted canvas: a lighter gray panel than the popover, lighter at its top, with a dense 4.25 pt grid of 0.75 pt
+   dots; in light mode a pale panel with dark dots. */
+.clu-tp-canvas {
+  position: absolute;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at center, rgb(var(--tp-ink) / 30%) 0.375px, transparent 0.75px) 1px 1px / 4.25px 4.25px,
+    linear-gradient(rgb(255 255 255 / 16%), rgb(255 255 255 / 8%));
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.clu-theme-picker[data-resolved='light'] .clu-tp-canvas {
+  background:
+    radial-gradient(circle at center, rgb(0 0 0 / 22%) 0.375px, transparent 0.75px) 1px 1px / 4.25px 4.25px,
+    linear-gradient(rgb(255 255 255 / 70%), rgb(255 255 255 / 45%));
+}
+
+.clu-tp-modes {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+.clu-tp-mode {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: rgb(var(--tp-ink) / 55%);
+  cursor: default;
+}
+/* The plate fades in over 80 ms under the pointer; a click moves the plate and the
+   editor's colors within one frame, so only entering hover has a transition. */
+.clu-tp-mode:hover {
+  background: rgb(var(--tp-ink) / 10%);
+  color: rgb(var(--tp-ink) / 85%);
+  transition: background-color 80ms linear, color 80ms linear;
+}
+/* The picked mode's small stars twinkle once per click (the moon's stars shrink to almost nothing by 400 ms and
+   are back at 700 ms while the moon holds still); never when the editor opens or the mode arrives from elsewhere. */
+.clu-tp-mode .clu-tp-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.clu-tp-mode[data-picked] .clu-tp-spark {
+  animation: clu-tp-twinkle 700ms ease-in-out both;
+}
+@keyframes clu-tp-twinkle {
+  57% {
+    transform: scale(0.15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clu-tp-mode[data-picked] .clu-tp-spark {
+    animation: none;
+  }
+}
+.clu-tp-mode[aria-checked='true'] {
+  background: rgb(var(--tp-ink) / 10%);
+  color: rgb(var(--tp-ink) / 85%);
+}
+
+/* A handle: the color inside a white ring. The first color's is 45 pt, the others 30 pt. */
+.clu-theme-picker .clu-tp-handle {
+  position: absolute;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
+  cursor: grab;
+  touch-action: none;
+}
+.clu-theme-picker .clu-tp-handle:focus-visible {
+  outline: none;
+}
+/* A tap on the canvas or a swatch slides the handles to their new places; a drag does not lag, and minus and plus
+   change the handles within one frame. */
+.clu-tp-canvas[data-glide] .clu-tp-handle {
+  transition-property: transform, width, height, margin;
+  transition-duration: 170ms;
+  transition-timing-function: var(--ease-out);
+}
+/* The first tap on an empty canvas: the handle fades in over 67 ms and grows from 0.8 over 170 ms.
+   Set once on the new node, so it never replays. */
+.clu-theme-picker .clu-tp-handle[data-enter] {
+  animation:
+    clu-tp-handle-fade 67ms linear both,
+    clu-tp-handle-grow 170ms cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+@keyframes clu-tp-handle-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes clu-tp-handle-grow {
+  from {
+    scale: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clu-theme-picker .clu-tp-handle[data-enter] {
+    animation: none;
+  }
+}
+.clu-tp-handle:active {
+  cursor: grabbing;
+}
+
+/* The empty canvas's line: centered on the canvas, 16 tall, white at 85%. */
+/* The editor holds the keys while the canvas is empty; it draws no ring of its own. */
+.clu-theme-picker:focus {
+  outline: none;
+}
+.clu-tp-hint {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transform: translateY(-50%);
+  color: rgb(var(--tp-ink) / 85%);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+  /* Under the first tap it fades out in 67 ms, nearly linear. */
+  transition: opacity 67ms linear;
+}
+.clu-tp-hint[data-hidden] {
+  opacity: 0;
+}
+.clu-tp-count {
+  position: absolute;
+  top: 293px;
+  left: 50%;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+.clu-tp-glyph {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: rgb(var(--tp-ink) / 62%);
+  transition: color var(--t-fast) var(--ease-out);
+}
+.clu-tp-glyph:hover:not(:disabled) {
+  color: rgb(var(--tp-ink) / 90%);
+}
+.clu-tp-glyph:disabled {
+  color: rgb(var(--tp-ink) / 22%);
+}
+
+.clu-tp-presets {
+  position: absolute;
+  top: 364.5px;
+  left: 8.5px;
+  width: 339px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* One page of 9 shows; the arrows slide the strip a page (265.5 pt) in 400 ms. */
+.clu-tp-swatches {
+  width: 260px;
+  height: 32px;
+  overflow: hidden;
+}
+.clu-tp-strip {
+  display: flex;
+  align-items: center;
+  gap: 5.5px;
+  height: 100%;
+  transition-property: transform;
+  transition-timing-function: var(--ease-out);
+}
+.clu-tp-swatch {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 14%);
+}
+.clu-tp-swatch[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 14%), 0 0 0 2px rgb(var(--tp-ink) / 90%);
+}
+
+/* The intensity slider: a white 6% pill, the wave (white 62% left of the thumb, 25% right of it) and the thumb. */
+.clu-tp-slider {
+  position: absolute;
+  border-radius: 8px;
+  background: rgb(var(--tp-ink) / 6%);
+  cursor: grab;
+  touch-action: none;
+}
+.clu-tp-wave {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+.clu-tp-wave path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.clu-tp-wave-on {
+  stroke: rgb(var(--tp-ink) / 70%);
+}
+.clu-tp-wave-off {
+  stroke: rgb(var(--tp-ink) / 25%);
+}
+.clu-tp-thumb {
+  position: absolute;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
+}
+
+/* The grain dial: a gray knob that shows the grain, a ring of 20 dots and a white radial pin. */
+.clu-tp-dial {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+}
+/* The knob is a dark shaded sphere lit from above with a lighter rim. */
+.clu-tp-knob {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 28%, #4d4d4d, #2a2a2a 62%, #1f1f1f);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 16%),
+    inset 0 1px 1px rgb(255 255 255 / 22%),
+    0 1px 3px rgb(0 0 0 / 35%);
+  overflow: hidden;
+}
+.clu-tp-knob::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--clu-tp-grain, none);
+  background-size: 32px 32px;
+  mix-blend-mode: overlay;
+  opacity: var(--clu-tp-grain-opacity, 0);
+}
+.clu-tp-ring {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+.clu-tp-dot-on {
+  fill: rgb(var(--tp-ink) / 55%);
+}
+.clu-tp-dot-off {
+  fill: rgb(var(--tp-ink) / 25%);
+}
+.clu-tp-pin {
+  stroke: rgb(var(--tp-ink));
+  stroke-linecap: round;
+}
+
+/* Onboarding's "Pick a look": the same editor in the card, laid out in place, no opening scale. The host sets
+   `zoom` so the whole editor fits the card at the smallest window. */
+.clu-theme-picker[data-inline] {
+  position: relative;
+  flex: none;
+  transform: none;
+  opacity: 1;
+  transition: none;
+}

@@ -1,0 +1,58 @@
+diff --git a/chrome/BUILD.gn b/chrome/BUILD.gn
+index 06bfcf5a90d093b9ac8e255e93ef2ffd0a00421e..d61b22f8630129c580324b730166e732c2c907ce 100644
+--- a/chrome/BUILD.gn
++++ b/chrome/BUILD.gn
+@@ -48,6 +48,7 @@ if (is_android) {
+   import("//build/config/apple/symbols.gni")
+   import("//build/config/mac/mac_sdk.gni")
+   import("//build/config/mac/rules.gni")
++  import("//clu/build/config.gni")
+   import("//build/util/branding.gni")
+   import("//chrome/browser/buildflags.gni")
+   import("//chrome/updater/branding.gni")
+@@ -540,10 +541,21 @@ if (is_win) {
+     }
+   }
+ 
++  # Clu: every build has its own CFBundleVersion (docs/chromium/icons.md section 7).
++  action("clu_app_plist") {
++    script = "//clu/build/bundle_version.py"
++    _in = get_target_outputs(":chrome_app_plist")
++    sources = _in
++    outputs = [ "$target_gen_dir/clu_app_plist.plist" ]
++    args = rebase_path(_in + outputs, root_build_dir) +
++           [ clu_bundle_version, clu_bundle_id ]
++    deps = [ ":chrome_app_plist" ]
++  }
++
+   mac_app_bundle("chrome_app") {
+     output_name = chrome_product_full_name
+ 
+-    info_plist_target = ":chrome_app_plist"
++    info_plist_target = ":clu_app_plist"
+     extra_substitutions = [
+       "CHROMIUM_BUNDLE_ID=$chrome_mac_bundle_id",
+       "CHROMIUM_SHORT_NAME=$chrome_product_short_name",
+@@ -573,6 +585,11 @@ if (is_win) {
+       ":chrome_versioned_bundle_data",
+     ]
+ 
++    # Clu: the Dock tile plug-in, which shows the chosen app icon while Rio is closed (docs/chromium/icons.md).
++    bundle_deps += [ "//clu/browser/app_icon:dock_tile_plugin_bundle_data" ]
++    # Clu: rio-ai, the on-device model's helper tool (docs/chromium/parity-ai.md).
++    bundle_deps += [ "//clu/browser/ai:ai_helper_bundle_data" ]
++
+     if (enable_updater) {
+       bundle_deps += [ ":chromium_updater_privileged_helper" ]
+     }
+@@ -781,6 +798,10 @@ if (is_win) {
+       # certificate and will not necessarily work in any other build.
+       entitlements_templates += [ "app/app-entitlements-chrome.plist" ]
+     }
++    if (chrome_mac_team_id != "") {
++      # Clu: the browser passkey entitlement (docs/chromium/m9.md).
++      entitlements_templates += [ "//clu/app/app-entitlements-clu.plist" ]
++    }
+     output_name = "$target_gen_dir/app-entitlements.plist"
+     substitutions = [
+       "CHROMIUM_BUNDLE_ID=$chrome_mac_bundle_id",

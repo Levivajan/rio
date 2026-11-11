@@ -1,0 +1,13 @@
+<!doctype html>
+<title>Ads</title>
+<h1>Ads fixture</h1>
+<div class="ad-slot">Generic ad slot</div>
+<div class="host-slot">Site-specific ad slot</div>
+<script>
+  // A first-party script that loads, a banner the path rule blocks, and a pixel from a tracker host the domain rule
+  // blocks (the browser test watches the requests).
+  for (const src of ['/blocker/ok.js', '/blocker/ads/banner.js']) {
+    document.head.append(Object.assign(document.createElement('script'), { src }))
+  }
+  document.body.append(Object.assign(new Image(), { src: `http://tracker.localhost:${location.port}/blocker/pixel.gif` }))
+</script>

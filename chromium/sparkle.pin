@@ -1,0 +1,8 @@
+# Sparkle 2 for Clu's updates (docs/chromium/PLAN.md, docs/chromium/m12.md). scripts/chromium/fetch-sparkle.sh
+# downloads this release asset from Sparkle's official GitHub repository and refuses it unless its SHA-256 matches the
+# digest GitHub publishes for the asset. To move to a newer release, change all four lines from
+# `gh api repos/sparkle-project/Sparkle/releases/tags/<tag>` (assets[].digest, and git/ref/tags/<tag> for the commit).
+version=2.10.1
+commit=ab7d71291238df6e0492143b120c9b696a35f603
+url=https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz
+sha256=1a856d2a9edb8e628de88121d7be04cf0e2167f8641650b78fca00b14244cf27

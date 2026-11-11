@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shipping address</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 40px; max-width: 420px; }
+  form { display: grid; gap: 6px; }
+  input, select, button { font: inherit; }
+</style>
+<h1>Shipping address</h1>
+<!-- An address form with autocomplete tokens, for native address autofill (CluNative* browser tests). The profile
+     the test fills from is made up; no real address is used. -->
+<form id="address" action="signed-in.html" method="post">
+  <label>Full name <input id="name" name="name" autocomplete="name"></label>
+  <label>Street address <input id="address1" name="address1" autocomplete="address-line1"></label>
+  <label>City <input id="city" name="city" autocomplete="address-level2"></label>
+  <label>State <input id="state" name="state" autocomplete="address-level1"></label>
+  <label>ZIP code <input id="zip" name="zip" autocomplete="postal-code"></label>
+  <label>Country
+    <select id="country" name="country" autocomplete="country">
+      <option value=""></option>
+      <option value="US">United States</option>
+      <option value="CA">Canada</option>
+    </select>
+  </label>
+  <label>Phone <input id="phone" name="phone" type="tel" autocomplete="tel"></label>
+  <label>Email <input id="email" name="email" type="email" autocomplete="email"></label>
+  <button id="submit" type="submit">Continue</button>
+</form>

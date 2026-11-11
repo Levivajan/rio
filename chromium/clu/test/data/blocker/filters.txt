@@ -1,0 +1,6 @@
+! Clu blocker fixture (restored from electron-final:e2e/fixtures/extensions/filters.txt; the redirect line has no
+! declarativeNetRequest form and is gone). docs/chromium/m7.md.
+||tracker.localhost^
+/ads/banner.js
+##.ad-slot
+localhost,127.0.0.1##.host-slot

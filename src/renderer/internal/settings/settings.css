@@ -1,0 +1,833 @@
+/* The app settings window (docs/chromium/parity-settings.md section 2), styled for light
+   and dark mode. The
+   window is 684 x 650 with a native 28 pt title bar; this document fills the 684 x 622 under it. Its colors are its
+   own family (the settings grays), set here for light and dark, so nothing here is navy and nothing follows a space. */
+:root {
+  --sw-bg: #fdfdfd;
+  --sw-toolbar: #ffffff;
+  --sw-separator: #e6e6e6;
+  --sw-card: #fafafa;
+  --sw-card-border: #e5e5e5;
+  --sw-ink: #262626;
+  --sw-ink-2: #808080;
+  --sw-tab-ink: #717171;
+  --sw-tab-hover: rgb(0 0 0 / 4%);
+  --sw-tab-selected: #ffffff;
+  --sw-tab-selected-border: transparent;
+  --sw-tab-selected-shadow: 0 0.5px 2px rgb(0 0 0 / 12%), 0 2px 8px rgb(0 0 0 / 6%);
+  --sw-accent: #2f6eed;
+  --sw-control: #e9e9e9;
+  --sw-control-hover: #e0e0e0;
+  --sw-switch-on: #3a7aec;
+  --sw-knob-on: #dee8f7;
+  --sw-switch-off: rgb(0 0 0 / 11%);
+  --sw-knob-off: #ffffff;
+  --sw-field: #ffffff;
+  --sw-field-ink: #333333;
+  --sw-field-border: rgb(0 0 0 / 12%);
+  --sw-search: #f2f2f2;
+  --sw-selected-row: #e6eefc;
+  --sw-list-card: #f7f7f7;
+}
+:root[data-theme='dark'] {
+  --sw-bg: #25282a;
+  --sw-toolbar: #25282a;
+  --sw-separator: #232323;
+  --sw-card: #282b2d;
+  --sw-card-border: #3d4042;
+  --sw-ink: #e3e4e4;
+  --sw-ink-2: #838586;
+  --sw-tab-ink: #a9abac;
+  --sw-tab-hover: rgb(255 255 255 / 5%);
+  --sw-tab-selected: #272c2d;
+  --sw-tab-selected-border: #424d52;
+  --sw-tab-selected-shadow: none;
+  --sw-accent: #3577f3;
+  --sw-control: #36383a;
+  --sw-control-hover: #404244;
+  --sw-switch-on: #397cf6;
+  --sw-knob-on: #c8dafa;
+  --sw-switch-off: rgb(255 255 255 / 14%);
+  --sw-knob-off: #cfd0d1;
+  --sw-field: #ffffff;
+  --sw-field-ink: #333333;
+  --sw-field-border: rgb(0 0 0 / 30%);
+  --sw-search: #3b3d3f;
+  --sw-selected-row: #252e3a;
+  --sw-list-card: #242728;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--sw-bg);
+  color: var(--sw-ink);
+  font-size: 13px;
+  user-select: none;
+}
+
+.clu-sw {
+  /* The shared controls take the window's sizes: 24 pt pop-up and push buttons with a fill and no border. */
+  --control-h: 24px;
+  --control-r: 6px;
+  --control-px: 10px;
+  --control-fs: 13px;
+  --control-bg: var(--sw-control);
+  --control-bg-hover: var(--sw-control-hover);
+  --control-bg-press: var(--sw-control-hover);
+  --control-border: transparent;
+  --ink: var(--sw-ink);
+  --ink-2: var(--sw-ink-2);
+  --primary: var(--sw-accent);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Toolbar: the tab row right under the 32 pt title bar, window y 32 to 88. */
+.clu-sw-toolbar {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1px;
+  box-sizing: border-box;
+  height: 56px;
+  padding-top: 0;
+  border-bottom: 1px solid var(--sw-separator);
+  background: var(--sw-toolbar);
+  -webkit-app-region: drag;
+}
+.clu-sw-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  min-width: 55px;
+  /* The plate is 54 x 47 and stops 9 above the separator. */
+  height: 47px;
+  /* Icon centered 15 below the tab's top and label 36 below it (window y 47 and 68). */
+  padding: 2px 6px 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sw-tab-ink);
+  font: inherit;
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+  transition: background-color 120ms ease-out;
+  -webkit-app-region: no-drag;
+}
+.clu-sw-tab:hover {
+  background: var(--sw-tab-hover);
+}
+.clu-sw-tab[aria-selected='true'] {
+  border-color: var(--sw-tab-selected-border);
+  background: var(--sw-tab-selected);
+  box-shadow: var(--sw-tab-selected-shadow);
+  color: var(--sw-accent);
+}
+.clu-sw-tab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--sw-accent) 45%, transparent);
+  outline-offset: 0;
+}
+
+/* Body: cards 555 wide with 64.5 margins, the first 21 under the separator, 9 between cards. */
+.clu-sw-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 21px 64.5px 26px;
+}
+.clu-sw-body .clu-group {
+  border: 1px solid var(--sw-card-border);
+  border-radius: 7.5px;
+  background: var(--sw-card);
+}
+.clu-sw-body .clu-group + .clu-group,
+.clu-sw-body .clu-group + .clu-settings-list,
+.clu-sw-body .clu-group + .clu-site-tweaks {
+  margin-top: 9px;
+}
+.clu-sw-body .clu-group-row {
+  gap: 12px;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+/* Row dividers in the card's border color, inset 8 on both sides. */
+.clu-sw-body .clu-group-row + .clu-group-row {
+  border-top: 0;
+  background-image: linear-gradient(var(--sw-card-border), var(--sw-card-border));
+  background-position: 8px 0;
+  background-size: calc(100% - 16px) 1px;
+  background-repeat: no-repeat;
+}
+.clu-sw-body .clu-group-row-label {
+  color: var(--sw-ink);
+  font-size: 13px;
+  line-height: 16px;
+}
+.clu-sw-body .clu-group-row-hint {
+  color: var(--sw-ink-2);
+  font-size: 12px;
+  font-style: normal;
+}
+.clu-sw-body .clu-select > select {
+  border: 0;
+  padding-right: 26px;
+}
+.clu-sw-body .clu-btn {
+  border: 0;
+}
+
+/* The macOS 26 switch: a 36 x 16 track and a 21 x 12 pill knob inset 2. */
+.clu-sw .clu-toggle {
+  width: 36px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--sw-switch-off);
+  transition: background-color 200ms ease-out;
+}
+.clu-sw .clu-toggle[data-on='true'] {
+  background: var(--sw-switch-on);
+}
+.clu-sw .clu-toggle > span {
+  top: 2px;
+  left: 2px;
+  width: 21px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--sw-knob-off);
+  box-shadow: 0 0.5px 1px rgb(0 0 0 / 22%);
+  transition: transform 200ms ease-out, background-color 200ms ease-out;
+}
+.clu-sw .clu-toggle[data-on='true'] > span {
+  background: var(--sw-knob-on);
+  box-shadow: none;
+  transform: translateX(11px);
+}
+
+.clu-sw-intro {
+  margin: 0 0 14px;
+  padding: 0 10px;
+  color: var(--sw-ink);
+  font-size: 13px;
+  line-height: 17px;
+}
+.clu-sw-body .clu-group + .clu-sw-intro {
+  margin-top: 18px;
+}
+.clu-sw-heading {
+  margin: 16px 0 6px;
+  padding: 0 10px;
+  color: var(--sw-ink-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+.clu-sw-rule {
+  margin: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--sw-card-border);
+}
+
+/* Profiles: the list (205 wide) and the picked profile's settings (340 wide). */
+.clu-sw-profiles {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.clu-sw-profile-list {
+  overflow: hidden;
+}
+/* The list card is a step darker than the settings cards beside it. */
+.clu-sw-body .clu-sw-profile-list {
+  background: var(--sw-list-card);
+}
+.clu-sw-profile-list h3 {
+  margin: 0;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--sw-card-border);
+  color: var(--sw-ink-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+.clu-sw-profile-list ul {
+  margin: 0;
+  padding: 6px 16px;
+  list-style: none;
+}
+.clu-sw-profile-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  margin: 0 -6px;
+  padding: 0 6px;
+  border-radius: 6px;
+}
+.clu-sw-profile-list li + li {
+  box-shadow: 0 -1px 0 var(--sw-card-border);
+}
+.clu-sw-profile-list li[aria-selected='true'] {
+  background: var(--sw-selected-row);
+  box-shadow: none;
+}
+.clu-sw-profile-list li[aria-selected='true'] + li {
+  box-shadow: none;
+}
+.clu-sw-profile-list li:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--sw-accent) 45%, transparent);
+}
+.clu-sw-profile-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-sw-profile-count {
+  flex: none;
+  color: var(--sw-ink-2);
+  font-size: 12px;
+}
+.clu-sw-profile-settings .clu-sw-heading {
+  margin-top: 14px;
+}
+.clu-sw-links {
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+.clu-sw-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--sw-ink);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+}
+.clu-sw-link:hover {
+  background: var(--sw-tab-hover);
+}
+.clu-sw-link-tile {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+.clu-sw-link-tile[data-tint='blue'] { background: #3d7bf6; }
+.clu-sw-link-tile[data-tint='green'] { background: #34b65a; }
+.clu-sw-link-tile[data-tint='yellow'] { background: #f2b632; }
+.clu-sw-link-tile[data-tint='orange'] { background: #f08a35; }
+.clu-sw-link-tile[data-tint='purple'] { background: #8d6cf0; }
+.clu-sw-link-tile[data-tint='red'] { background: #ec5545; }
+.clu-sw-link-label {
+  flex: 1;
+}
+.clu-sw-link-arrow {
+  color: var(--sw-accent);
+}
+
+/* AI features: rows 81 apart, a 94 x 62 picture in a 3 pt white frame, a 15 pt name and a 13 pt line. */
+.clu-sw-features {
+  margin: 0;
+  padding: 0 10px;
+  list-style: none;
+}
+.clu-sw-feature {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 81px;
+  box-sizing: border-box;
+  padding: 9px 0;
+}
+.clu-sw-feature + .clu-sw-feature {
+  border-top: 1px solid var(--sw-card-border);
+}
+.clu-sw-feature-art {
+  flex: none;
+  /* 88 x 56 with its frame. */
+  width: 82px;
+  height: 50px;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  border-radius: 8px;
+}
+.clu-sw-feature-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.clu-sw-feature-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.clu-sw-feature-title {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--sw-ink);
+  font-size: 15px;
+  line-height: 19px;
+}
+.clu-sw-feature-line {
+  margin: 0;
+  color: var(--sw-ink-2);
+  font-size: 13px;
+  line-height: 17px;
+}
+
+/* Shortcuts: the list card (340 wide at x 68) and the side column (at x 424). */
+.clu-sw-body:has(.clu-sw-shortcuts) {
+  display: flex;
+  padding: 21px 68px 26px;
+  overflow: hidden;
+}
+.clu-sw-shortcuts {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+}
+.clu-sw-sc-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.clu-sw-sc-search {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--sw-search);
+  color: var(--sw-ink-2);
+}
+.clu-sw-sc-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sw-ink);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  user-select: text;
+}
+.clu-sw-sc-search input::placeholder {
+  color: var(--sw-ink-2);
+}
+.clu-sw-sc-search input::-webkit-search-cancel-button {
+  appearance: none;
+}
+.clu-sw-sc-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.clu-sw-sc-group {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--sw-card-border);
+  background: var(--sw-card);
+  color: var(--sw-ink-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+.clu-sw-sc-scroll ul {
+  margin: 0;
+  padding: 0 24px;
+  list-style: none;
+}
+.clu-sw-sc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 12px 0;
+}
+.clu-sw-sc-row + .clu-sw-sc-row {
+  border-top: 1px solid var(--sw-card-border);
+}
+.clu-sw-sc-title {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-sw-sc-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--sw-ink-2);
+}
+.clu-sw-sc-reset:hover {
+  background: var(--sw-tab-hover);
+  color: var(--sw-ink);
+}
+.clu-sw-keycap {
+  flex: none;
+  box-sizing: border-box;
+  min-width: 63px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--sw-field-border);
+  border-radius: 6px;
+  background: var(--sw-field);
+  color: var(--sw-field-ink);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.clu-sw-keycap[data-empty='true'] {
+  color: #9a9a9a;
+}
+.clu-sw-keycap[data-recording='true'] {
+  border-color: var(--sw-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--sw-accent) 40%, transparent);
+  color: var(--sw-accent);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.clu-sw-keycap:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--sw-accent) 45%, transparent);
+  outline-offset: 0;
+}
+.clu-sw-sc-note {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: var(--sw-ink-2);
+  font-size: 12px;
+}
+.clu-sw-sc-note > span {
+  flex-basis: 100%;
+  text-align: right;
+}
+.clu-sw-sc-empty {
+  margin: 0;
+  padding: 16px 24px;
+  color: var(--sw-ink-2);
+}
+.clu-sw-sc-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 0;
+}
+.clu-sw-sc-art {
+  display: flex;
+  gap: 4px;
+}
+.clu-sw-sc-art span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  border: 3px solid #2f6eed;
+  border-radius: 12px;
+  background: linear-gradient(#e9f0fd, #c9daf9);
+  box-shadow: inset 0 -4px 0 rgb(47 110 237 / 25%);
+  color: #2f6eed;
+  font-size: 30px;
+  font-weight: 600;
+}
+.clu-sw-sc-side h2 {
+  margin: 30px 0 8px;
+  color: var(--sw-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+.clu-sw-sc-side p {
+  margin: 0;
+  color: var(--sw-ink-2);
+  font-size: 13px;
+  line-height: 17px;
+}
+.clu-sw-sc-reset-all {
+  margin-top: auto;
+}
+.clu-sw-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scrim);
+}
+
+/* Icon: the 515 pt card fits 7 icons at a 70 pt pitch, so the
+   pane never scrolls. Dividers run from the preview's left (window x 128) to 40 short of the card's right (x 580). */
+.clu-sw-icons {
+  margin: 0;
+  padding: 5px 10px;
+  list-style: none;
+}
+.clu-sw-icons > li {
+  position: relative;
+}
+.clu-sw-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 70px;
+  padding-left: 6px;
+}
+.clu-sw-icons > li + li::before {
+  position: absolute;
+  top: 0;
+  right: 29.5px;
+  left: 53.5px;
+  border-top: 1px solid var(--sw-card-border);
+  content: '';
+}
+/* The radio: a solid 22 pt disc, and when picked a thick accent ring around a dark center. */
+.clu-sw-icon-row input[type='radio'] {
+  flex: none;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0.5px 1.5px rgb(0 0 0 / 30%);
+  appearance: none;
+}
+.clu-sw-icon-row input[type='radio']:checked {
+  border: 6px solid var(--sw-accent);
+  background: var(--sw-card);
+  box-shadow: none;
+}
+.clu-sw-app-icon {
+  display: block;
+  border-radius: 14px;
+}
+.clu-sw-icon-name {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.clu-sw-icon-current {
+  color: var(--sw-accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Helpers the import and site tweaks rows use. */
+.clu-settings-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: var(--fs-hint);
+  line-height: 1.35;
+  text-align: right;
+}
+.clu-settings-empty {
+  color: var(--ink-2);
+}
+.clu-settings-status {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-hint);
+  line-height: 1.35;
+  text-align: left;
+}
+.clu-settings-status.clu-settings-error {
+  color: var(--danger);
+}
+.clu-settings-checks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 160px;
+  color: var(--ink);
+}
+.clu-settings-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clu-settings-check input {
+  margin: 0;
+}
+.clu-settings-check:has(input:disabled) {
+  opacity: 0.45;
+}
+/* A fieldset row: its legend reads as the row's label. */
+fieldset.clu-group-row > legend {
+  float: left;
+}
+fieldset.clu-group-row:disabled .clu-settings-check {
+  opacity: 0.45;
+}
+.clu-settings-site-host {
+  overflow-wrap: anywhere;
+}
+/* A list of sites drawn as a card: a <ul> of shared rows. */
+.clu-settings-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-settings-note {
+  margin-top: 8px;
+  text-align: left;
+}
+
+/* Profiles: the list runs the pane's height with a 28 pt header and a bar of +, − and edit
+   at its foot; popups take their content's width (136, 154.5, 137), not a fixed 150. */
+.clu-sw-profiles {
+  align-items: stretch;
+  min-height: 445px;
+}
+.clu-sw-profile-list {
+  display: flex;
+  flex-direction: column;
+}
+.clu-sw-profile-list h3 {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  box-sizing: border-box;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.clu-sw-profile-list ul {
+  flex: 1 1 auto;
+}
+.clu-sw-profile-list li > .clu-input {
+  height: 26px;
+}
+.clu-sw-profile-error {
+  padding: 0 16px 6px;
+  text-align: left;
+}
+.clu-sw-profile-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 32px;
+  border-top: 1px solid var(--sw-card-border);
+}
+.clu-sw-profile-bar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sw-ink);
+}
+.clu-sw-profile-bar button + button {
+  border-left: 1px solid var(--sw-card-border);
+}
+.clu-sw-profile-bar button:last-child {
+  width: 38px;
+}
+.clu-sw-profile-bar button:hover:not(:disabled) {
+  background: var(--sw-tab-hover);
+}
+.clu-sw-profile-bar button:disabled {
+  opacity: 0.35;
+}
+/* Advanced's colored icon tiles: 20 pt rounded squares 8 pt before the label, a white glyph (the design's tints). */
+.clu-sw-tile-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.clu-sw-tile {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: #fff;
+}
+.clu-sw-tile[data-tint='blue'] { background: #3f8ff7; }
+.clu-sw-tile[data-tint='green'] { background: #68ce67; }
+.clu-sw-tile[data-tint='red'] { background: #eb534e; }
+.clu-sw-tile[data-tint='magenta'] { background: #ca43ea; }
+.clu-sw-info-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.clu-sw-info {
+  display: inline-flex;
+  color: var(--sw-ink-2);
+}
+.clu-sw-body .clu-select {
+  min-width: 0;
+}
+.clu-sw-body .clu-select > select {
+  width: auto;
+}
+
+/* Advanced: a row of push buttons under the last card (More Settings… at the card's left edge, 12 below). */
+.clu-sw-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Links: the hero runs the window's width from the separator down, 135 pt, then the intro 27 under it;
+   Peek's note is an italic 12 pt line. */
+.clu-sw-hero {
+  margin: -21px -64.5px 27px;
+  line-height: 0;
+}
+.clu-sw-hero svg {
+  display: block;
+}
+.clu-sw-hero-edge {
+  fill: var(--sw-bg);
+}
+.clu-sw-body .clu-group-row-hint .clu-sw-note {
+  font-style: italic;
+}

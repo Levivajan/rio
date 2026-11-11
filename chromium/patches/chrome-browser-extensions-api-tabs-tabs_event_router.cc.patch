@@ -1,0 +1,43 @@
+diff --git a/chrome/browser/extensions/api/tabs/tabs_event_router.cc b/chrome/browser/extensions/api/tabs/tabs_event_router.cc
+index f575867fe3918c3f0ad6fbea48846b758807685f..358b593d8bc65caf1dc1e7b659ef3ca3d16c5736 100644
+--- a/chrome/browser/extensions/api/tabs/tabs_event_router.cc
++++ b/chrome/browser/extensions/api/tabs/tabs_event_router.cc
+@@ -18,6 +18,7 @@
+ #include "chrome/browser/ui/browser_window/public/browser_window_interface.h"
+ #include "chrome/browser/ui/recently_audible_helper.h"
+ #include "chrome/common/extensions/api/tabs.h"
++#include "clu/browser/ui/webui/clu_tab_hooks.h"  // nogncheck
+ #include "components/favicon/content/content_favicon_driver.h"
+ #include "components/sessions/core/session_id.h"
+ #include "components/tab_groups/tab_group_id.h"
+@@ -61,6 +62,10 @@ bool WillDispatchTabUpdatedEvent(
+     std::optional<base::ListValue>& event_args_out,
+     mojom::EventFilteringInfoPtr& event_filtering_info_out,
+     bool* dispatch_separate_event_out) {
++  // Clu: a window's hidden placeholder page is no tab to the user.
++  if (clu::IsPlaceholderTab(contents)) {
++    return false;
++  }
+   auto scrub_tab_behavior = ExtensionTabUtil::GetScrubTabBehavior(
+       extension, target_context, contents);
+   api::tabs::Tab tab_object = ExtensionTabUtil::CreateTabObject(
+@@ -93,6 +98,9 @@ bool WillDispatchTabCreatedEvent(
+     std::optional<base::ListValue>& event_args_out,
+     mojom::EventFilteringInfoPtr& event_filtering_info_out,
+     bool* dispatch_separate_event_out) {
++  if (clu::IsPlaceholderTab(contents)) {
++    return false;
++  }
+   ExtensionTabUtil::ScrubTabBehavior scrub_tab_behavior =
+       ExtensionTabUtil::GetScrubTabBehavior(extension, target_context,
+                                             contents);
+@@ -482,6 +490,9 @@ void TabsEventRouter::OnActiveTabChanged(TabListInterface& tab_list,
+                                          tabs::TabInterface* tab) {
+   content::WebContents* tab_contents = tab->GetContents();
+   CHECK(tab_contents);
++  if (clu::IsPlaceholderTab(tab_contents)) {
++    return;
++  }
+ 
+   auto args = base::MakeRefCounted<EventArgs>();
+   int tab_id = ExtensionTabUtil::GetTabId(tab_contents);

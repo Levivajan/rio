@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Clip</title>
+<body style="margin:0;font:14px sans-serif">
+<video width="480" height="270" playsinline loop src="clip.webm"></video>
+<p><button id="play">Play</button> <span id="state"></span></p>
+<script>
+  // A 4 s file video with a quiet 440 Hz track (clip.webm), played like a site's video rather than a live stream.
+  const video = document.querySelector('video')
+  const state = document.getElementById('state')
+  const show = () => {
+    state.textContent = JSON.stringify({ playing: !video.paused, paused: video.paused, pip: document.pictureInPictureElement === video })
+  }
+  for (const ev of ['play', 'pause', 'enterpictureinpicture', 'leavepictureinpicture']) video.addEventListener(ev, show)
+  document.getElementById('play').addEventListener('click', () => void video.play())
+  show()
+</script>
+</body>

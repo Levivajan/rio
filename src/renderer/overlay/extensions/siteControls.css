@@ -1,0 +1,320 @@
+.clu-site-controls {
+  position: fixed;
+  box-sizing: border-box;
+  width: 236px;
+  /* A column inside the popover's max height (window bottom less the margin): the body and footer keep their size and
+     All Site Settings scrolls in what is left, so nothing draws past the window. Visible for the arrow. */
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  /* 21 pt corners, a 0.5 pt darker outline and a tight 1.5 pt shadow. */
+  border: 0.5px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-radius: 21px;
+  /* Tinted with the space color. Opaque: the overlay widget has no window behind it to blur, so any
+     translucency shows the sidebar's rows sharp through the panel. */
+  background: color-mix(in srgb, var(--tint) 30%, var(--surface));
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 0.5px 1.5px rgb(0 0 0 / 14%);
+  color: var(--ink);
+  transform-origin: var(--arrow-x) top;
+  animation: clu-site-controls-in var(--t-fade) var(--ease-out);
+}
+/* The dialog takes focus so Tab starts inside it; the ring belongs on its controls. */
+.clu-site-controls:focus,
+.clu-site-controls:focus-visible {
+  outline: none;
+}
+:root[data-reduced-motion='true'] .clu-site-controls {
+  animation-name: clu-site-controls-fade;
+}
+/* Dismissing: the entry reversed, a fade and a scale back to 0.98 toward the arrow. */
+.clu-site-controls[data-closing] {
+  animation: clu-site-controls-out var(--t-fade) cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+:root[data-reduced-motion='true'] .clu-site-controls[data-closing] {
+  animation: none;
+}
+@keyframes clu-site-controls-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes clu-site-controls-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes clu-site-controls-fade {
+  from {
+    opacity: 0;
+  }
+}
+.clu-site-controls-blocking {
+  padding: 12px;
+}
+.clu-site-controls-blocking p {
+  margin: 4px 0 0;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-site-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.clu-site-controls-slot {
+  padding: 8px 12px;
+  border-top: 1px solid var(--hover-ink);
+}
+/* The tweaks section brings its own padding. */
+.clu-site-controls-slot[data-slot='tweaks'] {
+  padding: 0;
+}
+/* A module's section may render nothing. */
+.clu-site-controls-slot:empty {
+  display: none;
+}
+.clu-site-controls-clear:focus-visible {
+  outline: var(--control-focus);
+  outline-offset: 0;
+}
+.clu-site-controls-clear {
+  width: calc(100% + 2 * var(--row-px));
+  height: var(--row-h);
+  margin: -4px calc(-1 * var(--row-px));
+  padding: 0 var(--row-px);
+  border: 0;
+  border-radius: var(--row-r);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+.clu-site-controls-clear:hover {
+  background: var(--hover-ink);
+}
+/* Tooltips in the panel are Rio's gray, never the space's tint. */
+.clu-site-controls .clu-tooltip {
+  background: color-mix(in srgb, var(--ink) 8%, var(--surface));
+}
+/* The arrow points at the sliders button: 27 wide, 10 tall, with a soft tip. A 19 pt square
+   turned 45 degrees and flattened. */
+.clu-site-controls::before {
+  position: absolute;
+  top: -9.5px;
+  left: calc(var(--arrow-x) - 9.5px);
+  width: 19px;
+  height: 19px;
+  border-top: 0.5px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-left: 0.5px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-top-left-radius: 5px;
+  background: inherit;
+  backdrop-filter: none;
+  transform: scaleY(0.74) rotate(45deg);
+  content: '';
+}
+.clu-site-controls-body {
+  flex: none;
+  padding: 10px 10px 0;
+}
+.clu-site-controls-top,
+.clu-site-controls-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 48px);
+  /* 48 pt tiles 8 apart fill 216. */
+  gap: 8px;
+}
+.clu-site-controls-top {
+  margin-bottom: 8px;
+}
+.clu-site-controls .clu-site-controls-tile {
+  position: relative;
+  width: 48px;
+  height: 32px;
+  border: 0.5px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--ink);
+}
+.clu-site-controls-tiles .clu-site-controls-tile {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.clu-site-controls .clu-site-controls-tile:hover {
+  background: color-mix(in srgb, var(--ink) 10%, var(--surface));
+}
+.clu-site-controls-tile[aria-disabled='true'] img {
+  opacity: 0.45;
+}
+/* The extension icon is about 14 pt, its badge chip on the icon's bottom right corner. */
+.clu-site-controls-tile.clu-action-button img {
+  width: 14px;
+  height: 14px;
+}
+.clu-site-controls-badge {
+  position: absolute;
+  right: 16px;
+  bottom: 7px;
+  min-width: 10px;
+  padding: 0 2px;
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 10px;
+}
+.clu-site-controls-section h2 {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.clu-site-controls-section + .clu-site-controls-section {
+  margin-top: 10px;
+}
+.clu-site-controls-settings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-site-controls-setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 43px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+.clu-site-controls-setting-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  color: #fff;
+}
+.clu-site-controls-setting[data-decision='deny'] .clu-site-controls-setting-icon {
+  background: color-mix(in srgb, var(--accent-strong) 40%, var(--surface));
+}
+.clu-site-controls-setting-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.clu-site-controls-setting-text strong,
+.clu-site-controls-setting-text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-site-controls-setting-text strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.clu-site-controls-setting-text span {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.clu-site-controls-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 10px 0;
+  /* The pill sits 10.5 below the divider. */
+  padding: 10.5px 0 10px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+}
+.clu-site-controls-security {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px 0 8px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.clu-site-controls .clu-site-controls-more {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.clu-site-controls-more-panel {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  border-top: 1px solid var(--hover-ink);
+}
+.clu-site-controls-more-panel .clu-site-controls-slot:first-child {
+  border-top: 0;
+}
+/* Developer Mode off draws its hammer faded. */
+.clu-site-controls-setting[data-dev-mode='off'] .clu-site-controls-setting-icon {
+  opacity: 0.4;
+}
+/* Every control fits the 236 pt panel: no sideways scroll, the two tweak buttons share the row and the
+   permission selects take what the label leaves. */
+.clu-site-controls-more-panel {
+  overflow-x: hidden;
+}
+.clu-site-controls .clu-tweaks-actions > .clu-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-site-controls .clu-site-permission {
+  gap: 8px;
+}
+.clu-site-controls .clu-site-permission label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-site-controls .clu-site-permission .clu-select {
+  flex: 0 0 92px;
+  width: 92px;
+}
+.clu-site-controls .clu-site-permissions-footer .clu-btn {
+  min-width: 0;
+}
+/* The "…" menu hangs from its button, over the panel's edge. */
+.clu-site-controls > .clu-menu {
+  min-width: 190px;
+}
+/* All Site Settings in place of the popover's content: a back button and the title over the controls. */
+.clu-site-controls-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px 6px 6px;
+}
+.clu-site-controls-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.clu-site-controls .clu-site-controls-back {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}

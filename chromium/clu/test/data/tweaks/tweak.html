@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tweak fixture</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 32px; color: rgb(20, 20, 20); }
+      .card { display: inline-block; width: 120px; height: 60px; margin: 8px; background: #eee; }
+      #promo { padding: 12px; background: #fde68a; }
+    </style>
+  </head>
+  <body>
+    <h1>Tweak me</h1>
+    <div id="promo">Promo banner</div>
+    <div class="cards"><div class="card">One</div><div class="card">Two</div><div class="card">Three</div></div>
+    <p id="clicks">0</p>
+    <script>
+      window.pageClicks = 0
+      document.addEventListener('click', () => {
+        window.pageClicks += 1
+        document.getElementById('clicks').textContent = String(window.pageClicks)
+      })
+    </script>
+  </body>
+</html>

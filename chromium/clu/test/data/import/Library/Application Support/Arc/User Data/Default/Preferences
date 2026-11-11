@@ -1,0 +1,12 @@
+{
+  "default_search_provider_data": {
+    "template_url_data": { "short_name": "Kagi", "keyword": "kagi.com", "url": "https://kagi.com/search?q={searchTerms}" }
+  },
+  "extensions": {
+    "settings": {
+      "aaaabbbbccccddddeeeeffffgggghhhh": { "from_webstore": true, "location": 1, "path": "aaaabbbbccccddddeeeeffffgggghhhh/1.0_0" },
+      "mhjfbmdgcfjbbpaeojofohoefgiehjai": { "location": 5, "manifest": { "name": "A component" } },
+      "NOT-AN-ID": { "from_webstore": true, "location": 1, "manifest": { "name": "Junk" } }
+    }
+  }
+}

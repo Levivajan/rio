@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/platform/runtime_enabled_features.json5 b/third_party/blink/renderer/platform/runtime_enabled_features.json5
+index e627f2be2491665c9b9c1a262a8283859ec5bb60..18e3790be5ee738c5ea952c473b92cb5c0a1b1e6 100644
+--- a/third_party/blink/renderer/platform/runtime_enabled_features.json5
++++ b/third_party/blink/renderer/platform/runtime_enabled_features.json5
+@@ -1021,7 +1021,8 @@
+     {
+       name: "BrowserInitiatedAutomaticPictureInPicture",
+       public: true,
+-      status: "experimental",
++      // Clu: leaving a tab with a playing video enters picture-in-picture (docs/chromium/m6.md).
++      status: "stable",
+     },
+     {
+       name: "BufferedBytesConsumerLimitSize",

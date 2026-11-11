@@ -1,0 +1,30 @@
+/* Back and forward history menu (F7): the scaffold menu rows with a 16 px favicon or letter glyph. */
+.clu-nav-history {
+  width: 280px;
+  max-width: 280px;
+}
+.clu-nav-history .clu-menu-item {
+  justify-content: flex-start;
+  gap: var(--row-gap);
+  font-size: var(--fs-row);
+}
+.clu-nav-history-icon {
+  flex: none;
+  width: var(--fav);
+  height: var(--fav);
+  border-radius: 4px;
+}
+.clu-nav-history-letter {
+  display: inline-grid;
+  place-items: center;
+  background: var(--hover-ink);
+  color: var(--ink-2);
+  font-size: 10px;
+  font-weight: 600;
+}
+.clu-nav-history-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

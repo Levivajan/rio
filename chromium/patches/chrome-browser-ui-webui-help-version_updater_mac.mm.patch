@@ -1,0 +1,72 @@
+diff --git a/chrome/browser/ui/webui/help/version_updater_mac.mm b/chrome/browser/ui/webui/help/version_updater_mac.mm
+index 5764895..c60db7b 100644
+--- a/chrome/browser/ui/webui/help/version_updater_mac.mm
++++ b/chrome/browser/ui/webui/help/version_updater_mac.mm
+@@ -43,7 +43,8 @@ int GetDownloadProgress(int64_t downloaded_bytes, int64_t total_bytes) {
+                           0.0, 1.0);
+ }
+ 
+-void UpdateStatus(VersionUpdater::StatusCallback status_callback,
++// Clu: unused, Rio never asks Chromium's updater (below).
++[[maybe_unused]] void UpdateStatus(VersionUpdater::StatusCallback status_callback,
+                   const updater::UpdateService::UpdateState& update_state) {
+   VersionUpdater::Status status = VersionUpdater::Status::CHECKING;
+   int progress = 0;
+@@ -108,6 +109,18 @@ void UpdateStatus(VersionUpdater::StatusCallback status_callback,
+   status_callback.Run(status, progress, false, false, version, 0, err_message);
+ }
+ 
++}  // namespace
++
++// Clu: Rio's updater (clu/browser/updater/clu_update_service.h), declared here
++// so this target needs no dependency on Rio.
++namespace clu {
++bool CheckForUpdatesFromAbout(
++    base::RepeatingCallback<void(const std::string&, const std::string&)>
++        report);
++}  // namespace clu
++
++namespace {
++
+ // macOS implementation of version update functionality, used by the WebUI
+ // About/Help page.
+ class VersionUpdaterMac : public VersionUpdater {
+@@ -118,15 +131,32 @@ void UpdateStatus(VersionUpdater::StatusCallback status_callback,
+   ~VersionUpdaterMac() override = default;
+ 
+   // VersionUpdater implementation.
++  // Clu: Rio updates through Sparkle (docs/chromium/m12.md), never Chromium's
++  // updater. About runs Rio's check and shows its state; a build without
++  // updates, or a feed it cannot reach, shows nothing.
+   void CheckForUpdate(StatusCallback status_callback,
+                       PromoteCallback promote_callback) override {
+-    updater::EnsureUpdater(
+-        base::TaskPriority::USER_VISIBLE,
+-        base::BindOnce(promote_callback, PromotionState::PROMOTE_ENABLED),
+-        base::BindOnce(&updater::CheckForUpdate,
+-                       base::BindRepeating(&UpdateStatus, status_callback)));
++    if (clu::CheckForUpdatesFromAbout(base::BindRepeating(
++            [](const StatusCallback& callback, const std::string& state,
++               const std::string& version) {
++              const Status status =
++                  state == "checking"         ? CHECKING
++                  : state == "updating"       ? UPDATING
++                  : state == "nearly-updated" ? NEARLY_UPDATED
++                  : state == "updated"        ? UPDATED
++                                              : DISABLED;
++              callback.Run(status, 0, false, false, version, 0,
++                           std::u16string());
++            },
++            status_callback))) {
++      return;
++    }
++    status_callback.Run(UpgradeDetector::GetInstance()->is_upgrade_available()
++                            ? NEARLY_UPDATED
++                            : DISABLED,
++                        0, false, false, std::string(), 0, std::u16string());
+   }
+-  void PromoteUpdater() override { updater::SetUpSystemUpdater(); }
++  void PromoteUpdater() override {}
+ };
+ 
+ }  // namespace

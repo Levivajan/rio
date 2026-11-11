@@ -1,0 +1,91 @@
+diff --git a/chrome/browser/ui/startup/infobar_utils.cc b/chrome/browser/ui/startup/infobar_utils.cc
+index 94d977bdfcc44454f27542ac3cd8d7f72055d7da..879f81338f5b40b4e9b70ede004e6c3903183c4a 100644
+--- a/chrome/browser/ui/startup/infobar_utils.cc
++++ b/chrome/browser/ui/startup/infobar_utils.cc
+@@ -214,8 +214,11 @@ void AddInfoBarsIfNecessary(BrowserWindowInterface* browser,
+   }
+ 
+   // Web apps should not display the session restore bubble (crbug.com/40800614)
+-  const bool should_display_bubble =
+-      !is_web_app && HasPendingUncleanExit(browser->GetProfile());
++  // Clu: nor does Clu. Its tabs come back from clu.db after any exit, so there
++  // is nothing to restore, and the bubble anchors to the app menu button,
++  // which Clu's frame does not show (the anchor CHECK aborted every launch
++  // after an unclean exit).
++  const bool should_display_bubble = false;
+   base::UmaHistogramBoolean("Startup.CrashBubbleShown", should_display_bubble);
+   if (should_display_bubble) {
+     ShowSessionCrashedBubbleIfNotOffTheRecordProfile(
+@@ -253,19 +256,8 @@ void AddInfoBarsIfNecessary(BrowserWindowInterface* browser,
+   infobars::ContentInfoBarManager* infobar_manager =
+       infobars::ContentInfoBarManager::FromWebContents(web_contents);
+ 
+-  if (!google_apis::HasAPIKeyConfigured()) {
+-    if (infobars::IsInfoBarMigrated(
+-            infobars::InfoBarDelegate::GOOGLE_API_KEYS_INFOBAR_DELEGATE)) {
+-      if (auto* manager =
+-              infobars::BrowserInfoBarManager::From(g_browser_process)) {
+-        manager->Show(
+-            tabs::TabInterface::GetFromContents(web_contents),
+-            infobars::InfoBarDelegate::GOOGLE_API_KEYS_INFOBAR_DELEGATE);
+-      }
+-    } else {
+-      GoogleApiKeysInfoBarDelegate::Create(infobar_manager);
+-    }
+-  }
++  // Clu: no "Google API keys are missing" infobar. The only key Clu takes is
++  // the Safe Browsing key from ~/.clu/keys.gn (docs/chromium/m9.md).
+ 
+   if (ObsoleteSystem::IsObsoleteNowOrSoon()) {
+     PrefService* local_state = g_browser_process->local_state();
+@@ -319,47 +311,8 @@ void AddInfoBarsIfNecessary(BrowserWindowInterface* browser,
+   }
+ #endif  // BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || BUILDFLAG(IS_LINUX)
+ 
+-  // The default browser prompt should only be shown after the first run.
+-  if (is_first_run == chrome::startup::IsFirstRun::kNo) {
+-#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
+-    if (base::FeatureList::IsEnabled(features::kSeparateDefaultAndPinPrompt)) {
+-      const int seed = features::kSeparateDefaultAndPinPromptRandSeed.Get();
+-      const int choice = (seed > 0) ? (seed % 2) : base::RandIntInclusive(0, 1);
+-
+-      base::OnceCallback<void(bool)> pdf_callback = base::DoNothing();
+-      if (base::FeatureList::IsEnabled(features::kPdfInfoBar)) {
+-        pdf_callback = base::BindOnce(
+-            &pdf::infobar::PdfInfoBarController::MaybeShowInfoBarAtStartup,
+-            browser->GetWeakPtr());
+-      }
+-
+-      if (choice == 0) {
+-        // Experiment Arm 1: Show default browser prompt first, then PDF.
+-        ShowDefaultBrowserPrompt(profile, std::move(pdf_callback));
+-      } else {
+-        // Experiment Arm 2: Show Pin to Taskbar prompt first, then PDF.
+-        default_browser::PinInfoBarController::MaybeShowInfoBarForBrowser(
+-            browser->GetWeakPtr(), std::move(pdf_callback),
+-            /*another_infobar_shown=*/false);
+-      }
+-    } else {
+-      // Default browser prompt with either pinning if enabled or fallback to
+-      // pdf if enabled.
+-      base::OnceCallback<void(bool)> callback = base::DoNothing();
+-      if (base::FeatureList::IsEnabled(features::kPdfInfoBar)) {
+-        callback = base::BindOnce(
+-            &pdf::infobar::PdfInfoBarController::MaybeShowInfoBarAtStartup,
+-            browser->GetWeakPtr());
+-      }
+-      callback = base::BindOnce(
+-          &default_browser::PinInfoBarController::MaybeShowInfoBarForBrowser,
+-          browser->GetWeakPtr(), std::move(callback));
+-      ShowDefaultBrowserPrompt(profile, std::move(callback));
+-    }
+-#else
+-    // Purely default browser path since it's non mac/windows.
+-    ShowDefaultBrowserPrompt(profile, base::DoNothing());
+-#endif  // BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
+-  }
++  // Clu: no "isn't your default browser" bar, nor the pin or PDF prompts
++  // chained to it. Rio asks once in onboarding and
++  // in Settings.
+ #endif  // !BUILDFLAG(IS_CHROMEOS) && !BUILDFLAG(IS_ANDROID)
+ }

@@ -1,0 +1,49 @@
+diff --git a/chrome/browser/ui/views/extensions/extensions_toolbar_desktop.cc b/chrome/browser/ui/views/extensions/extensions_toolbar_desktop.cc
+index dce94a0eb7efbdd2a569ddf636695fa090237a42..59341a978d635c7b0586ffe2d20b6eb3e55a7d49 100644
+--- a/chrome/browser/ui/views/extensions/extensions_toolbar_desktop.cc
++++ b/chrome/browser/ui/views/extensions/extensions_toolbar_desktop.cc
+@@ -69,6 +69,17 @@
+ #include "ui/views/widget/widget.h"
+ #include "ui/views/widget/widget_observer.h"
+ 
++// Clu: declared here, not included, so this target needs no dependency on
++// Clu's hooks (patch budget); defined in clu/browser/ui/views/frame.
++class BrowserWindowInterface;
++namespace views {
++class View;
++}  // namespace views
++namespace clu {
++views::View* GetExtensionPopupAnchorView(BrowserWindowInterface* browser,
++                                         const std::string& action_id);
++}  // namespace clu
++
+ namespace {
+ 
+ class IphWidgetActivationObserver : public views::WidgetObserver {
+@@ -636,6 +647,14 @@ void ExtensionsToolbarDesktop::PopOutAction(
+   CHECK(!popped_out_action_.has_value(), base::NotFatalUntil::M162);
+   popped_out_action_ = action_id;
+   UpdateIconVisibility(action_id);
++  // Clu: the toolbar is hidden, so its layout never finishes animating the action out and a queued popup never
++  // opens; the popup hangs from Clu's anchor instead (docs/chromium/m7.md).
++  if (clu::GetExtensionPopupAnchorView(browser_, action_id)) {
++    base::SequencedTaskRunner::GetCurrentDefault()->PostTask(
++        FROM_HERE, std::move(closure));
++    UpdateContainerVisibility();
++    return;
++  }
+   GetAnimatingLayoutManager()->PostOrQueueAction(std::move(closure));
+   UpdateContainerVisibility();
+ }
+@@ -1259,6 +1278,11 @@ views::FocusManager* ExtensionsToolbarDesktop::GetFocusManagerForAccelerator() {
+ 
+ views::BubbleAnchor ExtensionsToolbarDesktop::GetReferenceButtonForPopup(
+     const extensions::ExtensionId& action_id) {
++  // Clu: extension popups hang from the clicked action button in the sidebar.
++  if (views::View* clu_anchor =
++          clu::GetExtensionPopupAnchorView(browser_, action_id)) {
++    return views::BubbleAnchor(clu_anchor);
++  }
+   ToolbarActionView* view = GetViewForId(action_id);
+   return view ? view->GetReferenceButtonForPopup()
+               : GetExtensionsButtonAnchor();

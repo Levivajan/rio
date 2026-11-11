@@ -1,0 +1,49 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The command bar's browser side (docs/plan/04-command.md, docs/chromium/m5.md): Copy URL, the history index sync and
+# the suggestion rules, pure, plus the profile's history reader the bar's handler uses.
+source_set("core") {
+  sources = [
+    "clu_copy_url.cc",
+    "clu_copy_url.h",
+    "clu_index_sync.cc",
+    "clu_index_sync.h",
+    "clu_suggest_rules.cc",
+    "clu_suggest_rules.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//url" ]
+}
+
+source_set("history") {
+  sources = [
+    "clu_history_index.cc",
+    "clu_history_index.h",
+  ]
+  public_deps = [
+    ":core",
+    "//base",
+    "//components/history/core/browser",
+  ]
+  deps = [
+    "//chrome/browser/history",
+    "//chrome/browser/profiles:profile",
+    "//components/keyed_service/core",
+    "//url",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_copy_url_unittest.cc",
+    "clu_index_sync_unittest.cc",
+    "clu_suggest_rules_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    "//base",
+    "//testing/gtest",
+    "//url",
+  ]
+}

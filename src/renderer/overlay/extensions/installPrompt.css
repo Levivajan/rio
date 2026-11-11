@@ -1,0 +1,32 @@
+/* Install prompt. A long name or permission wraps; a long list scrolls. */
+.clu-install-prompt-icon {
+  display: block;
+  margin: 0 0 12px;
+  border-radius: 6px;
+}
+.clu-install-prompt-lead {
+  margin: 0 0 4px;
+  color: var(--ink-2);
+}
+.clu-install-prompt-permissions {
+  max-height: 200px;
+  margin: 0 0 12px;
+  padding: 0 0 0 18px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  list-style: disc;
+}
+.clu-install-prompt-warning {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-install-prompt .clu-dialog-title {
+  overflow-wrap: anywhere;
+}
+.clu-install-prompt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

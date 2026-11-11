@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/cocoa/BUILD.gn b/chrome/browser/ui/cocoa/BUILD.gn
+index c8352aebb0337178be15f96b71888fe522fb6db6..1a9df9752d90fab592ce462e79dce8d2d125f3f8 100644
+--- a/chrome/browser/ui/cocoa/BUILD.gn
++++ b/chrome/browser/ui/cocoa/BUILD.gn
+@@ -173,6 +173,7 @@ source_set("cocoa") {
+     "//chrome/browser/ui/views/frame:browser_view_header",
+     "//chrome/browser/ui/window_metadata",
+     "//chrome/browser/web_applications",
++    "//clu/browser/ui/cocoa:main_menu",
+     "//components/bookmarks/browser",
+     "//components/bookmarks/managed",
+     "//components/favicon/core",

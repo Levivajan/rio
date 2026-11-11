@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx4CXxWYnCLjxkjnUNbJ8OEuiMlA+ix+QFrtX8wcfbwTp5yfhyJvAAi+wZkCbTs270ocRKpfEQfuVnd3QJIMAvIXB9eZPesyL73jvZdpoUKnnxjb73Zj6xKly/ICuqcoSPxKNreahvzWSBK1bJnsTXXjVwNPs2glrOHDl1eTjTo3JcgQLQxjx4EsO+K31gsA2ngTkfRHUEnBgroZgrMjt1KLrkPVt9eW9KJTImtwEZtRd8xshs25OKydwZzw76EArh3anf6JhUmedpZ+6mjnu+TLwzFT9Ph8xSH8FmP+JrDgG1wi6X2ZzOZoU/nE5XKntRSz2czcCG7mlKUK0wu9SUQIDAQAB",
+  "name": "Clu Side Panel Fixture",
+  "version": "1.0.0",
+  "description": "Fixture for Clu's side panel test: its action opens its panel next to the page card.",
+  "action": { "default_title": "Clu Side Panel Fixture" },
+  "side_panel": { "default_path": "panel.html" },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["sidePanel"]
+}

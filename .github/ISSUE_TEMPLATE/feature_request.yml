@@ -1,0 +1,24 @@
+name: Feature request
+description: Ask for something Rio does not do yet
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the situation, not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like Rio to do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: How do you do it today?
+      description: Another browser, an extension, a workaround.
+    validations:
+      required: false

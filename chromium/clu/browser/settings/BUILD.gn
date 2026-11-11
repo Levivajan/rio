@@ -1,0 +1,70 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Settings (docs/chromium/m8.md). `:registry` is the pure key registry ported from src/shared/settings.ts; `:prefs`
+# the Local State prefs, alone so the Local State registration has no Clu dependencies; `:service` CluAppSettings
+# over Local State and ThemeService.
+
+source_set("registry") {
+  sources = [
+    "clu_settings_registry.cc",
+    "clu_settings_registry.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//clu/browser/commands" ]
+}
+
+source_set("prefs") {
+  sources = [
+    "clu_settings_prefs.cc",
+    "clu_settings_prefs.h",
+  ]
+  deps = [ "//components/prefs" ]
+}
+
+source_set("service") {
+  sources = [
+    "clu_app_settings.cc",
+    "clu_app_settings.h",
+  ]
+  public_deps = [
+    ":prefs",
+    ":registry",
+    "//base",
+    "//clu/browser/spaces:service",
+    "//clu/browser/theme:core",
+  ]
+  deps = [
+    "//base:i18n",
+    "//chrome/browser:browser_process",
+    "//chrome/browser/content_settings:content_settings_factory",
+    "//chrome/browser/first_run",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/profiles:profile_manager",
+    "//chrome/browser/themes",
+    "//chrome/common:constants",
+    "//clu/browser/commands",
+    "//clu/browser/updater:service",
+    "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
+    "//components/prefs",
+  ]
+  if (is_mac) {
+    deps += [ "//clu/browser/app_icon" ]
+  }
+}
+
+# The app controller patch's hook (clu_settings_hooks.h), implemented in //clu/browser/ui/webui.
+source_set("hooks") {
+  public = [ "clu_settings_hooks.h" ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [ "clu_settings_registry_unittest.cc" ]
+  deps = [
+    ":registry",
+    "//clu/browser/commands",
+    "//base",
+    "//testing/gtest",
+  ]
+}

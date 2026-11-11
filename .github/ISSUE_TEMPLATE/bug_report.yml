@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in Rio does not work as it should
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rio version
+      description: Rio menu, About Rio. Give the version and build number.
+      placeholder: "1.0.0 (8127.18.123)"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "macOS 15.4"
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac model
+      description: Apple menu, About This Mac.
+      placeholder: "MacBook Pro 14-inch, M3 Pro, 18 GB"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or screen recording
+      description: Drag a file here. Hide anything private first (tabs, names, addresses).
+    validations:
+      required: false

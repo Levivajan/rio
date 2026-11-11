@@ -1,0 +1,27 @@
+diff --git a/chrome/browser/resources/settings/route.ts b/chrome/browser/resources/settings/route.ts
+index 257eee5f0e7f7b9a14f56041384ddd7b0ee0ba9d..60ffdc6fa6f60528c2dd1927429690ea1efe2237 100644
+--- a/chrome/browser/resources/settings/route.ts
++++ b/chrome/browser/resources/settings/route.ts
+@@ -158,20 +158,13 @@ function createRoutes(): SettingsRoutes {
+   if (visibility.people !== false) {
+     r.PEOPLE = r.BASIC.createSection(
+         '/people', 'people', loadTimeData.getString('peoplePageTitle'));
+-    if (loadTimeData.getBoolean('replaceSyncPromosWithSignInPromos')) {
+-      r.ACCOUNT = r.PEOPLE.createChild('/account');
+-      r.GOOGLE_SERVICES = r.PEOPLE.createChild('/googleServices');
+-    }
++    // Clu: no Google account, sync or Google services pages; the section
++    // keeps the profile and import (docs/chromium/m12.md).
+     // <if expr="not is_chromeos">
+-    r.SIGN_OUT = r.PEOPLE.createChild('/signOut');
+-    r.SIGN_OUT.isNavigableDialog = true;
+     r.IMPORT_DATA = r.PEOPLE.createChild('/importData');
+     r.IMPORT_DATA.isNavigableDialog = true;
+     r.MANAGE_PROFILE = r.PEOPLE.createChild('/manageProfile');
+     // </if>
+-
+-    r.SYNC = r.PEOPLE.createChild('/syncSetup');
+-    r.SYNC_ADVANCED = r.SYNC.createChild('/syncSetup/advanced');
+   }
+ 
+   if (visibility.ai !== false && loadTimeData.getBoolean('showAiPage')) {

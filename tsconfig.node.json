@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "lib": [
+      "ES2024",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node",
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src/shared/**/*",
+    "vitest.config.ts",
+    "scripts/chromium/**/*.ts",
+    "playwright.webui.config.ts"
+  ]
+}

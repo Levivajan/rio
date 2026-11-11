@@ -1,0 +1,33 @@
+diff --git a/chrome/browser/ui/views/bubble_anchor_util_views.cc b/chrome/browser/ui/views/bubble_anchor_util_views.cc
+index 2d36e44a69c90300612a02369eee80fcba8e0dba..8356086e62f621b9ee0206e00948ac7acae278ed 100644
+--- a/chrome/browser/ui/views/bubble_anchor_util_views.cc
++++ b/chrome/browser/ui/views/bubble_anchor_util_views.cc
+@@ -27,6 +27,16 @@
+ #include "ui/views/bubble/bubble_border.h"
+ #include "ui/views/interaction/element_tracker_views.h"
+ 
++// Clu: declared here, not included, so this target needs no dependency on
++// Clu's hooks (patch budget); defined in clu/browser/ui/views/frame.
++class BrowserWindowInterface;
++namespace views {
++class View;
++}  // namespace views
++namespace clu {
++views::View* GetBubbleAnchorView(BrowserWindowInterface* browser);
++}  // namespace clu
++
+ // This file contains the bubble_anchor_util implementation for a Views
+ // browser window (BrowserView).
+ 
+@@ -35,6 +45,11 @@ namespace bubble_anchor_util {
+ AnchorConfiguration GetPageInfoAnchorConfiguration(
+     BrowserWindowInterface* browser,
+     Anchor anchor) {
++  // Clu: page info and permission prompts hang from CluAnchorView.
++  if (views::View* clu_anchor = clu::GetBubbleAnchorView(browser)) {
++    return {views::BubbleAnchor(clu_anchor), std::nullopt,
++            views::BubbleBorder::TOP_LEFT};
++  }
+   BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
+   auto* location_bar_view =
+       browser_view ? browser_view->GetLocationBarView() : nullptr;

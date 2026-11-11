@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+@import '../common/base.css';
+
+/* Internal pages. */
+html,
+body {
+  background: var(--window-bg);
+  user-select: text;
+}
+.clu-internal {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+.clu-internal h1 {
+  margin: 0 0 24px;
+  font-size: 24px;
+}
+.clu-internal dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+}
+.clu-internal dt {
+  color: var(--ink-2);
+}
+.clu-internal dd {
+  margin: 0;
+}

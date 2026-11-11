@@ -1,0 +1,116 @@
+.clu-extensions-menu {
+  position: fixed;
+  box-sizing: border-box;
+  width: 280px;
+  overflow-y: auto;
+  padding: 5px;
+  border-radius: var(--pop-r);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  color: var(--ink);
+  transform-origin: top right;
+  animation: clu-site-controls-in var(--t-fade) var(--ease-out);
+}
+.clu-extensions-menu:focus,
+.clu-extensions-menu:focus-visible {
+  outline: none;
+}
+:root[data-reduced-motion='true'] .clu-extensions-menu {
+  animation-name: clu-site-controls-fade;
+}
+.clu-extensions-menu-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-extensions-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.clu-extensions-menu-open {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--menu-item-r);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.clu-extensions-menu-open:hover:not(:disabled),
+.clu-extensions-menu-pin:hover {
+  background: var(--hover-ink);
+}
+.clu-extensions-menu-open:disabled {
+  opacity: 0.5;
+}
+.clu-extensions-menu-open:focus-visible,
+.clu-extensions-menu-pin:focus-visible {
+  outline: var(--focus);
+  outline-offset: -2px;
+}
+.clu-extensions-menu-name {
+  overflow: hidden;
+  flex: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-extensions-menu-badge {
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 10px;
+  line-height: 14px;
+}
+.clu-extensions-menu-letter {
+  width: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+.clu-extensions-menu-pin {
+  display: grid;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--menu-item-r);
+  background: transparent;
+  color: var(--ink-2);
+}
+.clu-extensions-menu-pin[data-pinned='true'] {
+  color: var(--accent);
+}
+.clu-extensions-menu-empty {
+  margin: 6px 8px;
+  color: var(--ink-2);
+}
+.clu-extensions-menu-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding: 6px 8px 2px;
+  border-top: 1px solid var(--surface-2);
+}
+/* Ink, not the accent: accent text on the popover's surface misses the 4.5:1 contrast small text needs. */
+.clu-extensions-menu-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.clu-extensions-menu-link:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}

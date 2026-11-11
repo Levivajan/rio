@@ -1,0 +1,12 @@
+diff --git a/tools/metrics/histograms/metadata/sql/histograms.xml b/tools/metrics/histograms/metadata/sql/histograms.xml
+index f6d7473a753334fed648b94b1e1fbcf2d1a0dad6..9de0b50990cd977c3b3c5bb0030682909cb9f35c 100644
+--- a/tools/metrics/histograms/metadata/sql/histograms.xml
++++ b/tools/metrics/histograms/metadata/sql/histograms.xml
+@@ -40,6 +40,7 @@ chromium-metrics-reviews@google.com.
+   <variant name="BrowsingTopics" summary="BrowsingTopics"/>
+   <variant name="CdmStorage" summary="CdmStorage"/>
+   <variant name="Chromoting" summary="Chromoting"/>
++  <variant name="CluModel" summary="CluModel"/>
+   <variant name="CodeCache"/>
+   <variant name="CollaborationMessageStorage"
+       summary="CollaborationMessageStorage"/>

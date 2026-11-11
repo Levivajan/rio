@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Sign in</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 40px; max-width: 420px; }
+  form { display: grid; gap: 6px; }
+  input, button { font: inherit; }
+</style>
+<h1>Sign in to Fixture</h1>
+<!-- A plain login form for the native password manager (CluNative* browser tests). Submitting navigates to
+     signed-in.html, which is how the password manager sees a successful sign-in. No real account is ever used. -->
+<form id="login" action="signed-in.html" method="post">
+  <label>Email <input id="username" name="username" type="email" autocomplete="username"></label>
+  <label>Password <input id="password" name="password" type="password" autocomplete="current-password"></label>
+  <button id="submit" type="submit">Sign in</button>
+</form>

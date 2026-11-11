@@ -1,0 +1,16 @@
+diff --git a/chrome/browser/ui/window_feature_controller/window_feature_controller.cc b/chrome/browser/ui/window_feature_controller/window_feature_controller.cc
+index 438022226545d544b4485dbb525b643b517cbefe..2985b6f6d2f1d05e494b512e70e471da3f123b70 100644
+--- a/chrome/browser/ui/window_feature_controller/window_feature_controller.cc
++++ b/chrome/browser/ui/window_feature_controller/window_feature_controller.cc
+@@ -61,6 +61,11 @@ bool WindowFeatureController::IsTrustedSource() const {
+ 
+ #if BUILDFLAG(IS_MAC)
+ bool WindowFeatureController::UsesImmersiveFullscreenMode() const {
++  // Clu: normal windows draw no toolbar or tab strip to reveal, so their full
++  // screen is plain (docs/chromium/m2-shell.md).
++  if (browser_type_ == BrowserWindowInterface::Type::TYPE_NORMAL) {
++    return false;
++  }
+   const bool is_pwa = app_controller_ != nullptr;
+   const bool is_tabbed_window =
+       CanSupportWindowFeature(WindowFeature::kFeatureTabStrip);

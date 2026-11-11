@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Hibernate fixture</title>
+<link rel="icon" type="image/png" id="icon">
+<script>
+  // ?n= names the page so specs can tell entries of one tab's history apart. Each entry gets its own icon URL:
+  // a document whose icon URL matches the previous one fires no favicon update.
+  const n = new URLSearchParams(location.search).get('n') || '0'
+  document.getElementById('icon').href = '../common/icon.png?n=' + encodeURIComponent(n)
+</script>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 40px; }
+  #tall { height: 6000px; background: linear-gradient(#eef, #fee); }
+</style>
+<h1 id="name">Hibernate</h1>
+<label>Note <input id="note" name="note"></label>
+<div id="tall"></div>
+<script>
+  document.title = 'Hibernate ' + n
+  document.getElementById('name').textContent = 'Hibernate ' + n
+</script>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Input log</title>
+    <style>
+      html, body { margin: 0; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <pre id="log"></pre>
+    <script>
+      // Every keydown chord and every click this page saw, in window.__keys and window.__clicks.
+      window.__keys = []
+      window.__clicks = []
+      const show = () => {
+        document.getElementById("log").textContent = window.__keys.concat(window.__clicks).join("\n")
+      }
+      window.addEventListener("keydown", (e) => {
+        window.__keys.push([e.metaKey && "Meta", e.ctrlKey && "Control", e.altKey && "Alt", e.shiftKey && "Shift", e.code].filter(Boolean).join("+"))
+        show()
+      })
+      window.addEventListener("click", (e) => {
+        window.__clicks.push(`${Math.round(e.clientX)},${Math.round(e.clientY)}`)
+        show()
+      })
+    </script>
+  </body>
+</html>

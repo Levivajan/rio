@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Load counter</title>
+  </head>
+  <body>
+    <h1>Loads: <span id="loads">0</span></h1>
+    <script>
+      // Counts loads of this page in this tab (sessionStorage survives reloads and same-tab navigations).
+      const loads = Number(sessionStorage.getItem('loads') || '0') + 1
+      sessionStorage.setItem('loads', String(loads))
+      document.getElementById('loads').textContent = String(loads)
+    </script>
+  </body>
+</html>

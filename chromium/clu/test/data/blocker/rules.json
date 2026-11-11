@@ -1,0 +1,1 @@
+{"version":"c70fcd91a6ac2faf","rules":[{"id":1,"priority":1,"action":{"type":"block"},"condition":{"requestDomains":["tracker.localhost"]}},{"id":2,"priority":1,"action":{"type":"block"},"condition":{"urlFilter":"/ads/banner.js"}}]}

@@ -1,0 +1,120 @@
+/* Downloads popover. Values come from tokens.css. */
+.clu-downloads {
+  position: fixed;
+  width: 360px;
+  max-height: min(480px, calc(100vh - 64px));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--pop-r);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.clu-downloads:focus {
+  outline: none;
+}
+.clu-downloads-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 10px 6px 14px;
+}
+.clu-downloads-header h2 {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-row);
+  font-weight: 600;
+}
+.clu-downloads-empty {
+  margin: 0;
+  padding: 12px 14px 18px;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-downloads-list {
+  margin: 0;
+  padding: 0 6px 6px;
+  list-style: none;
+  overflow-y: auto;
+}
+.clu-download {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 4px;
+  border-radius: var(--row-r);
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+.clu-download:hover {
+  background: var(--hover-ink);
+}
+.clu-download-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: var(--row-r);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.clu-download-main:disabled {
+  cursor: default;
+}
+.clu-download-name {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--fs-row);
+}
+.clu-download[data-exists='false'][data-state='completed'] .clu-download-name,
+.clu-download[data-state='cancelled'] .clu-download-name {
+  color: var(--ink-2);
+}
+.clu-download-status {
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}
+.clu-download-bar {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  margin-top: 3px;
+  border-radius: 2px;
+  background: var(--hover-ink);
+  overflow: hidden;
+}
+.clu-download-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width var(--t-base) var(--ease-out);
+}
+.clu-download-bar[data-indeterminate='true'] > span {
+  animation: clu-download-sweep 1.2s var(--ease-out) infinite;
+}
+@keyframes clu-download-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+:root[data-reduced-motion='true'] .clu-download-bar[data-indeterminate='true'] > span {
+  animation: none;
+}
+.clu-download-actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+}

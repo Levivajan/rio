@@ -1,0 +1,35 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The generated PLAN 8 key table (scripts/chromium/gen-mojom.ts) and how its commands meet Chromium's
+# (clu_command_routes.h). Pure, so the unit tests need nothing else.
+source_set("commands") {
+  sources = [
+    "clu_command_routes.cc",
+    "clu_command_routes.h",
+    "clu_shortcuts.cc",
+    "clu_shortcuts.h",
+    "command_table.cc",
+    "command_table.h",
+  ]
+  public_deps = [
+    "//base",
+    "//ui/events:event_constants",
+    "//ui/events:events_base",
+  ]
+  deps = [ "//chrome/app:command_ids" ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_command_routes_unittest.cc",
+    "clu_shortcuts_unittest.cc",
+  ]
+  deps = [
+    ":commands",
+    "//base",
+    "//base/test:test_support",
+    "//chrome/app:command_ids",
+    "//testing/gtest",
+  ]
+}

@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/chrome_browser_interface_binders_webui_parts_desktop.cc b/chrome/browser/chrome_browser_interface_binders_webui_parts_desktop.cc
+index 95fa3ac36e7c05089c0011d75e9dc2c4680ba2ea..7fc182ca67a0dad4c6add1490cbe8d37f774c887 100644
+--- a/chrome/browser/chrome_browser_interface_binders_webui_parts_desktop.cc
++++ b/chrome/browser/chrome_browser_interface_binders_webui_parts_desktop.cc
+@@ -98,6 +98,7 @@
+ #include "chrome/browser/ui/webui_browser/webui_browser.h"
+ #include "chrome/browser/ui/webui_browser/webui_browser_ui.h"
+ #include "chrome/common/chrome_features.h"
++#include "clu/browser/ui/webui/clu_webui.h"
+ #include "components/autofill/core/browser/ml_model/logging/autofill_ml_internals.mojom.h"
+ #include "components/browser_apis/bookmarks/bookmarks_api.mojom.h"
+ #include "components/browser_apis/browser_controls/browser_controls_api.mojom.h"
+@@ -219,6 +220,9 @@ void BindMetricsReporterService(
+ void PopulateChromeWebUIFrameBindersPartsDesktop(
+     mojo::BinderMapWithContext<content::RenderFrameHost*>* map,
+     content::RenderFrameHost* render_frame_host) {
++  // Clu: the bridge interfaces of chrome://clu-frame and chrome://clu-overlay.
++  clu::PopulateCluWebUIFrameBinders(map);
++
+   RegisterWebUIControllerInterfaceBinder<
+       search_engine_choice::mojom::PageHandlerFactory, SearchEngineChoiceUI>(
+       map);

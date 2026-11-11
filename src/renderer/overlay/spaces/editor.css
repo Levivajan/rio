@@ -1,0 +1,402 @@
+/* Space editor and profile manager. Values come from tokens.css. */
+.clu-space-editor .clu-dialog {
+  width: 432px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.clu-editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.clu-editor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.clu-editor-label {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.clu-editor-row {
+  display: flex;
+  gap: 8px;
+}
+.clu-editor-row > .clu-select {
+  flex: 1;
+}
+.clu-input.clu-editor-emoji {
+  flex: none;
+  width: 96px;
+  text-align: center;
+}
+.clu-editor-icon-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.clu-editor-icon-tabs {
+  display: flex;
+  gap: 2px;
+}
+.clu-editor-icon-tabs [role='tab'] {
+  height: 22px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--fs-label);
+}
+.clu-editor-icon-tabs [role='tab'][aria-selected='true'] {
+  background: var(--hover-ink);
+  color: var(--ink);
+  font-weight: 600;
+}
+.clu-editor-icon-tabs [role='tab']:focus-visible {
+  outline: var(--focus);
+  outline-offset: 1px;
+}
+.clu-editor-icon-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.clu-editor-symbol {
+  color: var(--ink-2);
+}
+.clu-editor-symbol[aria-pressed='true'] {
+  color: var(--ink);
+}
+.clu-editor-icons {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 2px;
+}
+.clu-editor-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1;
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+.clu-editor-icon:hover {
+  background: var(--hover-ink);
+}
+.clu-editor-icon[aria-pressed='true'] {
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.clu-editor-icon:focus-visible,
+.clu-editor-swatch:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+.clu-editor-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+.clu-editor-paste {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clu-editor-emoji {
+  width: 64px;
+  text-align: center;
+}
+.clu-editor-hint {
+  font-size: var(--fs-2);
+  color: var(--ink-2);
+}
+.clu-editor-error {
+  margin: 0;
+  font-size: var(--fs-2);
+  color: var(--danger);
+}
+:root[data-theme='dark'] .clu-editor-error {
+  color: #ff7b72;
+}
+.clu-editor-colors {
+  display: flex;
+  justify-content: space-between;
+}
+.clu-editor-swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+}
+.clu-editor-swatch[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+}
+.clu-editor-body {
+  margin: 0 0 14px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.clu-editor-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.clu-editor-footer > :first-child {
+  margin-right: auto;
+}
+.clu-profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.clu-profile-row:hover {
+  background: var(--hover-ink);
+}
+.clu-profile-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* New Space panel over the sidebar (in a 1280 x 800 window): it sits over the sidebar from below
+   the top row to above the bottom bar, where the frame leaves the sidebar bare, so the sidebar's own colors show
+   through; the page stays undimmed. Rows are 185 x 35 with 6 pt gaps
+   and 14 pt margins; Create Space is 36 tall, 30 pt above Cancel. */
+.clu-overlay-root[data-scrim='modal']:has(.clu-create-space) {
+  background: transparent;
+}
+.clu-create-space {
+  position: fixed;
+  top: 44px;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 30px 14px 0;
+  color: var(--ink);
+  overflow-y: auto;
+}
+.clu-create-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.clu-create-title {
+  margin: 20px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 22px;
+}
+.clu-create-text {
+  margin: 6px 4px 0;
+  font-size: 12.5px;
+  line-height: 15.5px;
+}
+.clu-create-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 26px;
+}
+.clu-create-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 35px;
+  padding: 0 10px 0 16px;
+  border: 0;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+.clu-create-row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+}
+.clu-create-row input::placeholder {
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.clu-create-name {
+  padding-left: 7px;
+}
+.clu-create-well {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+  font-size: 14px;
+  line-height: 1;
+}
+.clu-create-well[data-empty] {
+  border: 1px dashed color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.clu-create-profile select {
+  field-sizing: content;
+  max-width: 100px;
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.clu-create-info {
+  display: inline-flex;
+  margin-left: auto;
+  color: color-mix(in srgb, var(--ink) 75%, transparent);
+}
+.clu-create-theme:hover,
+.clu-create-well:hover {
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+}
+.clu-create-swatch {
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  border-radius: 50%;
+}
+.clu-create-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.clu-create-color {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font-size: 15px;
+  line-height: 1;
+}
+.clu-create-color {
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  border-radius: 50%;
+}
+.clu-create-color[aria-pressed='true'] {
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+/* The shared icon picker under the name row, sized to the sidebar's width. */
+.clu-create-space .clu-editor-section {
+  padding: 6px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.clu-create-space .clu-editor-icons {
+  grid-template-columns: repeat(auto-fill, minmax(26px, 1fr));
+}
+.clu-create-space .clu-editor-icon {
+  font-size: 15px;
+}
+.clu-create-space .clu-editor-paste {
+  flex-wrap: wrap;
+}
+.clu-create-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 11.5px;
+}
+.clu-create-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  margin-top: auto;
+  padding: 16px 0 12px;
+}
+.clu-create-submit {
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent-strong);
+  color: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.clu-create-submit:disabled {
+  background: color-mix(in srgb, var(--accent-strong) 60%, #000);
+  color: rgb(255 255 255 / 0.45);
+}
+.clu-create-cancel {
+  align-self: center;
+  border: 0;
+  padding: 2px 8px;
+  background: transparent;
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+.clu-create-space button:focus-visible,
+.clu-create-space select:focus-visible {
+  outline: var(--focus);
+  outline-offset: 1px;
+}

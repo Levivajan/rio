@@ -1,0 +1,105 @@
+/* Hover peek (docs/plan/01-shell.md F4; M11 floating sidebar): a panel floating 5 in from the window's
+   edges with radius 12, its tint a shade lighter than the docked one, a 1 pt light inner rim and a soft outward
+   shadow, which falls into the 16 px bleed of its overlay view. It slides in on the design's spring (its right edge
+   at 31%, 64%, 80%, 91%, 97% of the way on 17 ms frames, 3.5 past the end at 117 ms, settled by 250 ms) and out in
+   90 ms ease-in, accelerating away (6%, 20%, 40%, 66%, gone); 0 with reduced motion. The peek never drags the window, so hover always reaches it. */
+.clu-peek {
+  position: fixed;
+  top: var(--float-inset);
+  bottom: var(--float-inset);
+  left: var(--float-inset);
+  overflow: hidden;
+  border-radius: var(--float-r);
+  box-shadow: 0 0 8px rgb(0 0 0 / 22%);
+  transform: translateX(0);
+  transition: transform var(--peek-in) linear(0, 0.309 6.8%, 0.64 13.2%, 0.8 20%, 0.908 26.8%, 0.971 33.2%, 1.008 40%, 1.015 46.8%, 1.005 70%, 1);
+}
+/* Both slides are transitions on transform, so either one turns back from where the panel is. The slide in starts
+   from data-motion="enter" once the widget draws frames (SidebarPeek): a keyframe animation started at mount ran out
+   while the passive overlay's widget was still hidden and showed its last frame at once. */
+.clu-peek[data-motion='enter'],
+.clu-peek[data-motion='leaving'] {
+  transform: translateX(calc(-100% - var(--float-inset) - 16px));
+}
+.clu-peek[data-motion='leaving'] {
+  transition: transform var(--peek-out) var(--peek-out-ease);
+}
+/* The warm-up's box (SidebarPeekWarmup): the sidebar's width, off screen. */
+.clu-peek-warm {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: -10000px;
+}
+.clu-peek,
+.clu-peek * {
+  -webkit-app-region: no-drag;
+}
+.clu-peek > .clu-theme-bg {
+  filter: brightness(1.025);
+}
+/* The rim sits above the tint and the rows. */
+.clu-peek::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 35%);
+  pointer-events: none;
+}
+/* The window's buttons in the floating top row: at their docked place within the panel (LOOK.window
+   .trafficLights), macOS's fills with a darker rim, the glyphs on hovering the group, gray while the window is not
+   focused (white 30% over the tint with the color left in the rim). */
+.clu-peek-lights {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+}
+.clu-peek-lights > button {
+  width: var(--light-d);
+  height: var(--light-d);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--light);
+  box-shadow: inset 0 0 0 0.5px var(--light-rim);
+  color: rgb(0 0 0 / 55%);
+  display: grid;
+  place-items: center;
+}
+.clu-peek-lights > [data-light='close'] {
+  --light: #ff5f57;
+  --light-rim: #e2463f;
+}
+.clu-peek-lights > [data-light='minimize'] {
+  --light: #febc2e;
+  --light-rim: #e1a116;
+}
+.clu-peek-lights > [data-light='fullscreen'] {
+  --light: #28c840;
+  --light-rim: #12ac28;
+}
+.clu-peek-lights[data-focused='false'] > button {
+  background: rgb(255 255 255 / 30%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--light) 50%, transparent);
+}
+.clu-peek-lights svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  visibility: hidden;
+}
+.clu-peek-lights svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+.clu-peek-lights:hover svg {
+  visibility: visible;
+}
+.clu-peek-lights:hover > button {
+  background: var(--light);
+  box-shadow: inset 0 0 0 0.5px var(--light-rim);
+}

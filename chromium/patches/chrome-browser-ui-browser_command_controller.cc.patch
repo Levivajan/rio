@@ -1,0 +1,76 @@
+diff --git a/chrome/browser/ui/browser_command_controller.cc b/chrome/browser/ui/browser_command_controller.cc
+index afc3f64a97c6a8676a656fca1a3ede18eb23b1fb..a7b58d55209890b3f320f8f0cf222c87437053ac 100644
+--- a/chrome/browser/ui/browser_command_controller.cc
++++ b/chrome/browser/ui/browser_command_controller.cc
+@@ -115,6 +115,7 @@
+ #include "chrome/common/url_constants.h"
+ #include "chrome/common/webui_url_constants.h"
+ #include "chrome/grit/generated_resources.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "components/bookmarks/browser/bookmark_model_load_waiter.h"
+ #include "components/bookmarks/common/bookmark_bar_visibility_state.h"
+ #include "components/bookmarks/common/bookmark_pref_names.h"
+@@ -506,6 +507,11 @@ bool BrowserCommandController::IsReservedCommandOrKey(
+     return false;
+   }
+ 
++  // Clu: router keys (Cmd+1..9, Cmd+L, Clu's own); pages never see them.
++  if (clu::IsReservedCommand(browser_, command_id)) {
++    return true;
++  }
++
+ #if BUILDFLAG(IS_CHROMEOS)
+   // On Chrome OS, the top row of keys are mapped to browser actions like
+   // back/forward or refresh. We don't want web pages to be able to change the
+@@ -647,10 +653,22 @@ void BrowserCommandController::ShowCustomizeChromeSidePanel(
+ // BrowserCommandController, CommandUpdater implementation:
+ 
+ bool BrowserCommandController::SupportsCommand(int id) const {
++  // Clu: the IDC_CLU_* ids of Clu's main menu (docs/chromium/m5.md).
++  if (clu::SupportsCluCommand(browser_, id)) {
++    return true;
++  }
+   return command_updater_->SupportsCommand(id);
+ }
+ 
+ bool BrowserCommandController::IsCommandEnabled(int id) const {
++  if (clu::SupportsCluCommand(browser_, id)) {
++    return clu::IsCluCommandEnabled(browser_, id);
++  }
++  // Clu: page commands follow a focused Peek, not the tab under it (m6.md).
++  bool clu_enabled = false;
++  if (clu::OverrideCommandEnabled(browser_, id, &clu_enabled)) {
++    return clu_enabled;
++  }
+   return command_updater_->IsCommandEnabled(id);
+ }
+ 
+@@ -663,6 +681,13 @@ bool BrowserCommandController::ExecuteCommandWithDispositionAndContext(
+     return false;
+   }
+ 
++  // Clu: Cmd+T, Cmd+L, the tab keys and Clu's own ids run Clu's commands,
++  // before either command updater and before the no-tab check, so Clu's
++  // menu items run in a window showing its empty state (m2-shell.md, m5.md).
++  if (clu::HandleBrowserCommand(browser_, id)) {
++    return true;
++  }
++
+   // No commands are enabled if there is not yet any selected tab.
+   // TODO(pkasting): It seems like we should not need this, because either
+   // most/all commands should not have been enabled yet anyway or the ones that
+@@ -2755,10 +2780,12 @@ void BrowserCommandController::UpdateTabRestoreCommandState() {
+       TabRestoreServiceFactory::GetForProfile(profile());
+   // The command is enabled if the service hasn't loaded yet to trigger loading.
+   // The command is updated once the load completes.
++  // Clu: Cmd+Shift+T also reopens from Clu's closed stack and archive.
+   command_updater_->UpdateCommandEnabled(
+       IDC_RESTORE_TAB,
+-      tab_restore_service && (!tab_restore_service->IsLoaded() ||
+-                              !tab_restore_service->entries().empty()));
++      clu::KeepsCommandEnabled(browser_, IDC_RESTORE_TAB) ||
++          (tab_restore_service && (!tab_restore_service->IsLoaded() ||
++                                   !tab_restore_service->entries().empty())));
+ }
+ 
+ void BrowserCommandController::UpdateCheckedState(actions::ActionId action_id,

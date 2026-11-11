@@ -1,0 +1,55 @@
+/* The glyph alone in a 26 box; the blocked count is read out, not drawn. */
+.clu-icon-button.clu-site-controls-button {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  flex: none;
+  color: var(--glyph);
+}
+/* The hover and pressed box is a 28 x 26 rounded square, drawn under the glyph so the 26 box
+   keeps the pill's pitch. */
+.clu-icon-button.clu-site-controls-button,
+.clu-icon-button.clu-site-controls-button:hover:not(:disabled) {
+  isolation: isolate;
+  background: transparent;
+}
+.clu-site-controls-button::before {
+  position: absolute;
+  inset: 0 -1px;
+  z-index: -1;
+  border-radius: 8px;
+  background: transparent;
+  transition: background-color var(--t-fast) var(--ease-out);
+  content: '';
+}
+.clu-site-controls-button:hover::before {
+  background: var(--hover-ink);
+}
+.clu-site-controls-button[aria-expanded='true']::before {
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+}
+.clu-site-controls-button [data-blocked-count] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.clu-tooltip-anchor:has(> .clu-site-controls-button) {
+  flex: none;
+  align-self: center;
+}
+
+/* The button sits at the sidebar's trailing edge: a tooltip hung right of the pointer would run under the page card,
+   which covers the frame WebUI there. It hangs under the button, right-aligned, with its tight corner toward
+   it; the Tooltip's pointer placement is inline style, so this wins with !important. */
+.clu-tooltip-anchor:has(> .clu-site-controls-button) > .clu-tooltip {
+  top: calc(100% + 6px) !important;
+  right: 0;
+  left: auto !important;
+  border-radius: var(--tip-r) var(--tip-corner) var(--tip-r) var(--tip-r);
+  transform: none;
+  translate: none !important;
+}

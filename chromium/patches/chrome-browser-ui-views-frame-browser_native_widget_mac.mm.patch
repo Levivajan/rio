@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/ui/views/frame/browser_native_widget_mac.mm b/chrome/browser/ui/views/frame/browser_native_widget_mac.mm
+index fd4cc9a121ef9a7bf20e1269bcb381eabf6fa055..394114aef0d51f3cab5fe61d7bcd8a114ba6e7ff 100644
+--- a/chrome/browser/ui/views/frame/browser_native_widget_mac.mm
++++ b/chrome/browser/ui/views/frame/browser_native_widget_mac.mm
+@@ -50,6 +50,7 @@
+ #include "chrome/browser/ui/web_applications/app_browser_controller.h"
+ #include "chrome/common/pref_names.h"
+ #include "chrome/grit/generated_resources.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "components/bookmarks/common/bookmark_pref_names.h"
+ #include "components/dom_distiller/content/browser/distillable_page_utils.h"
+ #include "components/dom_distiller/core/url_utils.h"
+@@ -276,6 +277,12 @@ - (NSTouchBar*)makeTouchBar {
+ void BrowserNativeWidgetMac::GetWindowFrameTitlebarHeight(
+     bool* override_titlebar_height,
+     float* titlebar_height) {
++  // Clu: the window buttons center on the sidebar's top row.
++  if (browser_view_ &&
++      clu::GetTitlebarHeight(browser_view_->browser(), titlebar_height)) {
++    *override_titlebar_height = true;
++    return;
++  }
+   if (browser_view_ && browser_view_->browser_widget() &&
+       browser_view_->browser_widget()->GetFrameView()) {
+     *override_titlebar_height = true;
+@@ -748,6 +755,12 @@ - (NSTouchBar*)makeTouchBar {
+     if (browser_view_->GetIsWebAppType()) {
+       params->window_title_hidden = true;
+     }
++  } else if (clu::IsCreatingMiniWindow()) {
++    // Clu: the Mini window's toolbar sits in the title bar row (docs/chromium/m6.md).
++    params->window_class = remote_cocoa::mojom::WindowClass::kBrowser;
++    params->style_mask |= NSWindowStyleMaskFullSizeContentView;
++    params->titlebar_appears_transparent = true;
++    params->window_title_hidden = true;
+   } else {
+     params->window_class = remote_cocoa::mojom::WindowClass::kDefault;
+   }

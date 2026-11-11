@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Profile probe</title>
+<h1>Profile probe</h1>
+<p>Cookie: <output id="cookie"></output></p>
+<p>Storage: <output id="storage"></output></p>
+<p><input id="value" aria-label="Value" value="set-in-probe"> <button id="set" type="button">Set</button></p>
+<script>
+  // Set writes a persistent cookie and a localStorage key; every load prints what this profile holds.
+  // ?set=<value> does the same on load.
+  function show() {
+    const cookie = document.cookie.split('; ').find((c) => c.startsWith('clu_probe='))
+    document.getElementById('cookie').textContent = cookie ? decodeURIComponent(cookie.slice('clu_probe='.length)) : 'none'
+    document.getElementById('storage').textContent = localStorage.getItem('clu_probe') ?? 'none'
+  }
+  function set(value) {
+    document.cookie = `clu_probe=${encodeURIComponent(value)}; max-age=31536000; path=/; SameSite=Lax`
+    localStorage.setItem('clu_probe', value)
+    show()
+  }
+  document.getElementById('set').addEventListener('click', () => set(document.getElementById('value').value))
+  const initial = new URLSearchParams(location.search).get('set')
+  if (initial) set(initial)
+  show()
+</script>

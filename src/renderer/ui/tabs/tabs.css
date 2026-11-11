@@ -1,0 +1,628 @@
+/* Sidebar rows and favorites of the tabs module (design.md sections 1 and 2). This file loads before the scaffold's
+   styles.css, so overrides of its .clu-row rules carry one more class. */
+
+/* The row whose menu is open keeps the hover fill (an active row keeps its own). */
+.clu-row.clu-tab-row[data-menu-open]:not([data-active='true']) {
+  background: var(--row-hover);
+}
+/* Hover (M11): in at once, out over --t-hover-out (the base rule); the press keeps --t-press while hovered. */
+.clu-row.clu-tab-row:hover,
+.clu-row.clu-new-tab:hover {
+  transition-duration: 0ms, var(--t-press);
+}
+.clu-row.clu-tab-row:active,
+.clu-row.clu-new-tab:active {
+  transition-duration: 0ms, var(--t-press);
+}
+/* While the command bar opens a new tab, New Tab is the selected row and the current tab steps back to rest. */
+.clu-row.clu-new-tab[data-active='true'] {
+  color: var(--ink);
+}
+.clu-tab-tree:has(> .clu-new-tab[data-active='true']) .clu-row.clu-tab-row[data-active='true'] {
+  background: transparent;
+  box-shadow: none;
+}
+/* The peeked page's favicon on the row that opened the Peek: 16 pt, its right edge 10 in from the row's (x 180 to 196
+   at a 214 width). */
+.clu-row-peek-icon {
+  order: 3;
+  flex: none;
+  width: var(--fav);
+  height: var(--fav);
+  /* The resting close button after it hangs 4 past the padding; this keeps the icon's edge at the padding. */
+  margin-inline-end: calc(var(--row-px) - var(--close-box) / 2 - 18px + var(--close-box));
+  border-radius: 3px;
+}
+
+/* The slash at x 39.5 and the title after it at x 46.5. */
+.clu-row-slash {
+  flex: none;
+  margin-inline: calc(var(--row-gap) * -0.5) calc(var(--row-gap) * -0.5 - 3px);
+  pointer-events: none;
+  color: var(--ink-2);
+  font-size: var(--fs-row);
+}
+.clu-row-emoji {
+  font-size: calc(var(--fav) - 2px);
+  line-height: var(--fav);
+  text-align: center;
+}
+/* An icon that changes under a mounted row cross-fades; a row that mounts shows its icon at once (RowIcon.tsx). */
+.clu-row-favicon[data-fresh] {
+  animation: clu-fade-in var(--t-fade) var(--ease-out);
+}
+@keyframes clu-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A page loading without a favicon yet: a 14 pt square in the light space accent inside the 16 pt slot. */
+.clu-row-favicon-slot {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+}
+.clu-row-favicon-slot::before {
+  content: '';
+  width: 87.5%;
+  height: 87.5%;
+  border-radius: 3.5px;
+  background: color-mix(in srgb, var(--accent) 65%, #fff);
+}
+
+/* Row controls (M11): the favicon button of an off-pinned row; the speaker in a 23 box starting 3 left of the slot
+   after the favicon, which moves the title 25.5 right; close in a 24 box centered 18 from the row's right edge. */
+.clu-row .clu-icon-button.clu-row-reset,
+.clu-row .clu-icon-button.clu-row-audio,
+.clu-row .clu-icon-button.clu-row-close {
+  flex: none;
+  width: var(--close-box);
+  height: var(--close-box);
+  border-radius: var(--close-r);
+  color: var(--glyph);
+}
+.clu-row .clu-icon-button.clu-row-close:hover {
+  background: var(--close-hover);
+}
+.clu-row.clu-tab-row > .clu-row-title,
+.clu-row.clu-tab-row > .clu-rename-field {
+  order: 2;
+}
+.clu-row.clu-tab-row > .clu-tooltip-anchor:has(> .clu-row-audio) {
+  order: 1;
+  margin-inline-start: calc(var(--speaker-inset) * -1);
+  margin-inline-end: calc(var(--audio-shift) - var(--speaker-box) - var(--row-gap) + var(--speaker-inset));
+  /* The title slides the 25.5 right over 150 ms as the speaker shows,
+     starting from a margin that takes the speaker's room back. */
+  animation: clu-audio-in 150ms var(--ease-out);
+}
+@keyframes clu-audio-in {
+  from {
+    margin-inline-end: calc(var(--speaker-inset) - var(--speaker-box) - var(--row-gap));
+    opacity: 0;
+  }
+}
+.clu-row.clu-tab-row > .clu-tooltip-anchor:has(> .clu-row-close) {
+  order: 3;
+  margin-inline-end: calc(var(--close-box) / 2 + 18px - var(--close-box) - var(--row-px));
+}
+/* A pinned tab that navigated away: its favicon is a button with a hover box, then "/", then
+   the pinned title; hovering the button lifts the title and slides "Back to Pinned URL" in under it. */
+/* Its hover box is 38 x 38 at x 7 to 45, centered on the favicon slot. */
+.clu-row .clu-icon-button.clu-row-reset {
+  width: 38px;
+  height: 38px;
+  margin-inline: calc((var(--fav) - 38px) / 2);
+  border-radius: var(--close-r);
+}
+.clu-row .clu-icon-button.clu-row-reset:hover {
+  background: var(--close-hover);
+}
+.clu-row.clu-tab-row > .clu-row-title-stack {
+  order: 2;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+.clu-row-title-stack > .clu-row-title {
+  transition: transform 150ms var(--ease-out);
+}
+.clu-row-subtitle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% + 2.5px);
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
+  pointer-events: none;
+}
+/* A tidied title keeps "Double-click to rename" under it (title +3.5 and subtitle +20.5 in the 41 pt row), and a
+   Calendar row its next event. */
+.clu-row-title-stack:is([data-tidied], [data-event]) > .clu-row-title {
+  transform: translateY(-7.5px);
+}
+.clu-row-title-stack:is([data-tidied], [data-event]) > .clu-row-subtitle {
+  opacity: 1;
+  transform: none;
+}
+.clu-row:has(.clu-row-reset:hover) .clu-row-title-stack > .clu-row-title {
+  transform: translateY(-7.5px);
+}
+.clu-row:has(.clu-row-reset:hover) .clu-row-subtitle {
+  opacity: 1;
+  transform: none;
+}
+.clu-row .clu-icon-button.clu-row-audio {
+  width: var(--speaker-box);
+  height: var(--speaker-box);
+  border-radius: 6px;
+}
+/* Close is there in the hover's first frame, with the fill, and takes no width at rest, so
+   the title keeps its full width. Its own hover box still fades in over --t-close-hover. */
+.clu-row.clu-tab-row .clu-icon-button.clu-row-close,
+.clu-folder-row .clu-icon-button.clu-row-close {
+  transition: background-color var(--t-close-hover) var(--ease-out);
+}
+.clu-row.clu-tab-row .clu-icon-button.clu-row-close {
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+.clu-row.clu-tab-row:hover .clu-icon-button.clu-row-close,
+.clu-row.clu-tab-row:is(:focus-visible, :has(:focus-visible)) .clu-icon-button.clu-row-close {
+  width: var(--close-box);
+  opacity: 1;
+}
+.clu-row.clu-tab-row > .clu-tooltip-anchor:has(> .clu-row-close) {
+  margin-inline-start: calc(var(--row-gap) * -1);
+}
+.clu-row.clu-tab-row:hover > .clu-tooltip-anchor:has(> .clu-row-close),
+.clu-row.clu-tab-row:is(:focus-visible, :has(:focus-visible)) > .clu-tooltip-anchor:has(> .clu-row-close) {
+  margin-inline-start: 0;
+}
+
+/* A collapsing folder's children slide up under its row inside this clip (useRowFlip.ts). */
+.clu-row-collapse-clip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* A closed or unpinned row's copy fading where it was (useRowFlip.ts). */
+.clu-row-gone {
+  position: absolute;
+  margin: 0;
+  pointer-events: none;
+}
+
+/* Favorites (F1, M11): tiles 47 high filling the content width with 8 gaps; FavoritesGrid sets the columns from the
+   width. */
+.clu-sidebar .clu-favorites {
+  gap: var(--tile-gap);
+}
+.clu-favorite {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+.clu-favorites .clu-favorite-tile {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  color: var(--ink);
+  font: inherit;
+  transition:
+    background-color 110ms var(--ease-out),
+    transform var(--t-press) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out);
+}
+/* The hover fill is the rest fill x 0.95, about 9.75% darker than the sidebar. */
+.clu-favorites .clu-favorite-tile:hover {
+  background: var(--favorite-hover);
+  transition-duration: var(--t-fast), var(--t-press), var(--t-base);
+}
+.clu-favorites .clu-favorite-tile:active {
+  transform: scale(var(--press-scale));
+  transition-duration: var(--t-press);
+}
+:root[data-focus-keys] .clu-favorites .clu-favorite-tile:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+/* The selected tile takes the selected row's fill (near-white in light, the theme's in dark) and a 2 pt ring
+   in the space's accent (the theme's main color, never the site icon's) with a lighter half point inside it. */
+.clu-favorite[data-active='true'] .clu-favorite-tile {
+  background: var(--row-current);
+  box-shadow:
+    var(--shadow-row),
+    inset 0 0 0 2px var(--accent),
+    inset 0 0 0 2.5px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+/* An unread count, a 5 pt red dot at the tile's lower right, its center 10 pt in from the tile's right and bottom
+   edges, clear of the favicon. On a 59 and a 45 pt wide tile the dot keeps 10 pt from the tile's corner while its
+   offset from the favicon changes (19.5 and 13 pt right), so it is anchored to the tile corner, never the icon. It sits in the tile button, so it rides along with a press and keeps
+   its place hovered and selected. */
+.clu-favorite-icon {
+  display: inline-flex;
+  flex: none;
+}
+.clu-favorite-unread {
+  position: absolute;
+  right: 7.5px;
+  bottom: 7.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e94234;
+  pointer-events: none;
+}
+
+
+/* F3 folders: the glyph is centered on the 16 px favicon slot and drawn in the space accent; the
+   name is semibold with tight tracking. An emoji icon sits in the same 16 px box. */
+.clu-folder-glyph {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+  overflow: visible;
+  color: var(--accent-glyph, var(--accent));
+}
+.clu-folder-glyph > svg {
+  flex: none;
+}
+/* A minus centered 18 from the row's right edge collapses an open folder. */
+.clu-folder-row > .clu-tooltip-anchor:has(> .clu-folder-collapse) {
+  margin-inline-end: calc(var(--close-box) / 2 + 18px - var(--close-box) - var(--row-px));
+}
+.clu-folder-row > .clu-row-title,
+.clu-folder-row > .clu-tooltip-anchor > .clu-row-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.clu-folder-row > .clu-tooltip-anchor:has(> .clu-row-title) {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+/* The folder name's pill is the space accent with white text. */
+.clu-folder-row > .clu-tooltip-anchor:has(> .clu-row-title) > .clu-tooltip {
+  background: var(--accent);
+  color: #fff;
+}
+/* A closed folder's body is filled light; in dark an open folder is
+   filled with the accent. */
+.clu-folder-glyph svg:not([width='23']) > path:first-child {
+  fill: color-mix(in srgb, var(--accent) 6%, #fff);
+}
+:root[data-theme='dark'] .clu-folder-glyph svg[width='23'] > path:last-child {
+  fill: var(--accent-glyph, var(--accent));
+}
+.clu-folder-row .clu-row-emoji {
+  flex: none;
+  width: var(--fav);
+}
+
+/* Inline rename: the title is edited in place with the system selection, no box, at the title's own size and
+   weight (a folder keeps its semibold). */
+.clu-rename-field {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  height: calc(var(--row-h) - 10px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-row);
+}
+.clu-folder-row > .clu-rename-field {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.clu-row .clu-rename-field:focus,
+.clu-row .clu-rename-field:focus-visible {
+  outline: none;
+}
+
+/* The tab list scrolls and owns the empty area; the tree inside it holds only tree items. The + menu button sits
+ * outside the tree, anchored to the end of the Today label (PLAN 8.2). */
+.clu-tab-list {
+  position: relative;
+}
+.clu-tab-tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-pitch-gap);
+  flex: none;
+}
+/* The first pinned row sits a row gap under the space header. */
+.clu-tab-tree {
+  padding-top: var(--row-pitch-gap);
+}
+/* The Today divider: a 20.5 tall cell between Pinned and Today, so the last
+   pinned row's bottom is 30.5 from New Tab's top and 14.5 from the line. Its 1 pt
+   line (black 7.5%) spans the rows' text inset. "↓ Clear" fades in at its right end over 150 ms while the
+   pointer is over the sidebar, and the line stops 57.5 short of the content edge for it. */
+.clu-today-divider {
+  anchor-name: --clu-today;
+  position: relative;
+  flex: none;
+  height: 20.5px;
+}
+.clu-today-divider::before {
+  content: '';
+  position: absolute;
+  top: 9.5px;
+  left: var(--row-px);
+  right: var(--row-px);
+  height: 1px;
+  background: var(--today-divider);
+}
+/* With Today empty there is no divider: New Tab follows the pinned rows on the row pitch. */
+.clu-today-divider[data-clearable='false'] {
+  height: 0;
+  /* Cancels one of its two gaps, so New Tab sits on the 41 pitch. */
+  margin-top: calc(var(--row-pitch-gap) * -1);
+}
+.clu-today-divider[data-clearable='false']::before {
+  content: none;
+}
+.clu-sidebar:is(:hover, :has(:focus-visible)) .clu-today-divider[data-clearable='true']::before {
+  right: 57.5px;
+}
+.clu-today-clear {
+  position: absolute;
+  position-anchor: --clu-today;
+  top: anchor(top);
+  right: calc(anchor(right) + var(--row-px) - 4px);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 20px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--pill-placeholder);
+  font: inherit;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 150ms var(--ease-out),
+    visibility 0ms linear 150ms,
+    color var(--t-fast) var(--ease-out);
+  -webkit-app-region: no-drag;
+}
+.clu-tab-tree[data-clearing] > .clu-new-tab ~ * {
+  opacity: 0;
+  transition: opacity 50ms linear;
+}
+/* Clear: the titles go in the click's first frame; the favicons fade. */
+.clu-tab-tree[data-clearing] > .clu-new-tab ~ * .clu-row-title {
+  visibility: hidden;
+}
+.clu-today-clear:hover {
+  color: var(--glyph);
+}
+.clu-sidebar:is(:hover, :has(:focus-visible)) .clu-today-clear {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0ms;
+}
+.clu-sidebar[data-mode='private'] .clu-today-clear {
+  right: calc(anchor(right) + 30px);
+}
+.clu-tab-list > .clu-tooltip-anchor:has(> .clu-section-new) {
+  position: absolute;
+  position-anchor: --clu-today;
+  top: calc(anchor(top) - 1.5px);
+  right: calc(anchor(right) + 4px);
+}
+.clu-icon-button.clu-section-new {
+  width: 22px;
+  height: 22px;
+}
+
+/* Drag and drop (F8): the ghost at 0.9 opacity, a 2 px accent drop line, an accent outline for a folder or zone, the
+   dashed zones of an empty Favorites or Pinned during a drag, and a ring on the space icon under the pointer. */
+.clu-drag-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+.clu-drag-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0.8;
+  will-change: transform;
+}
+/* Over the favorites the row shrinks to 0.93 of its size (184.5 x 32.5 from 198 x 36). */
+.clu-drag-ghost-row {
+  transition: scale var(--t-fast) var(--ease-out);
+}
+.clu-drag-ghost[data-over-favorites] .clu-drag-ghost-row {
+  scale: 0.93;
+}
+/* Multi-select: every selected row takes the selected row's card; the
+   active one keeps an accent ring. */
+.clu-row.clu-tab-row[data-selected='true'] {
+  border-radius: var(--row-r);
+  background: var(--row-current);
+  box-shadow: var(--shadow-row);
+}
+.clu-row.clu-tab-row[data-selected='true'][data-active='true'] {
+  background: var(--active-surface);
+  box-shadow: var(--shadow-1), inset 0 0 0 1.5px color-mix(in oklab, var(--accent) 60%, transparent);
+}
+.clu-favorite[data-selected='true'] .clu-favorite-tile {
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+/* Inside the ghost row's right end: the page card covers anything right of the sidebar. */
+.clu-drag-count {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: var(--shadow-1);
+}
+/* The ghost keeps the row's size in the selected row's style, with its close glyph showing
+   (a Today row keeps its x). The rows under the ghost show no hover close while a drag runs. */
+.clu-drag-ghost-row > * {
+  background: var(--row-current);
+  box-shadow: var(--shadow-row);
+  border-radius: var(--row-r);
+}
+.clu-drag-ghost-row .clu-row.clu-tab-row .clu-icon-button.clu-row-close {
+  width: var(--close-box);
+  opacity: 1;
+}
+.clu-drag-ghost-row .clu-row.clu-tab-row > .clu-tooltip-anchor:has(> .clu-row-close) {
+  margin-inline-start: 0;
+}
+:root[data-sidebar-dragging] .clu-sidebar .clu-row.clu-tab-row:hover .clu-icon-button.clu-row-close {
+  width: 0;
+  opacity: 0;
+}
+:root[data-sidebar-dragging] .clu-sidebar .clu-row.clu-tab-row:hover > .clu-tooltip-anchor:has(> .clu-row-close) {
+  margin-inline-start: calc(var(--row-gap) * -1);
+}
+/* The drop line: a 7 px ring (1.5 stroke) at the left end, then a 2 px line to 3 short of the row's right edge. The
+   element is the ring's height; the line is its ::after. */
+.clu-drop-line {
+  position: fixed;
+  height: 7px;
+  box-sizing: border-box;
+}
+.clu-drop-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+}
+.clu-drop-line::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  right: 0;
+  top: 2.5px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+/* A folder the row would drop into: the accent band the full sidebar width on the folder's 41 pt cell, behind its
+   glyph and name, in one frame (drop indicator, into a folder). */
+.clu-row.clu-folder-row[data-drop-into]::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: calc(var(--row-pitch-gap) / -2);
+  bottom: calc(var(--row-pitch-gap) / -2);
+  left: calc((var(--sidebar-inset) + var(--row-indent, 0px)) * -1);
+  right: calc(var(--sidebar-inset) * -1);
+  background: var(--accent);
+}
+.clu-drop-box {
+  position: fixed;
+  box-sizing: border-box;
+  border-radius: var(--row-r);
+  border: 2px solid var(--accent);
+}
+.clu-drop-marker {
+  height: 0;
+}
+/* In the tab tree the marker would still add one row gap; the negative margin takes it back, so nothing moves. */
+.clu-tab-tree > .clu-drop-marker {
+  margin-bottom: calc(var(--row-pitch-gap) * -1);
+}
+.clu-space-button[data-drop-hover='true'] {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* The tidied title's letter morph (MorphTitle.tsx), each letter in over 100 ms, the sparkles over 240 ms. */
+.clu-morph-title {
+  position: relative;
+}
+.clu-morph-letter {
+  display: inline-block;
+  white-space: pre;
+  animation: clu-morph-letter 100ms var(--ease-out) backwards;
+}
+@keyframes clu-morph-letter {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translateY(2px);
+  }
+}
+.clu-morph-sparkle {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  opacity: 0;
+  pointer-events: none;
+  animation: clu-morph-sparkle 240ms var(--ease-out) backwards;
+}
+@keyframes clu-morph-sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(2px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) translateY(-3px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.6) translateY(-6px);
+  }
+}
+:root[data-reduced-motion='true'] :is(.clu-morph-letter, .clu-morph-sparkle) {
+  animation: none;
+}

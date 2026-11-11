@@ -1,0 +1,24 @@
+diff --git a/chrome/browser/ui/cocoa/main_menu_builder.mm b/chrome/browser/ui/cocoa/main_menu_builder.mm
+index 047674248727a122fb3aee712981eefd0a4c3049..05f41cdd3d23bb810475a24916c4b473c8976f05 100644
+--- a/chrome/browser/ui/cocoa/main_menu_builder.mm
++++ b/chrome/browser/ui/cocoa/main_menu_builder.mm
+@@ -21,6 +21,7 @@
+ #include "chrome/common/chrome_features.h"
+ #include "chrome/grit/branded_strings.h"
+ #include "chrome/grit/generated_resources.h"
++#include "clu/browser/ui/cocoa/clu_main_menu.h"
+ #include "components/dom_distiller/core/dom_distiller_features.h"
+ #include "components/strings/grit/components_strings.h"
+ #include "ui/base/accelerators/platform_accelerator_cocoa.h"
+@@ -637,6 +638,11 @@
+     }
+   }
+ 
++  // Clu: its menus and key table (docs/chromium/m5.md).
++  if (!is_pwa) {
++    clu::ApplyMainMenu(main_menu);
++  }
++
+   nsapp.mainMenu = main_menu;
+ 
+   return main_menu;

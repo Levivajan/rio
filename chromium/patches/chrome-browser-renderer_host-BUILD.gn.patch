@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/renderer_host/BUILD.gn b/chrome/browser/renderer_host/BUILD.gn
+index 60c6bb71d91b6929ec7d46d6f9a034fdac4d81a6..7f598acf70325efa71726a3bc977251c419bda23 100644
+--- a/chrome/browser/renderer_host/BUILD.gn
++++ b/chrome/browser/renderer_host/BUILD.gn
+@@ -99,6 +99,7 @@ if (is_mac) {
+       "//chrome/browser/devtools",
+       "//chrome/browser/glic",
+       "//chrome/browser/ui:browser_commands",
++      "//clu/common:urls",
+       "//components/spellcheck/browser",
+     ]
+   }

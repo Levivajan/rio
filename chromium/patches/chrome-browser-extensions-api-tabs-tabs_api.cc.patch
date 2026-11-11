@@ -1,0 +1,22 @@
+diff --git a/chrome/browser/extensions/api/tabs/tabs_api.cc b/chrome/browser/extensions/api/tabs/tabs_api.cc
+index de78a212cda49cdaedb23674e30ceec3db56807f..6061b4c0c56ee22832b0df1e5110c32ad21742da 100644
+--- a/chrome/browser/extensions/api/tabs/tabs_api.cc
++++ b/chrome/browser/extensions/api/tabs/tabs_api.cc
+@@ -57,6 +57,7 @@
+ #include "content/public/browser/navigation_controller.h"
+ #include "content/public/browser/navigation_entry.h"
+ #include "content/public/browser/navigation_handle.h"
++#include "clu/browser/ui/webui/clu_tab_hooks.h"  // nogncheck
+ #include "extensions/browser/api/constants.h"
+ #include "extensions/browser/extension_user_activation_service.h"
+ #include "extensions/browser/extension_zoom_request_client.h"
+@@ -723,7 +724,8 @@ bool TabsQueryFunction::MatchesTab(::tabs::TabInterface* candidate_tab,
+                                    const URLPatternSet& target_url_patterns) {
+   content::WebContents* web_contents = candidate_tab->GetContents();
+ 
+-  if (!web_contents) {
++  // Clu: a window's hidden placeholder page is no tab to the user.
++  if (!web_contents || clu::IsPlaceholderTab(web_contents)) {
+     return false;
+   }
+ 

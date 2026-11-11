@@ -1,0 +1,373 @@
+/* Shell frame styles. Drag regions: the frame (the top row and the gutters
+   around the card), the space under the tabs and the bottom bar's gaps drag the window (styles.css); every other part
+   of the sidebar below the top row does not. */
+.clu-sidebar > :not(.clu-top-row) {
+  -webkit-app-region: no-drag;
+}
+
+/* Page card placeholder under the page view: its shadow shows in the 10 px gutters (M11 --shadow-card, no border;
+   the dark set doubles the alpha). With no page it shows the tint at 33% over the page color. */
+.clu-card[data-empty='true'] {
+  background: color-mix(in srgb, var(--tint) 33%, var(--page-bg));
+}
+/* Dark chrome: the empty card is darker than the sidebar (#16181a under a #292537 default), a near-black
+   with a tenth of the tint. */
+:root[data-theme='dark'] .clu-card[data-empty='true'] {
+  background: color-mix(in srgb, var(--tint) 10%, #131517);
+}
+/* The empty card carries a third of the window's grain (ThemeBackground sets the tile and
+   the window's opacity). Overlay moves a bright card less than the tint, so --card-grain-scale (tokens.css) sets the
+   card's share per mode to land on a third of the window's spread. */
+.clu-card[data-empty='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--clu-grain-tile, none);
+  background-size: 64px 64px;
+  mix-blend-mode: overlay;
+  opacity: calc(var(--clu-grain-opacity, 0) * var(--card-grain-scale));
+  pointer-events: none;
+}
+
+/* Sidebar slide (01-shell F3): the frame carries the sidebar; SidebarFrame sets its transform per tween tick. */
+.clu-sidebar-frame {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  will-change: transform;
+}
+
+/* While the sidebar tweens, the card placeholder follows the page view's frame instead of jumping to the target,
+   so the slide never uncovers the card's surface under the sidebar. */
+.clu-frame[data-shell-tween] > .clu-card {
+  left: var(--shell-card-x) !important;
+  top: var(--shell-card-y) !important;
+  width: var(--shell-card-w) !important;
+  height: var(--shell-card-h) !important;
+}
+
+/* Focus mode runs the card edge to edge with square corners (01-shell F11). */
+.clu-frame:has(> .clu-sidebar-frame[data-focus='true']) > .clu-card {
+  border-radius: 0;
+}
+
+/* Resize handle on the sidebar's right edge, over the whole edge bar from 4.5 below the card's top.
+   section 1). Its 8 pt band stays clear of the top row's buttons, and the rest of the row keeps dragging the window. */
+.clu-resize-handle {
+  position: absolute;
+  top: calc(var(--card-inset) + 4.5px);
+  bottom: 0;
+  cursor: col-resize;
+  -webkit-app-region: no-drag;
+  touch-action: none;
+}
+
+/* The edge bar: 4 wide with round ends, 2 inside the sidebar's edge, from 4.5 below the card's
+   top to 4.5 above its bottom; fades in over 200 ms once shown and out over 220 ms. */
+.clu-resize-bar {
+  position: absolute;
+  top: calc(var(--card-inset) + 4.5px);
+  bottom: calc(var(--card-inset) + 4.5px);
+  width: 4px;
+  border-radius: 2px;
+  background: var(--resize-bar);
+  opacity: 0;
+  transition: opacity 220ms var(--ease-out);
+  pointer-events: none;
+}
+.clu-resize-bar[data-shown='true'] {
+  opacity: 1;
+  transition-duration: 200ms;
+}
+
+/* Left-edge hot zone for the hover peek (F4). It sits above the hidden sidebar and does not drag, so pointer moves
+   reach it. */
+.clu-hot-zone {
+  position: absolute;
+  z-index: 1;
+  -webkit-app-region: no-drag;
+}
+
+/* Top controls (F7, docs/chromium/parity-sidebar.md): the row runs to 6 from the card. Wide (212 and up), the toggle
+   sits after the lights at min(77, w - 140) and back, forward and reload sit at the right end on a 34 pitch (w - 106,
+   w - 72, w - 38); the lights' spacer gives way first, so nothing ever runs under the card. Narrow (211 and down), back,
+   forward and "..." are 28 boxes at w - 90, w - 62 and w - 34. The fill between them drags the window. Presses scale
+   to 0.92 for 120 ms and reload turns once over 400 ms. */
+.clu-top-row {
+  margin-right: -2px;
+  min-width: 0;
+}
+.clu-top-row-fill {
+  flex: 1 1 0;
+  min-width: calc(var(--tool-pitch) - var(--tool-box));
+  align-self: stretch;
+}
+.clu-nav-group {
+  display: flex;
+  flex: none;
+  gap: calc(var(--tool-pitch) - var(--tool-box));
+}
+.clu-top-row[data-mode='compact'] .clu-nav-group {
+  gap: 0;
+}
+.clu-top-row[data-mode='compact'] .clu-icon-button {
+  width: var(--tool-box-compact);
+  height: var(--tool-box-compact);
+}
+.clu-nav-button {
+  transition:
+    background-color var(--t-fast) var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+.clu-nav-button:active:not(:disabled) {
+  transform: scale(0.92);
+}
+/* While a page loads stop draws as light as the disabled arrows beside it; hover darkens it. */
+.clu-top-row .clu-icon-button.clu-nav-button[data-shell='nav-stop']:not(:hover) {
+  color: var(--glyph-disabled);
+}
+.clu-reload-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: clu-reload-spin 400ms var(--ease-out);
+}
+@keyframes clu-reload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* URL pill (F6, M11 geometry). The pill itself does not clip, so tooltips of its buttons show; the host text sits 14
+   in and ellipsizes; copy link and site controls, 26 square, center 47.25 and 19 from the pill's right edge (pitch 28.25). */
+.clu-url-pill[data-shell='url-pill'] {
+  position: relative;
+  flex: none;
+  padding: 0 4px 0 14px;
+  overflow: visible;
+}
+.clu-url-host {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pill-text);
+  font: inherit;
+  font-size: var(--fs-pill);
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-url-host[data-empty='true'] {
+  color: var(--pill-placeholder);
+}
+/* The empty pill's magnifier: 12 pt at window x 20, the text at 42.5. The empty host starts 2 earlier, so
+   the icon sits inside the host's clip; a negative margin on the icon itself cut its left edge off. */
+.clu-url-host[data-empty='true'] {
+  margin-left: -2px;
+}
+.clu-url-search-icon {
+  display: inline-block;
+  flex: none;
+  margin: 0 10.5px 0 0;
+  vertical-align: -1.5px;
+}
+.clu-icon-button.clu-url-action {
+  width: 26px;
+  height: 26px;
+  color: var(--glyph);
+}
+/* Copy link and site controls show only while the pointer is over the sidebar; without them the host
+   takes the pill's width (text width w - 32, w - 55 while the buttons show). They stay while
+   Site controls is open, its button pressed. They fade in and out (the shared .clu-reveal) and the
+   host's text narrows and widens with them over the same 150 ms, so they sit at the right whether shown or not. */
+.clu-url-pill[data-shell='url-pill'] {
+  /* The buttons' 26 + 2.25 + 26, the 2.25 gap before them and the 2 more of the pill's right inset while they show. */
+  --pill-actions: 58.5px;
+}
+.clu-url-pill[data-shell='url-pill'] > .clu-url-host {
+  padding-inline-end: calc(var(--pill-actions) * var(--revealed, 0));
+  transition: padding-inline-end var(--t-reveal) var(--reveal-ease, var(--ease-in));
+}
+.clu-url-pill[data-shell='url-pill'] > .clu-tooltip-anchor,
+.clu-url-pill[data-shell='url-pill'] > .clu-url-slot {
+  position: absolute;
+  top: 50%;
+  margin-top: -13px;
+}
+.clu-url-pill[data-shell='url-pill'] > .clu-tooltip-anchor {
+  right: calc(6px + 26px + 2.25px);
+}
+.clu-url-pill[data-shell='url-pill'] > .clu-url-slot {
+  right: 6px;
+  display: inline-flex;
+}
+.clu-sidebar:is(:hover, :has(:focus-visible), :has([data-site-controls-button][aria-expanded='true'])) .clu-url-pill,
+.clu-url-pill[data-placement='toolbar'] {
+  --revealed: 1;
+  --reveal-ease: var(--ease-out);
+}
+/* Toolbar mode: a band above the page card that drags the window, the pill inside it 30 tall with its center on
+   the top row's line (y 23.5), as wide as the card. */
+.clu-toolbar {
+  position: absolute;
+  top: 0;
+  -webkit-app-region: drag;
+}
+/* The card's grabber would sit on the field's top edge. */
+.clu-frame:has(> .clu-toolbar) > .clu-card-grabber {
+  display: none;
+}
+.clu-url-pill[data-placement='toolbar'] {
+  position: absolute;
+  top: calc(var(--top-row-y) + var(--top-row-h) / 2 - 15px);
+  left: 0;
+  right: 0;
+  height: 30px;
+  margin: 0;
+}
+/* Loading (M11): a pill in the margin above the page card, centered on it. While the page waits it pulses (48 wide);
+   once data arrives a 128 track shows a segment sweeping along it. Gone when the load finishes. */
+/* The card's grabber: where the loading pill sits, 48 x 4, a dark
+   translucent pill over the tint. Only while the pointer is in the margin above the card (the design's top
+   margin is empty at rest). The zone is the margin itself and stays a window drag area. */
+.clu-card-grabber-zone {
+  position: absolute;
+  top: 0;
+  -webkit-app-region: drag;
+}
+.clu-card-grabber {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 48px;
+  height: 4px;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  background: rgb(0 0 0 / 0.36);
+  pointer-events: none;
+  opacity: 0;
+}
+.clu-card-grabber-zone:hover > .clu-card-grabber {
+  opacity: 1;
+}
+/* The loading indicator moves only transform and opacity (the compositor's)
+   (docs/chromium/motion.md; durations are LOOK.loading, CardLoading.test.tsx keeps them equal). The element is always
+   the 128 track, centered by its margin; the waiting pill is its 48 wide ::before. */
+.clu-card-loading {
+  position: absolute;
+  top: 3px;
+  width: 128px;
+  height: 4px;
+  margin-left: -64px;
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.clu-card-loading::before,
+.clu-card-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  background: var(--loading-ink);
+}
+.clu-card-loading[data-phase='waiting'] {
+  animation: clu-loading-pulse 1600ms ease-in-out infinite;
+}
+.clu-card-loading[data-phase='waiting']::before,
+.clu-card-loading[data-pill]::before {
+  left: 40px;
+  width: 48px;
+}
+.clu-card-loading[data-phase='receiving'],
+.clu-card-loading[data-phase='done']:not([data-pill]) {
+  background: var(--loading-track);
+}
+/* Waiting to receiving: the pill widens from its center into the track and rises from the pulse's opacity, the
+   segment full until its first drain. */
+.clu-card-loading[data-phase='receiving'] {
+  animation: clu-loading-open 320ms var(--ease-out) both;
+}
+.clu-card-loading[data-phase='receiving']::after,
+.clu-card-loading[data-phase='done']:not([data-pill])::after {
+  left: 0;
+  width: 100%;
+  transform-origin: left center;
+}
+.clu-card-loading[data-phase='receiving']::after {
+  animation: clu-loading-sweep 1117ms linear 320ms infinite backwards;
+}
+/* Done: the track fills, then shrinks to its center and fades; from the waiting phase the pill just fades. */
+.clu-card-loading[data-phase='done'] {
+  animation: clu-loading-done 370ms linear forwards;
+}
+.clu-card-loading[data-phase='done'][data-pill] {
+  animation-name: clu-loading-done-pill;
+}
+@keyframes clu-loading-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes clu-loading-open {
+  from {
+    opacity: var(--clu-loading-from, 1);
+    transform: scaleX(0.375);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+/* One cycle in thirds, linear: the left end drains across, empty, the right end fills again.
+   scaleX 0 hides the segment while it jumps back to the left. */
+@keyframes clu-loading-sweep {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  33.333% {
+    transform: translateX(100%) scaleX(0);
+  }
+  66.667% {
+    transform: translateX(0) scaleX(0);
+  }
+  100% {
+    transform: translateX(0) scaleX(1);
+  }
+}
+@keyframes clu-loading-done {
+  from {
+    opacity: var(--clu-loading-from, 1);
+    transform: scaleX(1);
+  }
+  to {
+    opacity: 0;
+    transform: scaleX(0.25);
+  }
+}
+@keyframes clu-loading-done-pill {
+  from {
+    opacity: var(--clu-loading-from, 1);
+  }
+  to {
+    opacity: 0;
+  }
+}
+:root[data-reduced-motion='true'] .clu-reload-spin,
+:root[data-reduced-motion='true'] .clu-card-loading,
+:root[data-reduced-motion='true'] .clu-card-loading::after {
+  animation: none;
+}
+:root[data-reduced-motion='true'] .clu-card-loading[data-phase='receiving']::after {
+  transform: scaleX(0.4);
+}

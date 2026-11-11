@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.web.tsbuildinfo",
+    "lib": [
+      "ES2024",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@clu/webui-boot": [
+        "./src/renderer/webui/boot-mojo.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/renderer/**/*",
+    "src/shared/**/*",
+    "src/test-utils/**/*"
+  ],
+  "exclude": [
+    "src/shared/**/*.test.ts"
+  ]
+}

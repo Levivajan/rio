@@ -1,0 +1,161 @@
+/* History page. Values come from tokens.css. */
+.clu-history {
+  padding-top: 0;
+}
+.clu-history-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 32px 0 12px;
+  background: var(--surface);
+}
+.clu-history-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-bottom: 12px;
+}
+.clu-history .clu-history-bar h1 {
+  margin: 0;
+}
+.clu-history-count {
+  font-size: var(--fs-cmd);
+  font-weight: 600;
+}
+.clu-history-spacer {
+  flex: 1;
+}
+.clu-history-search {
+  box-sizing: border-box;
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--row-r);
+  background: var(--surface-2);
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+.clu-history-search::placeholder {
+  color: var(--ink-2);
+}
+.clu-history :focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+.clu-history-day h2 {
+  margin: 20px 0 6px;
+  padding: 0 var(--row-px);
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.clu-history-day ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-history-row {
+  display: flex;
+  align-items: center;
+  gap: var(--row-gap);
+  height: var(--row-h);
+  padding: 0 4px 0 var(--row-px);
+  border-radius: var(--row-r);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.clu-history-row:hover,
+.clu-history-row:focus-within {
+  background: var(--hover-ink);
+  transition-duration: var(--t-fast);
+}
+.clu-history-row[data-selected] {
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+}
+.clu-history-check {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--primary);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease-out);
+}
+.clu-history-row:hover .clu-history-check,
+.clu-history-check:focus-visible,
+.clu-history[data-selecting] .clu-history-check {
+  opacity: 1;
+}
+.clu-history-time {
+  flex: none;
+  width: 64px;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}
+.clu-history-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--row-gap);
+  min-width: 0;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.clu-history-favicon {
+  flex: none;
+  width: var(--fav);
+  height: var(--fav);
+  border-radius: 3px;
+}
+.clu-history-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-history-host {
+  flex: none;
+  max-width: 40%;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-history-more {
+  flex: none;
+  opacity: 0;
+}
+.clu-history-row:hover .clu-history-more,
+.clu-history-row:focus-within .clu-history-more,
+.clu-history-more[aria-expanded='true'] {
+  opacity: 1;
+}
+.clu-history-empty {
+  margin: 64px 0;
+  color: var(--ink-2);
+  text-align: center;
+}
+.clu-history-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+.clu-history-layer.is-scrim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scrim);
+}
+.clu-history-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}

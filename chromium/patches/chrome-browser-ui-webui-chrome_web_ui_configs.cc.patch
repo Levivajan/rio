@@ -1,0 +1,20 @@
+diff --git a/chrome/browser/ui/webui/chrome_web_ui_configs.cc b/chrome/browser/ui/webui/chrome_web_ui_configs.cc
+index 105d9e9726a92518871a049ff44d8c8e0f488656..1f64cb2ca2964b5601c2b0bae5674feb39f88a34 100644
+--- a/chrome/browser/ui/webui/chrome_web_ui_configs.cc
++++ b/chrome/browser/ui/webui/chrome_web_ui_configs.cc
+@@ -59,6 +59,7 @@
+ #include "chrome/browser/ui/webui/translate_internals/translate_internals_ui.h"
+ #include "chrome/browser/ui/webui/usb_internals/usb_internals_ui.h"
+ #include "chrome/browser/ui/webui/version/version_ui.h"
++#include "clu/browser/ui/webui/clu_webui.h"
+ #include "components/enterprise/buildflags/buildflags.h"
+ #include "components/safe_browsing/buildflags.h"
+ #include "components/security_interstitials/content/connection_help_ui.h"
+@@ -531,4 +532,7 @@ void RegisterChromeWebUIConfigs() {
+   map.AddWebUIConfig(std::make_unique<skills::SkillsUIConfig>());
+ #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX) || \
+         // BUILDFLAG(IS_CHROMEOS)
++
++  // Clu: chrome://clu-frame and chrome://clu-overlay.
++  clu::RegisterCluWebUIConfigs(map);
+ }

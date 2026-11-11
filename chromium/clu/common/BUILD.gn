@@ -1,0 +1,5 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+source_set("urls") {
+  public = [ "clu_urls.h" ]
+}

@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.h b/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.h
+index 60cf7ccc7026cb6129147c737d98bf7e6c6eae3c..af7aa37670c91f0efaa929af89b03676a427c0b1 100644
+--- a/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.h
++++ b/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.h
+@@ -181,7 +181,8 @@ class BrowserViewLayoutImpl : public BrowserViewLayout {
+   // Retrieve dimensions of modal dialogs.
+ 
+   // Gets the top of the dialog anchoring area, in local coordinates.
+-  int GetDialogTop(const ProposedLayout& layout) const;
++  // Clu: virtual, so the Clu layout drops dialogs from its page card.
++  virtual int GetDialogTop(const ProposedLayout& layout) const;
+ 
+   // Gets the bottom of the dialog anchoring area, in local coordinates.
+   int GetDialogBottom(const ProposedLayout& layout) const;

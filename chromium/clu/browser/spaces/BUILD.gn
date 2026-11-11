@@ -1,0 +1,72 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Spaces and profiles across the browser (docs/chromium/m4.md). `:core` is the pure list and its rules, ported from
+# src/shared/spaces.ts and src/main/spaces; `:prefs` the Local State prefs, alone so //chrome/browser/prefs:impl can
+# register them; `:service` the browser-wide service over Local State and ProfileManager. Upstream, only
+# //chrome/browser/prefs:impl depends on `:prefs`; the model's factory depends on `:service`.
+
+source_set("core") {
+  sources = [
+    "clu_space_list.cc",
+    "clu_space_list.h",
+    "clu_space_rules.cc",
+    "clu_space_rules.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//base:i18n",
+    "//clu/browser/ui/webui:bridge",
+    "//third_party/icu",
+  ]
+}
+
+source_set("prefs") {
+  sources = [
+    "clu_spaces_prefs.cc",
+    "clu_spaces_prefs.h",
+  ]
+  deps = [
+    "//base",
+    "//clu/browser/settings:prefs",
+    "//clu/browser/site:core",
+    "//components/prefs",
+  ]
+}
+
+source_set("service") {
+  sources = [
+    "clu_spaces_service.cc",
+    "clu_spaces_service.h",
+  ]
+  public_deps = [
+    ":core",
+    ":prefs",
+    "//base",
+    "//clu/browser/model:model_service",
+  ]
+  deps = [
+    "//chrome/browser:browser_process",
+    "//chrome/browser/lifetime",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/profiles:profile_manager",
+    "//chrome/browser/profiles:profile_util",
+    "//chrome/common:constants",
+    "//clu/browser/importer:core",
+    "//clu/browser/settings:prefs",
+    "//components/prefs",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_space_list_unittest.cc",
+    "clu_space_rules_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    "//base",
+    "//base/test:test_support",
+    "//testing/gtest",
+  ]
+}

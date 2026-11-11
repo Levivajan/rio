@@ -1,0 +1,180 @@
+/* Engine surfaces. Each passive view is the surface's rect, 8 px larger than the card on each side. --shadow-2 blurs
+   past that and clips to a hard edge, so these cards use --shadow-1 and a hairline to stand off a page of any color. */
+.clu-engine-float {
+  position: fixed;
+  inset: 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px 0 12px;
+  border-radius: var(--pop-r);
+  border: 1px solid var(--hover-ink);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+  font-size: var(--fs-row);
+  animation: clu-engine-float-in var(--t-fade) var(--ease-out);
+}
+/* These views are too short to show a tooltip whole; aria-label still names the button. */
+.clu-engine-float .clu-tooltip {
+  display: none;
+}
+@keyframes clu-engine-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.clu-find-bar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.clu-find-count {
+  flex: none;
+  padding: 0 6px;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+  font-variant-numeric: tabular-nums;
+}
+.clu-zoom-pill {
+  justify-content: center;
+  padding: 0 6px;
+}
+.clu-zoom {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.clu-zoom-percent {
+  min-width: 44px;
+  text-align: center;
+  color: var(--ink);
+  font-size: var(--fs-row);
+  font-variant-numeric: tabular-nums;
+}
+/* The view is the widest a notice gets, and the card hugs its text in the middle of it. */
+.clu-fullscreen-notice {
+  position: fixed;
+  inset: 8px;
+  display: flex;
+  justify-content: center;
+}
+.clu-fullscreen-notice .clu-engine-float {
+  position: static;
+  padding: 0 12px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 42px;
+}
+.clu-unresponsive {
+  gap: 6px;
+}
+.clu-unresponsive-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-prompt-text {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+  font-size: var(--fs-row);
+  overflow-wrap: anywhere;
+}
+.clu-prompt-notice {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: var(--fs-row);
+  font-weight: 600;
+}
+.clu-prompt-field {
+  display: block;
+  margin: 0 0 10px;
+  font-size: var(--fs-2);
+  color: var(--ink-2);
+}
+.clu-prompt-list {
+  max-height: 240px;
+  margin: 0 0 16px;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+}
+.clu-prompt-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: var(--fs-row);
+  overflow-wrap: anywhere;
+}
+.clu-prompt-option input {
+  flex: none;
+  margin: 3px 0 0;
+}
+.clu-prompt-option:hover {
+  background: var(--hover-ink);
+}
+.clu-prompt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.clu-page-menu {
+  position: fixed;
+  animation: clu-engine-float-in var(--t-fade) var(--ease-out);
+}
+/* On the list itself: overflow on the wrapper would clip the list's shadow. */
+.clu-page-menu > .clu-menu {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+/* The swipe arrow: a disc that slides in from the page's edge with the fingers. */
+.clu-nav-arrow {
+  --slide: calc((1 - var(--progress)) * 64px);
+  position: fixed;
+  top: 20px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--hover-ink);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+  opacity: calc(0.4 + 0.6 * var(--progress));
+  transition: transform 60ms linear, background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.clu-nav-arrow[data-direction='back'] {
+  left: 12px;
+  transform: translateX(calc(-1 * var(--slide)));
+}
+.clu-nav-arrow[data-direction='forward'] {
+  right: 12px;
+  transform: translateX(var(--slide));
+}
+.clu-nav-arrow[data-armed='true'] {
+  background: var(--accent);
+  border-color: transparent;
+  color: #fff;
+}
+.clu-nav-arrow[data-settling] {
+  transition: transform var(--t-base) var(--ease-out), opacity var(--t-base) var(--ease-out);
+}
+.clu-nav-arrow[data-settling='commit'] {
+  opacity: 0;
+}

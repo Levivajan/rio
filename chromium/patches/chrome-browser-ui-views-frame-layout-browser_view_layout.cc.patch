@@ -1,0 +1,38 @@
+diff --git a/chrome/browser/ui/views/frame/layout/browser_view_layout.cc b/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+index 08df6d9f5521d2c36f1e25c15ee7f6f6054c74fb..8b9736bffd05d8c7b6c0615c6ef001599fb4d6be 100644
+--- a/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
++++ b/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+@@ -19,6 +19,8 @@
+ #include "chrome/browser/ui/views/frame/layout/browser_view_tabbed_layout_impl.h"
+ #include "chrome/browser/ui/views/frame/multi_contents_view.h"
+ #include "chrome/browser/ui/web_applications/app_browser_controller.h"
++#include "clu/browser/ui/views/frame/browser_view_clu_layout_impl.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "components/web_modal/web_contents_modal_dialog_host.h"
+ #include "ui/views/view.h"
+ #include "ui/views/widget/widget.h"
+@@ -142,8 +144,9 @@ std::unique_ptr<BrowserViewLayout> BrowserViewLayout::CreateLayout(
+   if (browser) {
+     switch (browser->GetType()) {
+       case BrowserWindowInterface::Type::TYPE_NORMAL:
+-        return std::make_unique<BrowserViewTabbedLayoutImpl>(
+-            std::move(delegate), std::move(views));
++        // Clu: normal windows use the Clu shell layout (docs/chromium/m2-shell.md).
++        return clu::CreateBrowserViewCluLayout(std::move(delegate), browser,
++                                               std::move(views));
+       case BrowserWindowInterface::Type::TYPE_APP:
+       case BrowserWindowInterface::Type::TYPE_APP_POPUP: {
+         bool is_web_app =
+@@ -158,6 +161,12 @@ std::unique_ptr<BrowserViewLayout> BrowserViewLayout::CreateLayout(
+             std::move(delegate), std::move(views), is_web_app);
+       }
+       case BrowserWindowInterface::Type::TYPE_POPUP:
++        // Clu: its Mini window is a popup with the Clu layout (docs/chromium/m6.md).
++        if (clu::IsCreatingMiniWindow()) {
++          return clu::CreateBrowserViewCluLayout(std::move(delegate), browser,
++                                                 std::move(views));
++        }
++        [[fallthrough]];
+       case BrowserWindowInterface::Type::TYPE_DEVTOOLS:
+       case BrowserWindowInterface::Type::TYPE_FLOATING:
+         return std::make_unique<BrowserViewPopupLayoutImpl>(std::move(delegate),

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Harbor News</title>
+    <link>/tabs/a.html</link>
+    <item>
+      <title>Boats are back</title>
+      <link>/tabs/a.html</link>
+    </item>
+    <item>
+      <title><![CDATA[Fish & chips]]></title>
+      <link>/tabs/b.html</link>
+    </item>
+    <item>
+      <title>A script link is never a row</title>
+      <link>javascript:alert(1)</link>
+    </item>
+  </channel>
+</rss>

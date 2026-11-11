@@ -1,0 +1,30 @@
+/* Site tweaks section of clu://settings. Rows are the shared card rows (controls.css); a site key of any
+   length stays on one line. */
+.clu-site-tweaks .clu-group + .clu-group {
+  margin-top: 12px;
+}
+.clu-site-tweaks-error {
+  margin: 0 0 8px;
+  color: var(--danger);
+  font-size: var(--fs-hint);
+}
+.clu-site-tweak-site,
+.clu-site-tweak-detail,
+.clu-site-tweaks-confirm-site {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-site-tweaks-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scrim);
+}
+.clu-site-tweaks-confirm-site {
+  margin: 0 0 4px;
+  font-weight: 500;
+}

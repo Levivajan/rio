@@ -1,0 +1,22 @@
+--- a/chrome/browser/ui/views/frame/browser_view.cc
++++ b/chrome/browser/ui/views/frame/browser_view.cc
+@@ -257,6 +257,7 @@
+ #include "chrome/grit/branded_strings.h"
+ #include "chrome/grit/generated_resources.h"
+ #include "chrome/grit/theme_resources.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "components/autofill/core/common/autofill_payments_features.h"
+ #include "components/collaboration/public/messaging/message.h"
+ #include "components/enterprise/buildflags/buildflags.h"
+@@ -4683,6 +4684,11 @@
+     return views::ClientView::NonClientHitTest(point);
+   }
+ #endif  // BUILDFLAG(IS_MAC)
++
++  // Clu: the frame WebUI's drag areas are the window's title bar.
++  if (clu::IsWindowDragArea(browser(), this, point)) {
++    return HTCAPTION;
++  }
+ 
+   // Since the TabStrip only renders in some parts of the top of the window,
+   // the un-obscured area is considered to be part of the non-client caption

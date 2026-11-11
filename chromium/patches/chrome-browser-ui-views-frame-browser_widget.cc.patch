@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/ui/views/frame/browser_widget.cc b/chrome/browser/ui/views/frame/browser_widget.cc
+index df70a8b38c53cbd6ecc03f54f264dd54b268ae92..add63552e53ae9c8302935154081d3e2cd284032 100644
+--- a/chrome/browser/ui/views/frame/browser_widget.cc
++++ b/chrome/browser/ui/views/frame/browser_widget.cc
+@@ -34,6 +34,7 @@
+ #include "chrome/browser/ui/views/frame/top_container_view.h"
+ #include "chrome/browser/ui/web_applications/app_browser_controller.h"
+ #include "chrome/common/chrome_switches.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "ui/base/hit_test.h"
+ #include "ui/base/mojom/menu_source_type.mojom-shared.h"
+ #include "ui/base/mojom/window_show_state.mojom.h"
+@@ -501,6 +502,8 @@ ui::ColorProviderKey BrowserWidget::GetColorProviderKey() const {
+     key.app_controller = app_controller;
+     key.app_background_color = app_controller->GetBackgroundColor();
+   }
++  // Clu: Clu windows paint Chromium's surfaces in Clu's colors.
++  clu::AdjustColorProviderKey(browser_view_->browser(), key);
+ 
+ #if BUILDFLAG(IS_CHROMEOS)
+   // ChromeOS SystemWebApps use the OS theme all the time.

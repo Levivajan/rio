@@ -1,0 +1,67 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Passkey fixture</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 40px; max-width: 420px; }
+  button, input { font: inherit; margin: 4px 0; }
+  form { margin-top: 24px; display: grid; gap: 6px; }
+</style>
+<h1>Sign in</h1>
+<button id="create" type="button">Create a passkey</button>
+<button id="get" type="button">Sign in with a passkey</button>
+<p id="status">Ready</p>
+<form id="password">
+  <input id="user" autocomplete="username webauthn" placeholder="Email">
+  <input id="pass" type="password" autocomplete="current-password" placeholder="Password">
+  <button type="submit">Sign in with password</button>
+</form>
+<script>
+  // Results land in window.results (newest last) so specs read them through page.evaluate; ms is how long the
+  // request took to settle.
+  window.results = []
+  const rnd = (n) => crypto.getRandomValues(new Uint8Array(n))
+  async function run(kind, fn) {
+    const t0 = performance.now()
+    let r
+    try {
+      const cred = await fn()
+      r = { kind, ok: true, type: cred && cred.type, ms: Math.round(performance.now() - t0) }
+    } catch (err) {
+      r = { kind, ok: false, name: err.name, ms: Math.round(performance.now() - t0) }
+    }
+    window.results.push(r)
+    document.getElementById('status').textContent = r.ok ? `${kind}: ok` : `${kind}: ${r.name}`
+    return r
+  }
+  window.createPasskey = () =>
+    run('create', () =>
+      navigator.credentials.create({
+        publicKey: {
+          rp: { name: 'Fixture', id: location.hostname },
+          user: { id: rnd(16), name: 'ada@example.com', displayName: 'Ada' },
+          challenge: rnd(32),
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+          authenticatorSelection: { residentKey: 'required', userVerification: 'preferred' }
+        }
+      })
+    )
+  window.getPasskey = (mediation) =>
+    run(mediation === 'conditional' ? 'conditional' : 'get', () =>
+      navigator.credentials.get({ publicKey: { challenge: rnd(32), rpId: location.hostname, userVerification: 'preferred' }, mediation })
+    )
+  // A credential no authenticator holds (clu_browsertests: the failure path leaves the password form usable).
+  window.getUnknownPasskey = () =>
+    run('unknown', () =>
+      navigator.credentials.get({
+        publicKey: { challenge: rnd(32), rpId: location.hostname, allowCredentials: [{ type: 'public-key', id: rnd(16) }] }
+      })
+    )
+  document.getElementById('create').addEventListener('click', () => window.createPasskey())
+  document.getElementById('get').addEventListener('click', () => window.getPasskey())
+  document.getElementById('password').addEventListener('submit', (e) => {
+    e.preventDefault()
+    document.getElementById('status').textContent = `Signed in as ${document.getElementById('user').value} with a password`
+  })
+  // ?probe=1 starts a silent autofill probe on load, as passkey sites do.
+  if (new URLSearchParams(location.search).has('probe')) window.getPasskey('conditional')
+</script>

@@ -1,0 +1,43 @@
+/* clu://about. Values come from tokens.css. */
+.about section {
+  margin: 0 0 32px;
+}
+.about h2 {
+  margin: 0 0 12px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.about-status {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+}
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.about-table th {
+  padding: 6px 12px 6px 0;
+  text-align: left;
+  font-size: var(--fs-2);
+  font-weight: 600;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--surface-2);
+}
+.about-table td {
+  height: var(--row-h);
+  padding: 0 12px 0 0;
+  border-bottom: 1px solid var(--surface-2);
+  overflow-wrap: anywhere;
+}
+.about-table .about-num {
+  text-align: right;
+  white-space: nowrap;
+}
+.about-table th:last-child,
+.about-table td:last-child {
+  padding-right: 0;
+}

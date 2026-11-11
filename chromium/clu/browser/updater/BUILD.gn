@@ -1,0 +1,46 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Clu's updates (docs/chromium/m12.md): the rules (feeds, keys, versions, app.update's status), the browser-wide
+# service, and on Mac the Sparkle driver. Sparkle itself is not linked: package.sh puts Sparkle.framework into the
+# app bundle and the driver loads it at run time.
+source_set("rules") {
+  sources = [
+    "clu_update_rules.cc",
+    "clu_update_rules.h",
+  ]
+  public_deps = [
+    "//base",
+    "//url",
+  ]
+}
+
+source_set("service") {
+  sources = [
+    "clu_update_service.cc",
+    "clu_update_service.h",
+  ]
+  public_deps = [
+    ":rules",
+    "//base",
+  ]
+  if (is_mac) {
+    sources += [ "clu_sparkle_update_driver_mac.mm" ]
+    frameworks = [ "Foundation.framework" ]
+  }
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_update_rules_unittest.cc",
+    "clu_update_service_unittest.cc",
+  ]
+  deps = [
+    ":rules",
+    ":service",
+    "//base",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//url",
+  ]
+}

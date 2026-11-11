@@ -1,0 +1,52 @@
+/* Tidy Today: the broom and "Tidy" on the Today divider, a hairline, then Clear without its arrow
+   (folder/drag-9.56.png at the 213 width: Tidy x 107 to 154, the hairline at x 158, Clear from 162; the divider's line
+   ends at x 106). Shown while the pointer is over the sidebar, fading in as Clear does. */
+.clu-today-tidy {
+  position: absolute;
+  position-anchor: --clu-today;
+  top: anchor(top);
+  right: calc(anchor(right) + var(--row-px) + 41px);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--pill-placeholder);
+  font: inherit;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 150ms var(--ease-out),
+    visibility 0ms linear 150ms,
+    color var(--t-fast) var(--ease-out);
+  -webkit-app-region: no-drag;
+}
+.clu-today-tidy::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: -4.5px;
+  width: 1px;
+  height: 12px;
+  background: var(--today-divider);
+}
+.clu-today-tidy:hover {
+  color: var(--glyph);
+}
+.clu-sidebar:is(:hover, :has(:focus-visible)) .clu-today-tidy {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0ms;
+}
+.clu-tab-list:has(.clu-today-tidy) .clu-today-clear > svg {
+  display: none;
+}
+.clu-sidebar:is(:hover, :has(:focus-visible)):has(.clu-today-tidy) .clu-today-divider[data-clearable='true']::before {
+  right: calc(var(--row-px) + 89px);
+}

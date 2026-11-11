@@ -1,0 +1,36 @@
+diff --git a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+index c14a8b0fb5f2b4804462d61db840690e6f2644a9..6239550098a8cd907e710347167aee7ea4c47932 100644
+--- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
++++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+@@ -547,6 +547,9 @@ void AddAiStrings(content::WebUIDataSource* html_source) {
+ #endif
+   };
+   html_source->AddLocalizedStrings(kLocalizedStrings);
++  // Clu: the menu entry that opens Rio's AI features.
++  html_source->AddLocalizedString("rioAiInnovationsTitle",
++                                  IDS_SETTINGS_AI_INNOVATIONS_PAGE_TITLE);
+   html_source->AddLocalizedString("aiPageTitle",
+                                   features::IsWebuiRefresh2026Enabled()
+                                       ? IDS_SETTINGS_AI_PAGE_TITLE
+@@ -2485,7 +2488,8 @@ std::string GetPeopleSignInPromptSecondaryWithAccount(Profile* profile) {
+ void AddPeopleStrings(content::WebUIDataSource* html_source, Profile* profile) {
+   static constexpr webui::LocalizedString kLocalizedStrings[] = {
+       // Top level people strings:
+-      {"peoplePageTitle", IDS_SETTINGS_PEOPLE},
++      // Clu: the section keeps the profile and import rows (docs/chromium/m12.md).
++      {"peoplePageTitle", IDS_OVERFLOW_MENU_ITEM_TEXT_PROFILE},
+       {"syncSettingsSavedToast", IDS_SETTINGS_SYNC_SETTINGS_SAVED_TOAST_LABEL},
+       {"manageGoogleAccount", IDS_SETTINGS_MANAGE_GOOGLE_ACCOUNT},
+       {"syncAndNonPersonalizedServices",
+@@ -3098,9 +3102,8 @@ void AddSearchInSettingsStrings(content::WebUIDataSource* html_source) {
+   };
+   html_source->AddLocalizedStrings(kLocalizedStrings);
+ 
+-  std::u16string help_text = l10n_util::GetStringFUTF16(
+-      IDS_SETTINGS_SEARCH_NO_RESULTS_HELP, chrome::kSettingsSearchHelpURL);
+-  html_source->AddString("searchNoResultsHelp", help_text);
++  // Clu: no link to Google's Chrome help center (docs/chromium/fixes.md).
++  html_source->AddString("searchNoResultsHelp", std::u16string());
+ }
+ 
+ void AddSearchStrings(content::WebUIDataSource* html_source, Profile* profile) {

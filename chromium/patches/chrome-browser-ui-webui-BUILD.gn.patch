@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/webui/BUILD.gn b/chrome/browser/ui/webui/BUILD.gn
+index 867d0cee383f40bd25250333374a6db70b72f625..411b6a5e183dd8b03cbe8b4b81772e2a41ac34ab 100644
+--- a/chrome/browser/ui/webui/BUILD.gn
++++ b/chrome/browser/ui/webui/BUILD.gn
+@@ -91,6 +91,7 @@ source_set("configs") {
+     "//chrome/browser/ui/webui/translate_internals",
+     "//chrome/browser/ui/webui/usb_internals",
+     "//chrome/browser/ui/webui/version",
++    "//clu/browser/ui/webui",
+     "//components/lens:buildflags",
+     "//components/notebooks/internals/webui",
+     "//components/webui/user_actions",

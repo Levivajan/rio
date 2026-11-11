@@ -1,0 +1,58 @@
+{
+  "name": "clu",
+  "productName": "Rio",
+  "version": "0.1.0",
+  "description": "Rio, a desktop web browser for macOS",
+  "private": true,
+  "type": "module",
+  "author": "The Rio Authors",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "npm run ui:fake",
+    "build": "npm run build:webui",
+    "typecheck": "tsc -b tsconfig.node.json tsconfig.web.json e2e/tsconfig.json",
+    "lint": "eslint .",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "verify": "npm run typecheck && npm run lint && npm run test:unit && npm run gen:chromium -- --check && npm run build:webui && npm run test:webui && npm run test:chromium",
+    "test:chromium": "scripts/chromium/test.sh --static",
+    "icon": "node scripts/make-icon.mjs",
+    "gen:chromium": "node scripts/chromium/run-ts.mjs scripts/chromium/gen-mojom.ts",
+    "build:webui": "node scripts/chromium/build-webui.mjs",
+    "ui:fake": "node scripts/chromium/ui-fake.mjs",
+    "test:webui": "playwright test -c playwright.webui.config.ts",
+    "package": "scripts/chromium/package.sh",
+    "package:smoke": "scripts/chromium/package-smoke.sh",
+    "update:smoke": "scripts/chromium/update-smoke.sh"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
+    "@resvg/resvg-js": "2.6.2",
+    "@tailwindcss/vite": "4.3.5",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "axe-core": "4.14.0",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "jsdom": "31.0.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwindcss": "4.3.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.6",
+    "vitest": "5.1.0"
+  }
+}

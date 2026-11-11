@@ -1,0 +1,29 @@
+/* The row scrolls sideways when the pinned actions overflow the sidebar. */
+.clu-action-row {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  height: 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-app-region: no-drag;
+}
+.clu-action-row .clu-action-button {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--tool-r);
+}
+.clu-action-row .clu-action-button[aria-disabled='true'] img {
+  opacity: 0.45;
+}
+.clu-action-row .clu-action-button img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+.clu-action-letter {
+  font-size: 11px;
+  font-weight: 600;
+}

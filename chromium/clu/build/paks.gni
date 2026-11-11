@@ -1,0 +1,15 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# What chrome/chrome_paks.gni adds to resources.pak for Clu (patch chrome-chrome_paks.gni.patch).
+clu_extra_paks = [
+  "$root_gen_dir/clu/clu_frame_resources.pak",
+  "$root_gen_dir/clu/clu_mojom_resources.pak",
+  "$root_gen_dir/clu/clu_overlay_resources.pak",
+  "$root_gen_dir/clu/clu_settings_resources.pak",
+]
+clu_extra_pak_deps = [ "//clu/resources" ]
+if (is_mac) {
+  # The alternate app icons (docs/chromium/icons.md).
+  clu_extra_paks += [ "$root_gen_dir/clu/clu_app_icon_resources.pak" ]
+  clu_extra_pak_deps += [ "//clu/browser/app_icon:resources" ]
+}

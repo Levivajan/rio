@@ -1,0 +1,17 @@
+diff --git a/chrome/browser/ui/views/extensions/extension_keybinding_registry_views.cc b/chrome/browser/ui/views/extensions/extension_keybinding_registry_views.cc
+index 2692110fe172fa7f96eee1ca0e9eb81697cc5036..08f4cf54b42bc6119098350789cc7abeb3c6679b 100644
+--- a/chrome/browser/ui/views/extensions/extension_keybinding_registry_views.cc
++++ b/chrome/browser/ui/views/extensions/extension_keybinding_registry_views.cc
+@@ -74,6 +74,12 @@ bool ExtensionKeybindingRegistryViews::RegisterAccelerator(
+     const ui::Accelerator& accelerator,
+     const extensions::ExtensionId& extension_id,
+     const std::string& command_name) {
++  // Clu: a chord the browser window already holds at high priority (Clu's key
++  // table, docs/chromium/m5.md) stays the window's; a second high-priority
++  // handler would DCHECK.
++  if (focus_manager_->HasPriorityHandler(accelerator)) {
++    return false;
++  }
+   focus_manager_->RegisterAccelerator(accelerator,
+                                       kExtensionAcceleratorPriority, this);
+   return true;

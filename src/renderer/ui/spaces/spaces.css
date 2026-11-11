@@ -1,0 +1,375 @@
+/* Spaces styles: switcher row, slider panels and the header rename field. */
+.clu-space-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+/* The bottom bar: the space items sit centered
+   between the Library and +, each a 36 wide hit box on a 34 pitch (they overlap by 2). When they do not fit the boxes
+   shrink evenly, the active one never under 24 and the others not under 16.5. Hover draws a 32 box centered in the
+   hit box. */
+.clu-space-switcher {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: 1px;
+  gap: 0;
+}
+/* The row sits at the window bottom, so its tooltips are pinned above the bar, not hung from the pointer. */
+.clu-space-bar .clu-tooltip {
+  top: auto !important;
+  bottom: calc(100% + 3.5px);
+  left: 0 !important;
+}
+.clu-space-switcher[data-dragging='true'] .clu-tooltip {
+  display: none;
+}
+.clu-space-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tool-box);
+  height: var(--tool-box);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tool-r);
+  background: transparent;
+  color: var(--glyph);
+  font: inherit;
+  cursor: default;
+  transition: background-color var(--t-base) var(--ease-out);
+}
+/* Each item sits in its tooltip's anchor, which is the flex item. */
+.clu-space-switcher > .clu-tooltip-anchor {
+  flex: 0 1 var(--switch-hit);
+  min-width: 16.5px;
+  margin-inline: calc((var(--switch-pitch) - var(--switch-hit)) / 2);
+}
+.clu-space-switcher > .clu-tooltip-anchor:has(> .clu-space-icon[aria-pressed='true']) {
+  min-width: 24px;
+}
+.clu-space-switcher > .clu-tooltip-anchor:has(> .clu-space-icon[data-kind='dot'][aria-pressed='false']) {
+  min-width: 12px;
+}
+.clu-space-placeholder {
+  display: inline-flex;
+  flex: 0 1 var(--switch-hit);
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: var(--tool-box);
+  margin-inline: calc((var(--switch-pitch) - var(--switch-hit)) / 2);
+}
+.clu-space-placeholder > .clu-space-dot {
+  background: var(--glyph);
+}
+.clu-space-icon {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  touch-action: none;
+}
+.clu-space-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(0px, calc(50% - var(--tool-box) / 2));
+  right: max(0px, calc(50% - var(--tool-box) / 2));
+  border-radius: var(--tool-r);
+  transition: background-color var(--t-base) var(--ease-out);
+  pointer-events: none;
+}
+.clu-space-icon:hover {
+  background: transparent;
+}
+.clu-space-icon:hover::after {
+  background: var(--button-hover);
+  transition-duration: var(--t-fast);
+}
+.clu-space-icon > * {
+  position: relative;
+  z-index: 1;
+}
+.clu-space-icon[data-dragging='true'] {
+  z-index: 2;
+  opacity: 0.85;
+  transition: none;
+}
+.clu-space-icon[data-drop]::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+.clu-space-icon[data-drop='before']::before {
+  left: -1px;
+}
+.clu-space-icon[data-drop='after']::before {
+  right: -1px;
+}
+
+.clu-space-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--switch-icon);
+  height: var(--switch-icon);
+  font-size: var(--switch-icon);
+  line-height: 1;
+}
+/* Switcher glyphs (M11): an inactive space is its glyph in the sidebar's own hue (the luminosity
+   blend keeps the shape's light and dark and takes the color from the sidebar under it) or an 8 pt dot; the
+   active one shows its full color with no ring and no pill, and its dot goes the toolbar glyph's dark. A hovered
+   inactive glyph shows in full too. */
+.clu-space-emoji {
+  mix-blend-mode: luminosity;
+  opacity: 0.6;
+}
+.clu-space-dot {
+  width: var(--switch-dot);
+  height: var(--switch-dot);
+  border-radius: 50%;
+  background: var(--glyph-inactive);
+}
+.clu-space-icon[aria-pressed='true'] .clu-space-dot,
+.clu-space-icon:hover .clu-space-dot {
+  background: var(--glyph);
+}
+.clu-space-icon[aria-pressed='true'] .clu-space-emoji,
+.clu-space-icon:hover .clu-space-emoji {
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+/* A symbol is a monochrome glyph: the dot's colors, inactive then the toolbar glyph's dark. */
+.clu-space-emoji[data-icon='symbol'] {
+  color: var(--glyph-inactive);
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+.clu-space-icon:is([aria-pressed='true'], :hover) .clu-space-emoji[data-icon='symbol'] {
+  color: var(--glyph);
+}
+
+.clu-sidebar-creating {
+  flex: 1;
+}
+.clu-space-slider {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* The panels carry the favorites and the name row too: the clip reaches the sidebar's edge, so the name row's
+     full-width border and the sliding rows show out to it. */
+  overflow: clip;
+  overflow-clip-margin: var(--sidebar-inset);
+}
+.clu-space-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.clu-space-panel[data-outgoing='true'] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* The space header (M11): a 36 row in 13 pt at weight 590 inside the content inset. With an icon,
+   the icon takes the favicon slot (x 18) and the name the title's place (x 45); without one the name starts 8 in.
+   Hover fills the row like a tab row, the icon turns into the pinned chevron and the three-dot button shows. The
+   1 pt border across the whole sidebar shows only while rows scroll under the header. */
+.clu-space-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--row-gap);
+  flex: none;
+  min-height: var(--space-header-h);
+  margin: var(--tile-gap) 0 0;
+  padding: 0 var(--row-px) 0 8px;
+  border-radius: var(--row-hover-r);
+  font-size: var(--fs-header);
+  font-weight: var(--fw-header);
+  color: var(--label);
+  white-space: nowrap;
+  transition: background-color var(--t-hover-out) var(--ease-out);
+  -webkit-app-region: no-drag;
+}
+.clu-space-header:is([data-icon='emoji'], [data-icon='symbol']) {
+  padding-inline-start: var(--row-px);
+}
+.clu-space-header:hover {
+  background: var(--row-hover);
+  transition-duration: 0ms;
+}
+.clu-sidebar[data-scrolled] .clu-space-header::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--sidebar-inset) * -1);
+  right: calc(var(--sidebar-inset) * -1);
+  bottom: -1px;
+  height: 1px;
+  background: var(--divider);
+}
+.clu-space-header-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clu-space-header-icon {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+}
+.clu-space-header-emoji {
+  display: inline-flex;
+  font-size: calc(var(--fav) - 1px);
+  line-height: 1;
+}
+.clu-space-header-toggle,
+.clu-space-header-more {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fav);
+  height: var(--fav);
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--glyph);
+}
+/* Its own rounded-square hover over the row's, like the sidebar's other buttons, and a darker press. */
+.clu-space-header-more:hover {
+  background: var(--button-hover);
+}
+.clu-space-header-more:active {
+  background: var(--row-multi);
+}
+.clu-space-header-icon > .clu-space-header-toggle {
+  position: absolute;
+  inset: 0;
+}
+.clu-space-header-more {
+  margin-inline-end: calc(18.25px - var(--row-px) - var(--fav) / 2);
+}
+/* No icon: the name at x 16 at rest and "> name" with the name at x 23.5 while the 4.5 pt chevron from x 13 shows: on hover and while the pinned rows are hidden. The whole row is
+   the toggle. */
+.clu-space-header[data-icon='none'] {
+  padding-inline-start: calc(16px - var(--sidebar-inset));
+  transition: padding-inline-start var(--t-fast) var(--ease-out);
+}
+.clu-space-header[data-icon='none']:is(:hover, [data-collapsed='true'], :has(:focus-visible)) {
+  padding-inline-start: calc(23.5px - var(--sidebar-inset));
+}
+.clu-space-header[data-icon='none'] > .clu-space-header-toggle {
+  position: absolute;
+  /* The glyph's ink (its 1.6 stroke included) starts 0.95 into the box. */
+  left: calc(13px - var(--sidebar-inset) - 0.95px);
+  top: 50%;
+  width: 8px;
+  height: 10px;
+  margin-top: -5px;
+  pointer-events: none;
+}
+/* The chevron and "…" fade in and out with the row's hover (the shared .clu-reveal), and the emoji fades
+   the other way under the chevron. */
+.clu-space-header:hover,
+.clu-space-header[data-collapsed='true'] > .clu-space-header-icon,
+.clu-space-header[data-collapsed='true'] > .clu-space-header-toggle {
+  --revealed: 1;
+  --reveal-ease: var(--ease-out);
+}
+.clu-space-header-emoji {
+  opacity: calc(1 - var(--revealed, 0));
+  transition: opacity var(--t-reveal) var(--reveal-ease, var(--ease-in));
+}
+.clu-space-header-input {
+  flex: 1;
+  min-width: 0;
+  margin: -3px -4px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 6px;
+  outline: var(--focus);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.clu-space-panel[data-peer='true'] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Private window (PLAN 3.15): a dark frame and sidebar whatever the system appearance, and a marked header. */
+.clu-frame:has(.clu-sidebar[data-mode='private']) {
+  --ink: #f2f2f7;
+  --ink-2: #a8a8b3;
+  --surface: #2a2a2e;
+  --surface-2: #161618;
+  --hover-ink: rgb(255 255 255 / 8%);
+  --active-surface: rgb(255 255 255 / 12%);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 16%);
+  color-scheme: dark;
+  color: var(--ink);
+}
+.clu-space-header[data-private='true'] {
+  gap: 6px;
+}
+.clu-space-header-private {
+  flex: none;
+  color: var(--ink-2);
+}
+
+/* After Create Space: 🙌 on a white card over a soft glow, centered in the sidebar for a second. */
+.clu-new-space-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 18%), transparent) center / 240px 240px no-repeat;
+}
+.clu-new-space-card-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 80px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+  font-size: 34px;
+  animation: clu-new-space-pop 300ms var(--ease-out) both;
+}
+@keyframes clu-new-space-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+:root[data-reduced-motion='true'] .clu-new-space-card-tile {
+  animation: none;
+}
+
+/* A swipe moves the panels by transform only, written once per frame: give them their own layers. */
+.clu-space-slider[data-state='dragging'] .clu-space-panel {
+  will-change: transform;
+}

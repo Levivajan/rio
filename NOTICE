@@ -1,0 +1,26 @@
+Rio
+===
+
+Rio's own code is licensed under the GNU General Public License v3.0 only (LICENSE). Commercial licenses for closed-source use
+are described in COMMERCIAL.md. The commercial license covers only Rio's own code, not the components named below.
+
+Rio is built on Chromium, the open source browser project, and ships Chromium's code under Chromium's licenses (BSD-3-Clause
+for the project itself, plus the licenses of the third-party components listed below).
+
+This repository holds Rio's own code and a set of patches against Chromium 158. It does not contain the Chromium tree.
+The Chromium checkout that apply.sh patches (see README.md) carries the full license texts: LICENSE at the top of that
+checkout and a LICENSE or README.chromium file in each third_party directory.
+
+A built Rio.app lists every Chromium and third-party component with its license text on its credits page, about:credits.
+That page is generated from the Chromium checkout when the app is built. Redistribute it with any binary you ship.
+
+Third-party code that Rio adds outside Chromium:
+
+- EasyList and EasyPrivacy (https://easylist.to/), fetched at build time for the ad blocker and used under CC BY-SA 3.0.
+  Credit: the EasyList authors. See chromium/clu/third_party/easylist.
+- Sparkle 2 (https://sparkle-project.org/), downloaded by scripts/chromium/fetch-sparkle.sh at the version and checksum
+  pinned in chromium/sparkle.pin, and packaged into release builds for updates. Sparkle is under its own license
+  (MIT with bundled components); its license file ships in the app bundle.
+- npm packages for the UI build and tests, each under its own license (package.json, package-lock.json).
+
+"Chromium" and "Google Chrome" are trademarks of Google LLC. Rio is not affiliated with or endorsed by Google.

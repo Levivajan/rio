@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Scheme</title>
+  </head>
+  <body>
+    <p>prefers-color-scheme: <span id="scheme">unknown</span></p>
+    <script>
+      const query = matchMedia('(prefers-color-scheme: dark)')
+      const show = () => (document.getElementById('scheme').textContent = query.matches ? 'dark' : 'light')
+      query.addEventListener('change', show)
+      show()
+    </script>
+  </body>
+</html>

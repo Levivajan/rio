@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/extensions/browser_extension_window_controller.cc b/chrome/browser/extensions/browser_extension_window_controller.cc
+index 497220fc726c4e37c1685d459b69369cba6ee21a..f5053560866d88a507514add160052e4de88723e 100644
+--- a/chrome/browser/extensions/browser_extension_window_controller.cc
++++ b/chrome/browser/extensions/browser_extension_window_controller.cc
+@@ -20,6 +20,7 @@
+ #include "chrome/browser/ui/navigator/browser_navigator_params.h"
+ #include "chrome/common/extensions/api/tabs.h"
+ #include "chrome/common/webui_url_constants.h"
++#include "clu/browser/ui/webui/clu_tab_hooks.h"  // nogncheck
+ #include "components/sessions/core/session_id.h"
+ #include "content/public/common/content_features.h"
+ #include "extensions/buildflags/buildflags.h"
+@@ -280,6 +281,10 @@ base::ListValue BrowserExtensionWindowController::CreateTabList(
+ #else
+     CHECK(web_contents);
+ #endif
++    // Clu: a window's hidden placeholder page is no tab to the user.
++    if (clu::IsPlaceholderTab(web_contents)) {
++      continue;
++    }
+ 
+     const ExtensionTabUtil::ScrubTabBehavior scrub_tab_behavior =
+         ExtensionTabUtil::GetScrubTabBehavior(extension, context, web_contents);

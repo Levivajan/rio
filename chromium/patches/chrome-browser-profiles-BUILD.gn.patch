@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/profiles/BUILD.gn b/chrome/browser/profiles/BUILD.gn
+index a85eb865e50f1951ddc82e60c614d455de44bfc0..1d44c205be6f3c3b6cfcf40d7e90ee0542b41adc 100644
+--- a/chrome/browser/profiles/BUILD.gn
++++ b/chrome/browser/profiles/BUILD.gn
+@@ -904,6 +904,7 @@ source_set("profiles_extra_parts_impl") {
+     "//chrome/browser/webdata_services",
+     "//chrome/browser/webid",
+     "//chrome/common:chrome_features",
++    "//clu/browser/model:service",
+     "//components/autofill/content/browser",
+     "//components/breadcrumbs/core:status",
+     "//components/captive_portal/core:buildflags",

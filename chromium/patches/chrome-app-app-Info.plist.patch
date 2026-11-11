@@ -1,0 +1,35 @@
+diff --git a/chrome/app/app-Info.plist b/chrome/app/app-Info.plist
+index 6fada0a2b1a1f4b5675fc657a3a7b2337e43c4a1..98fed6738876a9a3004002f169c4963555e9f9c9 100644
+--- a/chrome/app/app-Info.plist
++++ b/chrome/app/app-Info.plist
+@@ -161,6 +161,12 @@
+ 	<string>APPL</string>
+ 	<key>CFBundleSignature</key>
+ 	<string>${CHROMIUM_CREATOR}</string>
++	<!-- Rio: user data in ~/Library/Application Support/Rio (docs/chromium/PLAN.md). -->
++	<key>CrProductDirName</key>
++	<string>Rio</string>
++	<!-- Rio: the Dock tile plug-in shows the chosen app icon while Rio is closed (docs/chromium/icons.md). -->
++	<key>NSDockTilePlugIn</key>
++	<string>RioDockTile.docktileplugin</string>
+ 	<key>NSAppleScriptEnabled</key>
+ 	<true/>
+ 	<key>OSAScriptingDefinition</key>
+@@ -234,7 +240,7 @@
+ 				<string>public.content</string>
+ 			</array>
+ 			<key>UTTypeDescription</key>
+-			<string>Chromium Extension</string>
++			<string>${CHROMIUM_SHORT_NAME} Extension</string>
+ 			<key>UTTypeIcons</key>
+ 			<dict>
+ 				<key>UTTypeIconBadgeName</key>
+@@ -262,7 +268,7 @@
+ 				<string>com.apple.web-internet-location</string>
+ 			</array>
+ 			<key>UTTypeDescription</key>
+-			<string>Chromium Shortcut</string>
++			<string>${CHROMIUM_SHORT_NAME} Shortcut</string>
+ 			<key>UTTypeIcons</key>
+ 			<dict>
+ 				<key>UTTypeIconBadgeName</key>

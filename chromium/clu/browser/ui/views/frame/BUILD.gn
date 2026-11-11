@@ -1,0 +1,133 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The shell layout math, ported from src/shared/shell/{layout,tween}.ts. Pure, so the unit tests need nothing else.
+source_set("layout_math") {
+  sources = [
+    "clu_layout.cc",
+    "clu_layout.h",
+    "clu_look_tokens.h",
+  ]
+  public_deps = [
+    "//base",
+    "//ui/gfx/geometry",
+  ]
+}
+
+# The hooks upstream targets call (clu_shell_hooks.h), declared here and implemented in :frame, which reaches chrome
+# through //chrome/browser/ui/views/frame:browser_view_layout_core_impl.
+source_set("hooks") {
+  public = [ "clu_shell_hooks.h" ]
+}
+
+# The look's color supplier (CluColorSupplier, NativeColorsFor): tokens and ui/color only, so clu_unittests links it
+# without chrome.
+source_set("look") {
+  sources = [
+    "clu_look.cc",
+    "clu_look.h",
+  ]
+  public_deps = [
+    ":layout_math",
+    "//skia",
+    "//ui/color",
+  ]
+  deps = [
+    "//base",
+    "//chrome/browser/ui/color:color_headers",
+  ]
+}
+
+# BrowserViewCluLayoutImpl, CluShell and CluAnchorView. Only BrowserViewLayout::CreateLayout() depends on it upstream,
+# so it uses the same narrow frame targets BrowserViewTabbedLayoutImpl uses, plus content, views and the WebUI
+# embedding context. It never depends on //clu/browser/ui/webui; that side attaches through CluShell::Client.
+source_set("frame") {
+  sources = [
+    "browser_view_clu_layout_impl.cc",
+    "browser_view_clu_layout_impl.h",
+    "clu_anchor_view.cc",
+    "clu_anchor_view.h",
+    "clu_key_equivalent.h",
+    "clu_look_hooks.cc",
+    "clu_pane_bar.cc",
+    "clu_pane_bar.h",
+    "clu_peek_view.cc",
+    "clu_peek_view.h",
+    "clu_shell.cc",
+    "clu_shell.h",
+    "clu_ui_zoom.cc",
+    "clu_ui_zoom.h",
+  ]
+  public_deps = [
+    ":hooks",
+    ":layout_math",
+    ":look",
+    "//base",
+    "//chrome/browser/ui/views/frame:browser_view_layout",
+    "//chrome/browser/ui/views/frame:browser_view_layout_delegate",
+    "//chrome/browser/ui/views/frame:browser_view_layout_impl",
+    "//chrome/browser/ui/views/frame:browser_view_layout_params",
+    "//content/public/browser",
+    "//ui/base",
+    "//ui/base/unowned_user_data",
+    "//ui/color",
+    "//ui/views",
+    "//ui/views/controls/webview",
+  ]
+  deps = [
+    "//chrome/app:command_ids",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/ui/browser_window",
+    "//chrome/browser/ui/color:color_headers",
+    "//chrome/browser/ui/exclusive_access",
+    "//chrome/browser/ui/tabs:tab_enums",
+    "//chrome/browser/ui/tabs:tab_strip",
+    "//chrome/browser/ui/views/frame:contents_container_view",
+    "//chrome/browser/ui/views/frame:contents_web_view",
+    "//chrome/browser/ui/views/frame:frame",
+    "//chrome/browser/ui/views/frame:multi_contents_view",
+    "//chrome/browser/ui/views/frame:vertical_tab_strip_background_blur_backdrop",
+    "//chrome/browser/ui/views/frame:vertical_tab_strip_region_view",
+    "//chrome/browser/ui/views/infobars",
+    "//chrome/browser/ui/views/side_panel",
+    "//chrome/browser/ui/views/tabs/organizer",
+    "//chrome/browser/ui/webui:webui_util",
+    "//clu/browser/commands",
+    "//clu/browser/multitask:core",
+    "//clu/common:urls",
+    "//components/input",
+    "//components/url_formatter",
+    "//components/vector_icons",
+    "//skia",
+    "//ui/compositor",
+    "//third_party/blink/public/common",
+    "//ui/content_accelerators",
+    "//ui/events",
+    "//ui/events/blink",
+    "//ui/gfx",
+    "//url",
+  ]
+  if (is_mac) {
+    sources += [
+      "clu_key_equivalent_mac.mm",
+      "clu_window_buttons_mac.mm",
+    ]
+    frameworks = [ "AppKit.framework" ]
+  }
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_layout_unittest.cc",
+    "clu_look_unittest.cc",
+  ]
+  deps = [
+    ":layout_math",
+    ":look",
+    "//chrome/browser/ui/color:color_headers",
+    "//skia",
+    "//ui/color",
+    "//testing/gtest",
+    "//ui/gfx:test_support",
+  ]
+}

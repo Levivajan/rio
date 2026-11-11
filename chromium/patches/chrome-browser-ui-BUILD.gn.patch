@@ -1,0 +1,12 @@
+diff --git a/chrome/browser/ui/BUILD.gn b/chrome/browser/ui/BUILD.gn
+index 88668a0b3e98099a62afc4cd0e9858ed7f4676e4..023af065a9d2fae19f547134cfad5069d09534f8 100644
+--- a/chrome/browser/ui/BUILD.gn
++++ b/chrome/browser/ui/BUILD.gn
+@@ -749,6 +749,7 @@ if (!is_android) {
+       "//chrome/browser/ui/webui/side_panel/customize_chrome",
+       "//chrome/browser/ui/webui/util",
+       "//chrome/browser/ui/window_feature_controller",
++      "//clu/browser/ui/views/frame:hooks",
+       "//components/bookmarks/browser",
+       "//components/dom_distiller/core",
+       "//components/feed:feature_list",

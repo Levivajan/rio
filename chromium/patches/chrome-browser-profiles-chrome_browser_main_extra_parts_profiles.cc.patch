@@ -1,0 +1,21 @@
+diff --git a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
+index a03bb1d3555013e7f20d580be4acf6edf81c202a..1122b9f3e3854f6599687c33be97ba2003ea2897 100644
+--- a/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
++++ b/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
+@@ -298,6 +298,7 @@
+ #include "chrome/browser/webid/federated_identity_permission_context_factory.h"
+ #include "chrome/common/buildflags.h"
+ #include "chrome/common/chrome_features.h"
++#include "clu/browser/model/clu_model_service_factory.h"
+ #include "components/autofill/content/browser/autofill_log_router_factory.h"
+ #include "components/breadcrumbs/core/breadcrumbs_status.h"
+ #include "components/captive_portal/core/buildflags.h"
+@@ -1575,6 +1576,8 @@ void ChromeBrowserMainExtraPartsProfiles::
+ 
+   WebDataServiceFactory::GetInstance();
+   webrtc_event_logging::WebRtcEventLogManagerKeyedServiceFactory::GetInstance();
++  // Clu: the tab tree and archive of each profile (docs/chromium/m3.md).
++  clu::EnsureCluServiceFactoriesBuilt();
+ }
+ 
+ void ChromeBrowserMainExtraPartsProfiles::PreProfileInit() {

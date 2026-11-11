@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Target</title>
+    <style>
+      body { font: 16px -apple-system, sans-serif; margin: 24px; }
+    </style>
+  </head>
+  <body>
+    <h1>Target page</h1>
+    <p id="query"></p>
+    <p><a id="next" href="/multitask/target.html?n=next">Next page</a></p>
+    <p>Clicks: <span id="clicks">0</span></p>
+    <script>
+      // Load counter per tab (sessionStorage survives reloads and history moves in one webContents).
+      sessionStorage.setItem('loads', String(Number(sessionStorage.getItem('loads') || 0) + 1))
+      document.getElementById('query').textContent = location.search
+      let clicks = 0
+      addEventListener('click', () => (document.getElementById('clicks').textContent = String(++clicks)))
+    </script>
+  </body>
+</html>

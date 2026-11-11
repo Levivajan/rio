@@ -1,0 +1,48 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Split view, Peek, the Mini window and the media card (docs/chromium/m6.md). `:core` is the pure rules; `:hooks`
+# declares the calls upstream patches make (implemented in //clu/browser/ui/webui, header only with no deps so
+# upstream targets reach no Clu code).
+
+source_set("core") {
+  sources = [
+    "clu_media_cards.cc",
+    "clu_media_cards.h",
+    "clu_mini_rules.cc",
+    "clu_mini_rules.h",
+    "clu_peek_rules.cc",
+    "clu_peek_rules.h",
+    "clu_split_rules.cc",
+    "clu_split_rules.h",
+  ]
+  public_deps = [
+    "//base",
+    "//ui/gfx/geometry",
+    "//url",
+  ]
+  deps = [
+    "//clu/browser/ui/views/frame:layout_math",
+    "//clu/browser/ui/webui:bridge",
+  ]
+}
+
+source_set("hooks") {
+  public = [ "clu_multitask_hooks.h" ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_media_cards_unittest.cc",
+    "clu_mini_rules_unittest.cc",
+    "clu_peek_rules_unittest.cc",
+    "clu_split_rules_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    "//base",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//url",
+  ]
+}

@@ -1,0 +1,141 @@
+@import 'tailwindcss';
+@import '../common/base.css';
+
+/* Overlay bundle styles. The root is transparent; only surfaces draw. */
+html,
+body,
+#root {
+  background: transparent;
+  overflow: hidden;
+}
+.clu-overlay-root {
+  position: fixed;
+  inset: 0;
+}
+.clu-overlay-root[data-scrim='modal'] {
+  background: var(--scrim);
+}
+.clu-center {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+/* The toast: one at a time inside the page card's top right corner, a light card tinted with the space's accent,
+   dark text and a bordered action at the right. It slides in 12 px from the right and fades in over 220 ms; a new
+   toast replaces the old one (a new key, so the motion plays again). */
+.clu-toasts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px;
+}
+.clu-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: 44px;
+  padding: 0 7px 0 14px;
+  border: 1px solid rgb(0 0 0 / 8%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 12%, #fff);
+  color: #1d1d1f;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  /* The shadow fits the view's 8 point margin; a 24 point blur was cut off flat at the view's top edge. */
+  box-shadow: 0 2px 6px var(--popover-shadow);
+  animation: clu-toast-in 220ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+.clu-toast > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@keyframes clu-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+/* The exit: the entry reversed over 180 ms, done as the browser removes the toast. */
+.clu-toast[data-leaving] {
+  animation: clu-toast-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+@keyframes clu-toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clu-toast,
+  .clu-toast[data-leaving] {
+    animation: none;
+  }
+}
+.clu-toast .clu-btn {
+  margin-left: auto;
+  border: 1px solid rgb(0 0 0 / 14%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 60%);
+  color: #1d1d1f;
+  font-weight: 600;
+}
+.clu-toast .clu-btn:hover:not(:disabled) {
+  background: #fff;
+}
+/* The copy toast's share button: 27 pt square. */
+.clu-toast .clu-toast-share {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid rgb(0 0 0 / 14%);
+  border-radius: 7px;
+  background: rgb(255 255 255 / 60%);
+  color: #1d1d1f;
+}
+.clu-toast .clu-toast-share:hover {
+  background: #fff;
+}
+.clu-command {
+  position: fixed;
+  top: 18%;
+  left: 50%;
+  width: min(640px, calc(100% - 64px));
+  transform: translateX(-50%);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.clu-command input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-cmd);
+}
+.clu-command [role='option'] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  margin: 0 6px 6px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--ink);
+}
+.clu-command [role='option'][aria-selected='true'] {
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+}

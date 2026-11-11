@@ -1,0 +1,76 @@
+/* The update card (docs/chromium/m12.md): a small card above the sidebar footer. */
+.clu-update {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px var(--row-px);
+  border-radius: var(--row-r);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  font-size: var(--fs-row);
+  -webkit-app-region: no-drag;
+}
+.clu-update-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.clu-update-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-update-detail {
+  margin: 0;
+  overflow-wrap: anywhere;
+  opacity: 0.7;
+  font-size: 12px;
+}
+.clu-update-close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: default;
+}
+.clu-update-close:hover {
+  background: var(--surface-2);
+  opacity: 1;
+}
+.clu-update-button {
+  height: 24px;
+  margin-top: 4px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: default;
+  transition: transform var(--t-press) var(--ease-out);
+}
+.clu-update-button:active {
+  transform: scale(var(--press-scale));
+}
+.clu-update-close:focus-visible,
+.clu-update-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.clu-update-button:disabled {
+  opacity: 0.6;
+}

@@ -1,0 +1,51 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The app settings AI tab's on-device model (docs/chromium/parity-ai.md). Apple's Foundation Models API is Swift only,
+# so it runs in a small tool, rio-ai (clu_ai_helper.swift), built with the SDK's swiftc and put in
+# Rio.app/Contents/Helpers; the browser asks it through clu_ai_client.h and falls back to its rules.
+
+source_set("ai") {
+  sources = [
+    "clu_ai_client.cc",
+    "clu_ai_client.h",
+    "clu_link_hover.cc",
+    "clu_link_hover.h",
+    "clu_shift_key.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//url" ]
+  if (is_mac) {
+    sources += [ "clu_shift_key_mac.mm" ]
+    frameworks = [ "AppKit.framework" ]
+  } else {
+    sources += [ "clu_shift_key.cc" ]
+  }
+}
+
+if (is_mac) {
+  action("ai_helper") {
+    script = "build_ai_helper.py"
+    sources = [ "clu_ai_helper.swift" ]
+    outputs = [ "$root_out_dir/rio-ai" ]
+    args = [
+      rebase_path("clu_ai_helper.swift", root_build_dir),
+      rebase_path("$root_out_dir/rio-ai", root_build_dir),
+    ]
+  }
+
+  # Into Rio.app (chrome_app's bundle_deps, patch chrome-BUILD.gn).
+  bundle_data("ai_helper_bundle_data") {
+    sources = [ "$root_out_dir/rio-ai" ]
+    outputs = [ "{{bundle_contents_dir}}/Helpers/{{source_file_part}}" ]
+    public_deps = [ ":ai_helper" ]
+  }
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [ "clu_ai_client_unittest.cc" ]
+  deps = [
+    ":ai",
+    "//testing/gtest",
+  ]
+}

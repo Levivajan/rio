@@ -1,0 +1,16 @@
+diff --git a/components/remote_cocoa/app_shim/browser_native_widget_window_mac.mm b/components/remote_cocoa/app_shim/browser_native_widget_window_mac.mm
+index ae93fe9bd90c4d63983cf824cf2c23ef39b36eed..7f8581f6bca27c3213ef5e1238fd260ae6e26461 100644
+--- a/components/remote_cocoa/app_shim/browser_native_widget_window_mac.mm
++++ b/components/remote_cocoa/app_shim/browser_native_widget_window_mac.mm
+@@ -84,8 +84,9 @@ - (CGFloat)_minXTitlebarWidgetInset {
+ // _getCachedWindowCornerRadius.
+ - (CGFloat)_getCachedWindowCornerRadius {
+   if (@available(macOS 26, *)) {
+-    return 13.0 /* widget position from top and left */ +
+-           7.0 /* widget radius */;
++    // Clu: the look's window radius (kWindowCornerRadius in
++    // clu/browser/ui/views/frame/clu_look_tokens.h).
++    return 16.5;
+   }
+   // Don't mess with the window radius before macOS 26, as concentricity was not
+   // a design element for those releases.

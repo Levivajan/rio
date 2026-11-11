@@ -1,0 +1,15 @@
+diff --git a/chrome/browser/extensions/component_extensions_allowlist/allowlist.cc b/chrome/browser/extensions/component_extensions_allowlist/allowlist.cc
+index 720671265ee9851248a0f6369f758f0872e31ca3..e4262f974f81dee2fefaad0cf9fae599ec83baf3 100644
+--- a/chrome/browser/extensions/component_extensions_allowlist/allowlist.cc
++++ b/chrome/browser/extensions/component_extensions_allowlist/allowlist.cc
+@@ -76,6 +76,10 @@ bool IsComponentExtensionAllowlisted(const std::string& extension_id) {
+   if (kAllowed.contains(extension_id)) {
+     return true;
+   }
++  // Clu: the blocker and Site tweaks host (clu/browser/site/clu_site_extension.h).
++  if (extension_id == "nefakicccnkadleninchkbeapobjmcnp") {
++    return true;
++  }
+ 
+ #if BUILDFLAG(IS_CHROMEOS)
+   if (extension_id == extension_misc::kODFSExtensionId) {

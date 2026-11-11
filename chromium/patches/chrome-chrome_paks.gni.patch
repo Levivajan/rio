@@ -1,0 +1,23 @@
+diff --git a/chrome/chrome_paks.gni b/chrome/chrome_paks.gni
+index 918f760012ed46b140791175b52cd30dde5c002b..6b58416cf160fa53b7f733bf0d18b4e9a9168240 100644
+--- a/chrome/chrome_paks.gni
++++ b/chrome/chrome_paks.gni
+@@ -7,6 +7,7 @@ import("//build/config/chrome_build.gni")
+ import("//build/config/locales.gni")
+ import("//chrome/browser/buildflags.gni")
+ import("//chrome/common/features.gni")
++import("//clu/build/paks.gni")
+ import("//components/compose/features.gni")
+ import("//components/enterprise/buildflags/buildflags.gni")
+ import("//components/safe_browsing/buildflags.gni")
+@@ -211,6 +212,10 @@ template("chrome_extra_paks") {
+       sources += invoker.additional_paks
+     }
+ 
++    # Clu: the frame, overlay and bridge WebUI resources.
++    sources += clu_extra_paks
++    deps += clu_extra_pak_deps
++
+     if (enable_extensions_core) {
+       sources += [
+         "$root_gen_dir/chrome/component_extension_resources.pak",

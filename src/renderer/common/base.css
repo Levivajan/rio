@@ -1,0 +1,269 @@
+/* Shared component styles for every Clu bundle. Values come from tokens.css. */
+@import './tokens.css';
+@import './controls.css';
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  font-family: var(--font);
+  font-size: var(--fs-row);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+.clu-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--row-r);
+  background: transparent;
+  color: var(--ink-2);
+  -webkit-app-region: no-drag;
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+.clu-icon-button:hover:not(:disabled) {
+  background: var(--hover-ink);
+  color: var(--ink);
+}
+.clu-icon-button:disabled {
+  opacity: 0.4;
+}
+/* Hover reveal: a control that shows only on hover fades in and settles from 94% over --t-reveal, ease-out
+   in and ease-in out, and a pointer turning back reverses it from where it is drawn. Its trigger sets --revealed: 1
+   and --reveal-ease: var(--ease-out); opacity and scale only, so it runs once per enter or leave on the compositor. */
+.clu-reveal {
+  opacity: var(--revealed, 0);
+  scale: calc(1 - (1 - var(--revealed, 0)) * var(--reveal-settle));
+  transition:
+    opacity var(--t-reveal) var(--reveal-ease, var(--ease-in)),
+    scale var(--t-reveal) var(--reveal-ease, var(--ease-in)),
+    background-color var(--t-fast) var(--ease-out);
+}
+.clu-reveal:focus-visible {
+  --revealed: 1;
+}
+
+.clu-tooltip-anchor {
+  position: relative;
+  display: inline-flex;
+}
+/* Tooltips (M11): a 28 pt pill, radius 14 with a tight corner toward the pointer (it hangs 9.5 right of and below
+   it; under the anchor for keyboard focus), the tint at 35% over white, 12 pt medium text, a soft shadow, then one
+   accent-tinted keycap per key of the command's shortcut. It appears in one frame and fades out over 280 ms. */
+.clu-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--keycap-label-gap);
+  height: var(--tip-h);
+  padding: 0 var(--tip-px);
+  border-radius: var(--tip-corner) var(--tip-r) var(--tip-r) var(--tip-r);
+  background: color-mix(in srgb, var(--tint) 35%, #fff);
+  color: var(--ink);
+  font-size: var(--fs-2);
+  font-weight: 500;
+  line-height: var(--tip-h);
+  white-space: nowrap;
+  box-shadow: var(--shadow-tip);
+  pointer-events: none;
+  z-index: 10;
+}
+/* Hung above the pointer: the tight corner moves to the bottom left, toward it. */
+.clu-tooltip[data-above] {
+  border-radius: var(--tip-r) var(--tip-r) var(--tip-r) var(--tip-corner);
+}
+.clu-tooltip:has(.clu-keycaps) {
+  padding-right: 4.5px;
+}
+/* The frame's pill is laid out but not drawn: the overlay draws it above the page card. */
+.clu-tooltip[data-remote] {
+  opacity: 0;
+}
+.clu-tooltip[data-closing] {
+  animation: clu-tip-out var(--tip-out) cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+@keyframes clu-tip-out {
+  to {
+    opacity: 0;
+  }
+}
+/* A space tooltip's profile chip: an accent-tinted pill in the accent's dark. */
+.clu-tooltip-chip {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--tip-h) - 8px);
+  padding: 0 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: color-mix(in srgb, var(--accent), #000 35%);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-keycaps {
+  display: inline-flex;
+  gap: var(--keycap-gap);
+}
+.clu-keycap {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--keycap);
+  height: var(--keycap-h);
+  padding: 0 4px;
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, #fff);
+  border-bottom-width: 2px;
+  border-bottom-color: color-mix(in srgb, var(--accent) 75%, #000 5%);
+  border-radius: var(--keycap-r);
+  background: color-mix(in srgb, var(--accent) 30%, #fff);
+  color: color-mix(in srgb, var(--accent), #000 35%);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+:root[data-theme='dark'] .clu-tooltip {
+  background: color-mix(in srgb, var(--tint) 35%, var(--popover-bg));
+}
+
+.clu-letter-tile {
+  display: inline-block;
+  flex: none;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--accent) 22%, var(--surface));
+  color: var(--ink);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Menus (M11, styled as the native macOS 26 menu): radius 13, 5 pt padding, 24 pt items in 13 pt text, the
+   highlight inset 5 in the system blue (#528ff2) with white text, separators in an 11 pt block. The material is the
+   window's tint over near-white with a 0.5 pt dark outline and a 1 px light inner rim. It appears whole and fades out
+   over 190 ms on Esc. */
+.clu-menu {
+  min-width: 174px;
+  max-width: 320px;
+  padding: var(--menu-pad-y) 5px;
+  border-radius: var(--pop-r);
+  background: color-mix(in srgb, var(--tint) var(--menu-tint), #fff);
+  box-shadow: var(--shadow-2), 0 0 0 0.5px var(--menu-outline), inset 0 0 0 1px var(--menu-rim);
+  font-size: var(--fs-menu);
+  outline: none;
+}
+:root[data-theme='dark'] .clu-menu {
+  background: color-mix(in srgb, var(--tint) var(--menu-tint), var(--popover-bg));
+}
+/* A submenu takes its items' width (138 for share targets), the root at least 174. */
+.clu-menu[data-depth='1'],
+.clu-menu[data-depth='2'] {
+  min-width: 120px;
+}
+.clu-menu[data-closing] {
+  animation: clu-menu-out var(--t-menu-out) linear forwards;
+  pointer-events: none;
+}
+@keyframes clu-menu-out {
+  to {
+    opacity: 0;
+  }
+}
+.clu-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--menu-item-h);
+  padding: 0 11.5px;
+  border-radius: var(--menu-item-r);
+  color: var(--ink);
+  outline: none;
+}
+.clu-menu-item:focus,
+.clu-menu-item:hover,
+.clu-menu-item[aria-expanded='true'] {
+  background: var(--menu-highlight);
+  color: #fff;
+}
+.clu-menu-chevron {
+  display: inline-flex;
+  margin-right: -2.5px;
+}
+/* A key at the item's right edge, as a native menu's key equivalent. */
+.clu-menu-keys {
+  margin-left: auto;
+  padding-left: 24px;
+  opacity: 0.55;
+}
+.clu-menu-item[aria-disabled='true'] {
+  color: var(--ink-2);
+  opacity: 0.6;
+}
+.clu-menu-item.is-destructive {
+  color: #c4211b;
+}
+.clu-menu-item.is-destructive:focus,
+.clu-menu-item.is-destructive:hover {
+  color: #fff;
+}
+.clu-menu-item[aria-disabled='true']:focus,
+.clu-menu-item[aria-disabled='true']:hover {
+  background: transparent;
+  color: var(--ink-2);
+}
+.clu-menu-sep {
+  height: 1px;
+  margin: 5px 11.5px;
+  background: var(--row-multi);
+}
+
+
+/* Dialogs: the popover material, 18 pt in, a 15 pt semibold title, 13 pt text, actions trailing on one 8 pt gap. */
+.clu-dialog {
+  box-sizing: border-box;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: 18px;
+  border: var(--hairline-w) solid var(--card-border);
+  border-radius: var(--dialog-r);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-body);
+  box-shadow: var(--shadow-2);
+}
+.clu-dialog-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.clu-dialog-body {
+  margin: 0 0 16px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.clu-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+/* A button's key (Confirm.tsx): a small rounded cap in the button's own ink, "esc" on Cancel, "return" on the
+   confirm button. */
+.clu-dialog-key {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  opacity: 0.8;
+}

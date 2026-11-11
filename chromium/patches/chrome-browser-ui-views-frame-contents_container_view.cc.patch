@@ -1,0 +1,74 @@
+diff --git a/chrome/browser/ui/views/frame/contents_container_view.cc b/chrome/browser/ui/views/frame/contents_container_view.cc
+index 413b2f626db33f5c834d0e184786626bdea0e8b2..7af3710b9711cfb55898f4d443df31c5460d058f 100644
+--- a/chrome/browser/ui/views/frame/contents_container_view.cc
++++ b/chrome/browser/ui/views/frame/contents_container_view.cc
+@@ -31,6 +31,7 @@
+ #include "chrome/browser/ui/views/frame/top_container_view.h"
+ #include "chrome/browser/ui/views/indigo/indigo_toolbar.h"
+ #include "chrome/browser/ui/views/new_tab_footer/footer_web_view.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "chrome/common/chrome_features.h"
+ #include "components/search/ntp_features.h"
+ #include "content/public/browser/web_contents.h"
+@@ -158,6 +159,11 @@ ContentsContainerView::ContentsContainerView(BrowserView* browser_view)
+ 
+   mini_toolbar_ = AddChildView(std::make_unique<MultiContentsViewMiniToolbar>(
+       browser_view, contents_view_));
++  // Clu: a split pane's own toolbar on top, in place of the mini toolbar.
++  if (std::unique_ptr<views::View> clu_bar =
++          clu::CreatePaneBar(browser_view->browser(), contents_view_)) {
++    AddChildView(std::move(clu_bar));
++  }
+ 
+   container_outline_ =
+       AddChildView(std::make_unique<ContentsContainerOutline>(mini_toolbar_));
+@@ -205,6 +211,7 @@ void ContentsContainerView::UpdateBorderAndOverlay(bool is_in_split,
+       UpdateBorderRoundedCorners();
+ 
+       mini_toolbar_->SetVisible(false);
++      clu::UpdatePaneBar(this, false, false);
+       container_outline_->SetVisible(false);
+       if (capture_contents_border_view_) {
+         capture_contents_border_view_->SetIsInSplit(false);
+@@ -220,7 +227,9 @@ void ContentsContainerView::UpdateBorderAndOverlay(bool is_in_split,
+     container_outline_->UpdateState(is_active, is_highlighted);
+     // Mini toolbar should only be visible for the inactive contents
+     // container view or both depending on configuration.
+-    mini_toolbar_->UpdateState(is_active, is_highlighted);
++    if (!clu::UpdatePaneBar(this, true, is_active)) {
++      mini_toolbar_->UpdateState(is_active, is_highlighted);
++    }
+     if (capture_contents_border_view_) {
+       capture_contents_border_view_->SetIsInSplit(true);
+     }
+@@ -522,6 +531,15 @@ views::ProposedLayout ContentsContainerView::CalculateProposedLayout(
+                                        footer_rect);
+   }
+ 
++  // Clu: the pane toolbar takes the top of the page area.
++  if (views::View* clu_bar = clu::PaneBarOf(const_cast<ContentsContainerView*>(this))) {
++    const int bar_height = clu_bar->GetVisible() ? clu_bar->GetPreferredSize().height() : 0;
++    layouts.child_layouts.emplace_back(
++        clu_bar, clu_bar->GetVisible(),
++        GetMirroredRect(gfx::Rect(contents_view_bounds.x(), contents_view_bounds.y(),
++                                  contents_view_bounds.width(), bar_height)));
++    contents_view_bounds.Inset(gfx::Insets::TLBR(bar_height, 0, 0, 0));
++  }
+   const auto& contents_rect = GetMirroredRect(contents_view_bounds);
+   layouts.child_layouts.emplace_back(
+       contents_view_.get(), contents_view_->GetVisible(), contents_rect);
+@@ -612,9 +630,12 @@ views::ProposedLayout ContentsContainerView::CalculateProposedLayout(
+         mini_toolbar_->GetPreferredSize(available_space);
+     const int offset_x = width - mini_toolbar_size.width();
+     const int offset_y = height - mini_toolbar_size.height();
++    // Clu: with the pane toolbar there is no mini toolbar, so no notch in the outline either.
+     const gfx::Rect mini_toolbar_rect =
+-        gfx::Rect(offset_x, offset_y, mini_toolbar_size.width(),
+-                  mini_toolbar_size.height());
++        clu::PaneBarOf(const_cast<ContentsContainerView*>(this))
++            ? gfx::Rect()
++            : gfx::Rect(offset_x, offset_y, mini_toolbar_size.width(),
++                        mini_toolbar_size.height());
+     layouts.child_layouts.emplace_back(
+         mini_toolbar_.get(), mini_toolbar_->GetVisible(), mini_toolbar_rect);
+   }

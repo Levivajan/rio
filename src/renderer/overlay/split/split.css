@@ -1,0 +1,13 @@
+/* Split drop preview. */
+.clu-split-drop {
+  position: fixed;
+  border: 2px solid var(--accent);
+  border-radius: var(--split-r);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  pointer-events: none;
+  transition:
+    left var(--t-fast) var(--ease-out),
+    top var(--t-fast) var(--ease-out),
+    width var(--t-fast) var(--ease-out),
+    height var(--t-fast) var(--ease-out);
+}

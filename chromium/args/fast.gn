@@ -1,0 +1,17 @@
+# Used by scripts/chromium/build.sh fast -> out/Fast.
+# A static, optimized build without DCHECKs, symbols, PGO or ThinLTO, so it links in one pass and runs at full speed.
+# API keys (Safe Browsing) live in ~/.clu/keys.gn, which build.sh appends; they are never committed.
+target_cpu = "arm64"
+is_debug = false
+is_official_build = false  # no ThinLTO, no PGO
+is_component_build = false  # one framework, like the app that ships
+dcheck_always_on = false
+symbol_level = 0
+blink_symbol_level = 0
+v8_symbol_level = 0
+use_lld = false  # ld-prime, faster links on Arm Macs (158 docs)
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+enable_widevine = true
+ignore_missing_widevine_signing_cert = true  # false once Google issues the VMP cert
+enable_updater = false

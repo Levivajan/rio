@@ -1,0 +1,151 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The tab tree, archive and closed stack of one profile (docs/chromium/m3.md). `:core` is pure logic ported from
+# src/main/tabs and src/main/archive, `:store` its SQLite rows, `:model_service` the service that owns both and talks
+# to the windows, `:service` its keyed service factory. Only //chrome/browser/profiles:profiles_extra_parts_impl
+# depends on it upstream, to build the factory in time.
+
+source_set("core") {
+  sources = [
+    "clu_archive_rules.cc",
+    "clu_archive_rules.h",
+    "clu_live_feed.cc",
+    "clu_live_feed.h",
+    "clu_menu_items.cc",
+    "clu_menu_items.h",
+    "clu_nav_state.cc",
+    "clu_nav_state.h",
+    "clu_switcher.cc",
+    "clu_switcher.h",
+    "clu_tab_node.h",
+    "clu_tab_repair.cc",
+    "clu_tab_repair.h",
+    "clu_tab_rules.cc",
+    "clu_tab_rules.h",
+    "clu_tab_tree.cc",
+    "clu_tab_tree.h",
+    "clu_tidy.cc",
+    "clu_tidy.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//base:i18n",
+    "//clu/browser/ui/webui:bridge",
+    "//clu/browser/ui/webui:url_policy",
+    "//third_party/icu",
+    "//url",
+  ]
+}
+
+source_set("store") {
+  sources = [
+    "clu_store.cc",
+    "clu_store.h",
+  ]
+  public_deps = [
+    ":core",
+    "//base",
+    "//clu/browser/multitask:core",
+    "//sql",
+  ]
+  deps = [
+    "//clu/browser/spaces:core",
+    "//clu/browser/ui/webui:bridge",
+  ]
+}
+
+# The row id on a page's history entries, through Chromium's session and tab restore files (clu_row_stamp.h). Only
+# components and content: //clu/browser/ui/webui stamps the pages, the factory below registers the handler.
+source_set("row_stamp") {
+  sources = [
+    "clu_row_stamp.cc",
+    "clu_row_stamp.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//clu/browser/ui/webui:bridge",
+    "//components/sessions",
+    "//content/public/browser",
+  ]
+}
+
+# The model service itself: no profile code, so clu_unittests drives it with a temp store and a fake window.
+source_set("model_service") {
+  sources = [
+    "clu_model_service.cc",
+    "clu_model_service.h",
+    "clu_model_splits.cc",
+    "clu_page_state.cc",
+    "clu_page_state.h",
+  ]
+  public_deps = [
+    ":core",
+    ":store",
+    "//base",
+    "//components/keyed_service/core",
+  ]
+  deps = [
+    "//clu/browser/ui/webui:bridge",
+    "//components/sessions",
+    "//content/public/browser",
+    "//ui/base",
+    "//url",
+  ]
+}
+
+# The keyed service factory: one model per regular profile.
+source_set("service") {
+  sources = [
+    "clu_model_service_factory.cc",
+    "clu_model_service_factory.h",
+  ]
+  public_deps = [
+    ":model_service",
+    "//chrome/browser/profiles:profile",
+    "//components/keyed_service/content",
+  ]
+  deps = [
+    ":row_stamp",
+    "//base",
+    "//chrome/browser/sessions",
+    "//chrome/browser/signin",
+    "//chrome/common:constants",
+    "//clu/browser/importer:site_storage",
+    "//clu/browser/spaces:service",
+    "//clu/browser/theme:overlay_scrollbars",
+    "//components/pref_registry",
+    "//components/prefs",
+    "//components/safe_browsing/core/common:switches",
+    "//components/translate/core/browser:translate_pref_names",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_archive_rules_unittest.cc",
+    "clu_live_feed_unittest.cc",
+    "clu_menu_items_unittest.cc",
+    "clu_model_service_unittest.cc",
+    "clu_nav_state_unittest.cc",
+    "clu_row_stamp_unittest.cc",
+    "clu_store_unittest.cc",
+    "clu_switcher_unittest.cc",
+    "clu_tab_repair_unittest.cc",
+    "clu_tab_rules_unittest.cc",
+    "clu_tab_tree_unittest.cc",
+    "clu_tidy_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    ":model_service",
+    ":row_stamp",
+    ":store",
+    "//base",
+    "//base/test:test_support",
+    "//sql",
+    "//sql:test_support",
+    "//testing/gtest",
+    "//url",
+  ]
+}

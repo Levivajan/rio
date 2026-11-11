@@ -1,0 +1,30 @@
+diff --git a/chrome/browser/BUILD.gn b/chrome/browser/BUILD.gn
+index f0f5299..28e7f87 100644
+--- a/chrome/browser/BUILD.gn
++++ b/chrome/browser/BUILD.gn
+@@ -600,6 +600,7 @@ if (!is_android) {
+       "//chrome/browser/ui/webui_browser",
+       "//chrome/browser/ui/webui_browser:headers",
+       "//chrome/common:chrome_features",
++      "//clu/browser/ui/webui",
+       "//components/autofill/core/browser/ml_model/logging:mojo_bindings",
+       "//components/browser_apis/bookmarks:mojom",
+       "//components/browser_apis/browser_controls:mojom",
+@@ -1287,6 +1288,9 @@ source_set("core") {
+     "//chrome/common:version_header",
+     "//chrome/common/compose:mojo_bindings",
+     "//chrome/services/speech/buildflags",
++    "//clu/browser/site:hooks",
++    "//clu/browser/multitask:hooks",
++    "//clu/browser/settings:hooks",
+     "//components/actor/core",
+     "//components/actor/public/mojom:mojo_bindings",
+     "//components/application_locale_storage",
+@@ -1835,6 +1839,7 @@ source_set("core") {
+       "//chrome/browser/ui/browser_window:create_browser_window",
+       "//chrome/browser/ui/cocoa",
+       "//chrome/browser/ui/views:color_provider_browser_helper",
++      "//clu/browser/ui/cocoa:main_menu",
+       "//chrome/browser/web_applications/os_integration/mac:web_app_shortcut_copier_lib",
+       "//chrome/browser/webshare",
+       "//chrome/browser/webshare:impl",

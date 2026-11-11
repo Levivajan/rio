@@ -1,0 +1,58 @@
+diff --git a/chrome/browser/ui/webui/settings/settings_ui.cc b/chrome/browser/ui/webui/settings/settings_ui.cc
+index 1437a643e275ba752f482464c3a24a2e83cd6026..44bb381f7a9c767a38f6c8014b476671520b4d30 100644
+--- a/chrome/browser/ui/webui/settings/settings_ui.cc
++++ b/chrome/browser/ui/webui/settings/settings_ui.cc
+@@ -344,9 +344,8 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   AddSettingsPageUIHandler(std::make_unique<MacSystemSettingsHandler>());
+ #endif
+ 
+-  html_source->AddBoolean("signinAllowed", !profile->IsGuestSession() &&
+-                                               profile->GetPrefs()->GetBoolean(
+-                                                   prefs::kSigninAllowed));
++  // Clu: Rio has no Google sign-in or sync in Settings (docs/chromium/m12.md).
++  html_source->AddBoolean("signinAllowed", false);
+ 
+   html_source->AddBoolean("shouldUseMetricsConsentRestructure",
+                           metrics::MetricsReportingChoiceService::
+@@ -688,9 +687,8 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   // Within the AI subpage are separate sections for Glic, for GEIC, and for all
+   // other AI features. The visibility of these is separately controlled, but
+   // we want to show the subpage if any of them are enabled.
+-  html_source->AddBoolean("showAiPage",
+-                          show_glic_section || show_ai_features_section ||
+-                              enable_ai_mode_search || show_geic_section);
++  // Clu: Rio has no Chrome AI features, so no AI section (docs/chromium/m12.md).
++  html_source->AddBoolean("showAiPage", false);
+   html_source->AddBoolean("showAiPageAiFeatureSection",
+                           show_ai_features_section);
+ 
+@@ -713,15 +711,10 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+       "settingsRefresh2026",
+       features::IsSettingsRefresh2026Enabled() ? "settings-refresh-2026" : "");
+ 
+-  personal_context::PersonalContextEligibilityService* eligibility_service =
+-      PersonalContextEligibilityServiceFactory::GetForProfile(profile);
+-  html_source->AddBoolean("showSuggestionsFromGeminiSettings",
+-                          autofill::ShouldShowPersonalContextAutofillSetting(
+-                              autofill_client, eligibility_service));
+-  html_source->AddBoolean(
+-      "isAtMemoryEnabled",
+-      autofill::MayPerformAtMemoryAction(
+-          autofill::AtMemoryAction::kShowAtMemoryInSettings, autofill_client));
++  // Clu: Rio has no Gemini, so autofill offers no suggestions from it
++  // (docs/chromium/fixes.md).
++  html_source->AddBoolean("showSuggestionsFromGeminiSettings", false);
++  html_source->AddBoolean("isAtMemoryEnabled", false);
+ 
+   html_source->AddBoolean(
+       "isAtMemoryTriggerCustomizationAllowed",
+@@ -991,9 +984,6 @@ void SettingsUI::UpdateShowGlicState() {
+   update.Set("showGlicSettings", show_glic);
+   update.Set("showGeicSettings", show_geic);
+   update.Set("glicDisallowedByAdmin", enablement.DisallowedByAdmin());
+-  if (show_glic || show_geic) {
+-    update.Set("showAiPage", true);
+-  }
+ 
+   content::WebUIDataSource::Update(
+       web_ui()->GetWebContents()->GetBrowserContext(),

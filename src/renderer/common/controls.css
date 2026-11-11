@@ -1,0 +1,226 @@
+/* Shared controls (controls.tsx, docs/chromium/ui-polish.md). Every value comes from the control and page tokens in
+   tokens.css, so light and dark each take one family: the control, its card and the window. */
+.clu-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-h);
+  padding: 0 var(--control-px);
+  border: var(--hairline-w) solid var(--control-border);
+  border-radius: var(--control-r);
+  background: var(--control-bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--control-fs);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color var(--t-fast) var(--ease-out);
+  -webkit-app-region: no-drag;
+}
+.clu-btn:hover:not(:disabled) {
+  background: var(--control-bg-hover);
+}
+.clu-btn:active:not(:disabled) {
+  background: var(--control-bg-press);
+}
+.clu-btn[data-variant='primary'],
+.clu-btn[data-variant='danger'] {
+  border-color: transparent;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 500;
+}
+.clu-btn[data-variant='danger'] {
+  background: var(--danger);
+}
+.clu-btn[data-variant='primary']:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary), #000 8%);
+}
+.clu-btn[data-variant='danger']:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger), #000 8%);
+}
+.clu-btn[data-variant='plain'] {
+  border-color: transparent;
+  background: transparent;
+}
+.clu-btn[data-variant='plain']:hover:not(:disabled) {
+  background: var(--control-fill);
+}
+.clu-btn:disabled {
+  opacity: 0.45;
+}
+
+.clu-select {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  min-width: 160px;
+  max-width: 100%;
+}
+.clu-select > select {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 26px 0 var(--control-px);
+  border: var(--hairline-w) solid var(--control-border);
+  border-radius: var(--control-r);
+  background: var(--control-bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--control-fs);
+  text-overflow: ellipsis;
+  appearance: none;
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+.clu-select > select:hover:not(:disabled) {
+  background: var(--control-bg-hover);
+}
+.clu-select > svg {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  translate: 0 -50%;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+.clu-select:has(select:disabled) {
+  opacity: 0.45;
+}
+.clu-select > select[aria-invalid='true'],
+.clu-input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.clu-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: var(--control-h);
+  padding: 0 8px;
+  border: var(--hairline-w) solid var(--control-border);
+  border-radius: var(--control-r);
+  background: var(--control-bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--control-fs);
+  user-select: text;
+}
+.clu-input::placeholder {
+  color: var(--ink-2);
+}
+.clu-input:disabled {
+  opacity: 0.45;
+}
+
+/* Focus: the system's soft ring hugging the control, never a ring set off by a gap. */
+.clu-btn:focus-visible,
+.clu-select > select:focus-visible,
+.clu-input:focus-visible,
+.clu-toggle:focus-visible,
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+  outline: var(--control-focus);
+  outline-offset: 0;
+}
+.clu-input:focus,
+.clu-select > select:focus {
+  border-color: var(--focus-ring);
+}
+
+.clu-toggle {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: 32px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: var(--control-fill-strong);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.clu-toggle[data-on='true'] {
+  background: var(--primary);
+}
+.clu-toggle > span {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0.5px 1.5px rgb(0 0 0 / 30%);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.clu-toggle[data-on='true'] > span {
+  transform: translateX(14px);
+}
+.clu-toggle:disabled {
+  opacity: 0.45;
+}
+
+.clu-group {
+  overflow: hidden;
+  border: var(--hairline-w) solid var(--card-border);
+  border-radius: var(--group-r);
+  background: var(--card-bg);
+}
+.clu-group + .clu-group {
+  margin-top: 12px;
+}
+.clu-group-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  font-size: var(--fs-body);
+}
+.clu-group-row + .clu-group-row {
+  border-top: var(--hairline-w) solid var(--hairline);
+}
+.clu-group-row-text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.clu-group-row-label {
+  float: none;
+  padding: 0;
+  color: var(--ink);
+  font-size: var(--fs-body);
+  font-weight: 400;
+}
+.clu-group-row-hint {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-hint);
+  line-height: 1.35;
+}
+.clu-group-row-control {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  max-width: 60%;
+  color: var(--ink-2);
+  user-select: text;
+}
+
+/* Native checkboxes and radios take the primary color and sit on the text's line. */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--primary);
+}

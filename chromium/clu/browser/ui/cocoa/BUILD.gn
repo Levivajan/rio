@@ -1,0 +1,37 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+assert(is_mac)
+
+# Clu's main menu, applied to Chromium's (patch chrome-browser-ui-cocoa-main_menu_builder.mm). It depends on nothing
+# under //chrome/browser (the updater service depends only on //base), so //chrome/browser/ui/cocoa can depend on it
+# without a cycle.
+source_set("main_menu") {
+  sources = [
+    "clu_main_menu.h",
+    "clu_main_menu.mm",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    "//chrome/app:command_ids",
+    "//clu/browser/commands",
+    "//clu/browser/updater:service",
+    "//ui/base",
+  ]
+  frameworks = [ "Cocoa.framework" ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [ "clu_main_menu_unittest.mm" ]
+  deps = [
+    ":main_menu",
+    "//base",
+    "//base/test:test_support",
+    "//chrome/app:command_ids",
+    "//clu/browser/commands",
+    "//clu/browser/updater:service",
+    "//testing/gtest",
+    "//ui/base",
+  ]
+  frameworks = [ "Cocoa.framework" ]
+}

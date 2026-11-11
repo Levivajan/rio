@@ -1,0 +1,19 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+declare_args() {
+  # Where `npm run build:webui` wrote the frame, overlay and settings bundles and their .grd files (out/webui in the repo).
+  # scripts/chromium/build.sh sets it; the bundles are build input, never copied into the Chromium checkout.
+  clu_webui_dir = "//clu/resources/webui/dist"
+}
+
+declare_args() {
+  # The app's CFBundleVersion, so every build is a new version to LaunchServices and Sparkle. scripts/chromium/build.sh
+  # sets it to Chromium's BUILD.PATCH plus the repo's commit count (8127.18.<count>); empty keeps Chromium's BUILD.PATCH.
+  clu_bundle_version = ""
+}
+
+declare_args() {
+  # The app's CFBundleIdentifier when set; empty keeps BRANDING's org.example.rio. scripts/chromium/build.sh sets it to
+  # CLU_BUNDLE_ID, and out/Dev to CLU_BUNDLE_ID.test so test builds never share the installed Rio's id.
+  clu_bundle_id = ""
+}

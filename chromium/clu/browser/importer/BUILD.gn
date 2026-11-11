@@ -1,0 +1,142 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# Chrome and sidebar-file import (docs/chromium/m8.md, docs/plan/07-data.md). `:core` is pure: the import
+# rules, the Chrome Bookmarks and History readers, the sidebar-file parser, detection and the plan that turns
+# imported trees into tab rows; `:service` runs imports against the profiles' models, HistoryService and
+# CluSpacesService.
+
+source_set("core") {
+  sources = [
+    "clu_arc_keychain.h",
+    "clu_arc_keychain.mm",
+    "clu_arc_secrets.cc",
+    "clu_arc_secrets.h",
+    "clu_chrome_bookmarks.cc",
+    "clu_chrome_bookmarks.h",
+    "clu_chrome_history.cc",
+    "clu_chrome_history.h",
+    "clu_import_detect.cc",
+    "clu_import_detect.h",
+    "clu_import_plan.cc",
+    "clu_import_plan.h",
+    "clu_import_rules.cc",
+    "clu_import_rules.h",
+    "clu_sidebar_file.cc",
+    "clu_sidebar_file.h",
+    "clu_site_data.cc",
+    "clu_site_data.h",
+  ]
+  public_deps = [
+    ":site_storage",
+    "//base",
+    "//clu/browser/model:core",
+    "//clu/browser/theme:core",
+  ]
+  deps = [
+    "//base:i18n",
+    "//clu/browser/spaces:core",
+    "//crypto",
+    "//sql",
+    "//third_party/boringssl",
+    "//third_party/icu",
+    "//url",
+  ]
+}
+
+# Site storage staging and its merge at the next launch: no model or profile deps, so the startup hook in
+# //clu/browser/model can call it before profiles load.
+source_set("site_storage") {
+  sources = [
+    "clu_site_storage.cc",
+    "clu_site_storage.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//third_party/leveldatabase" ]
+}
+
+source_set("service") {
+  sources = [
+    "clu_import_service.cc",
+    "clu_import_service.h",
+  ]
+  public_deps = [
+    ":core",
+    "//base",
+  ]
+  deps = [
+    "//chrome/browser:browser_process",
+    "//chrome/browser/autofill",
+    "//chrome/browser/content_settings:content_settings_factory",
+    "//chrome/browser/history",
+    "//chrome/browser/password_manager/factories",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/search_engines",
+    "//chrome/common:constants",
+    "//clu/browser/model:service",
+    "//clu/browser/multitask:core",
+    "//clu/browser/settings:prefs",
+    "//clu/browser/settings:service",
+    "//clu/browser/spaces:service",
+    "//components/autofill/core/browser",
+    "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
+    "//components/history/core/browser",
+    "//components/keyed_service/core",
+    "//components/password_manager/core/browser:password_form",
+    "//components/password_manager/core/browser:password_string",
+    "//components/password_manager/core/browser/password_store:password_store_interface",
+    "//components/prefs",
+    "//components/search_engines",
+    "//content/public/browser",
+    "//content/public/common",
+    "//crypto",
+    "//net",
+    "//services/network/public/mojom",
+    "//third_party/boringssl",
+    "//url",
+  ]
+}
+
+source_set("test_support") {
+  testonly = true
+  sources = [
+    "clu_import_test_util.cc",
+    "clu_import_test_util.h",
+  ]
+  deps = [
+    ":core",
+    "//base",
+    "//crypto",
+    "//sql",
+    "//sql:test_support",
+    "//third_party/leveldatabase",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_arc_secrets_unittest.cc",
+    "clu_chrome_bookmarks_unittest.cc",
+    "clu_chrome_history_unittest.cc",
+    "clu_chrome_secrets_unittest.cc",
+    "clu_import_detect_unittest.cc",
+    "clu_import_plan_unittest.cc",
+    "clu_import_rules_unittest.cc",
+    "clu_sidebar_file_unittest.cc",
+    "clu_site_data_unittest.cc",
+  ]
+  deps = [
+    ":core",
+    ":test_support",
+    "//base",
+    "//base/test:test_support",
+    "//clu/browser/model:core",
+    "//crypto",
+    "//crypto:test_support",
+    "//sql",
+    "//sql:test_support",
+    "//testing/gtest",
+    "//third_party/leveldatabase",
+  ]
+}

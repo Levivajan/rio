@@ -1,0 +1,19 @@
+# What ships (docs/chromium/PLAN.md 3.3). Used by scripts/chromium/build.sh release -> out/Release.
+# API keys (Safe Browsing) live in ~/.clu/keys.gn, which build.sh appends; they are never committed.
+target_cpu = "arm64"
+is_official_build = true  # ThinLTO, no DCHECKs
+is_debug = false
+is_component_build = false  # required by the Mac signing scripts
+# PGO on: the official default (phase 2) with Chromium's published mac-arm profile for 8127
+# (chrome/build/pgo_profiles, tools/update_pgo_profiles.py --target=mac-arm update
+# --gs-url-base=chromium-optimization-profiles/pgo_profiles) and V8's builtins profile (v8/tools/builtins-pgo).
+# build.sh refuses while the checkout has no profile.
+chrome_pgo_phase = 2
+symbol_level = 1
+enable_dsyms = true  # crash symbolication
+enable_stripping = true
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+enable_widevine = true
+ignore_missing_widevine_signing_cert = true  # false once Google issues the VMP cert
+enable_updater = false

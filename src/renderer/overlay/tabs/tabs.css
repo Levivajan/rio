@@ -1,0 +1,313 @@
+/* Overlay surfaces of the tabs module. */
+.clu-prompt-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--fs-2);
+  color: var(--ink-2);
+}
+.clu-input.is-emoji {
+  width: 64px;
+  font-size: 17px;
+  text-align: center;
+}
+.clu-prompt-error {
+  min-height: 16px;
+  margin: 6px 0 12px;
+  font-size: var(--fs-2);
+  color: light-dark(#c5221f, #ff8a80);
+}
+.clu-prompt-hint {
+  margin: 6px 0 0;
+  font-size: var(--fs-2);
+  color: var(--ink-2);
+}
+
+/* Hover card (F15): the tooltip pill (base.css .clu-tooltip) with the tab's title, drawn inside its passive view's
+   shadow margin with the tight corner toward the pointer. */
+.clu-hover-card {
+  box-sizing: border-box;
+  width: max-content;
+  height: var(--tip-h);
+  padding: 0 var(--tip-px);
+  overflow: hidden;
+  border-radius: var(--tip-corner) var(--tip-r) var(--tip-r) var(--tip-r);
+  background: color-mix(in srgb, var(--tint) 35%, #fff);
+  box-shadow: var(--shadow-tip);
+  color: var(--ink);
+  font-size: var(--fs-2);
+  font-weight: 500;
+  line-height: var(--tip-h);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+/* It shows in one frame and fades out over --t-hover-card-out, decelerating (0.71 at 0, 0.38 at
+   25 ms, 0.13 at 50, 0 at 78), while the browser keeps it for that long. */
+.clu-hover-card[data-closing] {
+  animation: clu-hover-card-out var(--t-hover-card-out) cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+@keyframes clu-hover-card-out {
+  to {
+    opacity: 0;
+  }
+}
+/* Dark: a dark accent pill with white text. A space with no theme is gray, so its
+   pill is too, never the default blue accent's navy. */
+:root[data-theme='dark'] .clu-hover-card {
+  background: color-mix(in srgb, var(--popover-accent, var(--accent)) 60%, #000);
+  color: #fff;
+}
+/* A mail favorite's preview card (235): 239 x 64, radius 15, translucent near-white with a half
+   point border and a soft shadow, 13 pt text centered; it grows from 0.76 at its top left over 100 ms. The shadow
+   (2 down, 6 blur) ends inside the view's 8 pt margin, so the view's edge never cuts it square. */
+.clu-mail-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 239px;
+  height: 64px;
+  padding: 0 16px;
+  border: 0.5px solid rgb(0 0 0 / 25%);
+  border-radius: 15px;
+  background: rgb(250 247 248 / 96%);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 18%);
+  color: #4a4748;
+  font-size: 13px;
+  text-align: center;
+  transform-origin: top left;
+  animation: clu-mail-card-in var(--t-fast) var(--ease-out);
+  pointer-events: none;
+}
+:root[data-theme='dark'] .clu-mail-card {
+  border-color: rgb(255 255 255 / 12%);
+  background: var(--popover-bg);
+  color: var(--ink);
+}
+@keyframes clu-mail-card-in {
+  from {
+    opacity: 0;
+    scale: 0.76;
+  }
+}
+/* Out in about 75 ms, the in reversed. */
+.clu-mail-card[data-closing] {
+  animation: clu-mail-card-out 75ms var(--ease-in, ease-in) forwards;
+}
+@keyframes clu-mail-card-out {
+  to {
+    opacity: 0;
+    scale: 0.76;
+  }
+}
+/* The no-unread card, two centered lines, the leaf on the second. */
+.clu-mail-exhale {
+  margin: 0 -8px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+/* The unread list, in the mail card's style: 6 of padding, a 30 tall header with the count, a 44 tall row per
+   message (MAIL_CARD in src/shared/tabs.ts): the sender in medium weight with the time at the right, the subject under
+   them, each cut with an ellipsis. */
+.clu-mail-card.clu-mail-list {
+  display: block;
+  height: auto;
+  padding: 6px 0;
+  text-align: left;
+}
+.clu-mail-head {
+  box-sizing: border-box;
+  height: 30px;
+  padding: 0 14px;
+  line-height: 30px;
+  font-weight: 600;
+  color: #211e1f;
+}
+.clu-mail-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-mail-row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 44px;
+  padding: 0 14px;
+  border-top: 0.5px solid rgb(0 0 0 / 8%);
+}
+.clu-mail-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.clu-mail-from,
+.clu-mail-subject {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-mail-from {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  color: #211e1f;
+}
+.clu-mail-time {
+  flex: none;
+  font-size: 11.5px;
+  color: #725d5b;
+}
+.clu-mail-subject {
+  font-size: 12px;
+  color: #6f5a5b;
+}
+:root[data-theme='dark'] .clu-mail-head,
+:root[data-theme='dark'] .clu-mail-from {
+  color: var(--ink);
+}
+:root[data-theme='dark'] .clu-mail-time,
+:root[data-theme='dark'] .clu-mail-subject {
+  color: var(--ink-2, var(--ink));
+}
+:root[data-theme='dark'] .clu-mail-row {
+  border-top-color: rgb(255 255 255 / 8%);
+}
+/* The message list takes the pointer (the browser makes its view take clicks); a row with a message link
+   highlights under it and opens that message. A closing card takes nothing. */
+.clu-mail-card.clu-mail-list {
+  pointer-events: auto;
+}
+.clu-mail-card.clu-mail-list[data-closing] {
+  pointer-events: none;
+}
+.clu-mail-row[data-link] {
+  cursor: default;
+}
+.clu-mail-row[data-link]:hover {
+  background: rgb(0 0 0 / 6%);
+}
+:root[data-theme='dark'] .clu-mail-row[data-link]:hover {
+  background: rgb(255 255 255 / 8%);
+}
+/* A preview site's live card: 239 x 256, radius 15, the mail
+   card's border and shadow, the page's snapshot filling it from its top left; the same 0.76 grow over 100 ms. */
+.clu-live-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 239px;
+  height: 256px;
+  overflow: hidden;
+  border: 0.5px solid rgb(0 0 0 / 25%);
+  border-radius: 15px;
+  background: rgb(250 247 248 / 96%);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 18%);
+  color: #4a4748;
+  font-size: 13px;
+  transform-origin: top left;
+  animation: clu-mail-card-in var(--t-fast) var(--ease-out);
+  pointer-events: none;
+}
+:root[data-theme='dark'] .clu-live-card {
+  border-color: rgb(255 255 255 / 12%);
+  background: var(--popover-bg);
+  color: var(--ink);
+}
+
+/* Collapsed-folder popover: fills its passive view less the shadow's room
+   (FOLDER_PEEK in src/shared/tabs.ts); a near-white card, hairline and soft shadow, a 43 tall search header over 39
+   tall rows inset 4, the first highlighted. */
+.clu-folder-peek-view {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+}
+.clu-folder-peek {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
+  border: 0.5px solid light-dark(rgb(0 0 0 / 14%), rgb(255 255 255 / 12%));
+  border-radius: 10px;
+  background: light-dark(#fcfcfc, var(--popover-bg));
+  box-shadow: 0 6px 18px light-dark(rgb(0 0 0 / 16%), rgb(0 0 0 / 50%));
+  color: light-dark(rgb(0 0 0 / 88%), rgb(255 255 255 / 92%));
+}
+.clu-folder-peek-search {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 9px;
+  height: 42.5px;
+  padding: 0 12px;
+  border-bottom: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 10%));
+  color: light-dark(rgb(0 0 0 / 60%), rgb(255 255 255 / 60%));
+}
+.clu-folder-peek-search > input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: light-dark(rgb(0 0 0 / 85%), rgb(255 255 255 / 85%));
+  font: inherit;
+  font-size: 14px;
+}
+.clu-folder-peek-search > input::placeholder {
+  color: light-dark(rgb(0 0 0 / 50%), rgb(255 255 255 / 50%));
+}
+.clu-folder-peek-search > input::-webkit-search-cancel-button {
+  display: none;
+}
+.clu-folder-peek-rows {
+  flex: 1;
+  margin: 0;
+  padding: 4px 4px 3px;
+  overflow-y: auto;
+  list-style: none;
+}
+.clu-folder-peek-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 39px;
+  padding: 0 6px;
+  border-radius: 6px;
+  cursor: default;
+}
+.clu-folder-peek-row[aria-selected='true'] {
+  background: light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%));
+}
+/* Full contrast, as Rio's other menus (the dimmed rows read greyed out). */
+.clu-folder-peek-row > .clu-row-favicon,
+.clu-folder-peek-row > .clu-letter-tile {
+  flex: none;
+}
+.clu-folder-peek-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.clu-folder-peek-title,
+.clu-folder-peek-time {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-folder-peek-title {
+  font-size: 13px;
+  line-height: 16px;
+  color: light-dark(rgb(0 0 0 / 88%), rgb(255 255 255 / 92%));
+}
+.clu-folder-peek-time {
+  font-size: 11px;
+  line-height: 14px;
+  color: light-dark(rgb(0 0 0 / 55%), rgb(255 255 255 / 55%));
+}

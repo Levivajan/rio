@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkPWBxQkAP/ipZcekKCYUL/JCngCXrrGDCAKCIctR8m70rfhDO1ABbQDhEdP4tovN9kA7wlL1AcD/puTHb30PZ72ssrvuFl1/Kf6IFPbWY3S9tM1PSB5/wYtGDH5Qdmkn3KrQTqlMlfEhKPkuQh8TX4/H/vMPfD/Sr4EzA9rQBilsBZ1T/89htgm6hpWKM8uFK2MvoQO2I4sI18rEW+DR3FHvZt7bele4OSQZ/K6SQ+caNpvT/0OWYy2iI4nwiRWtdBAl6T9mi1yP7Gh8Ou2FjB3VPnB13fVr7DxJmB4IyQdaREGM0msvxLrg85dcnGgy8UUcSLtyXV57H1VEu3ijXQIDAQAB",
+  "name": "Clu Fixture",
+  "version": "1.0.0",
+  "description": "Fixture for Clu's extension tests.",
+  "action": { "default_popup": "popup.html", "default_title": "Clu Fixture", "default_icon": { "32": "icon.png" } },
+  "icons": { "32": "icon.png" },
+  "options_page": "options.html",
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{ "matches": ["http://127.0.0.1/*"], "js": ["content.js"], "run_at": "document_start" }],
+  "permissions": ["tabs"]
+}

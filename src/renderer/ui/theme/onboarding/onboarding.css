@@ -1,0 +1,247 @@
+/* First-run onboarding (docs/plan/01-shell.md F12): full-window takeover on the first space's theme. */
+.clu-ob {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  -webkit-app-region: drag;
+  transition: background var(--t-slow) var(--ease-out);
+}
+.clu-ob button {
+  -webkit-app-region: no-drag;
+  font: inherit;
+}
+/* Blink collects drag areas in document order and the frame follows the takeover, so its window-wide drag
+   area (and the sidebar's) landed over the card and the Mac took a press on "Bring everything over" or "Not now" as a
+   window drag. While the takeover shows, the inert frame behind it has no drag areas at all: it inherits the body's
+   none (an explicit none is Blink's legacy no-drag, which would cover the window and stop the takeover's own drag). */
+body:has(.clu-ob) .clu-frame,
+body:has(.clu-ob) .clu-frame * {
+  -webkit-app-region: inherit !important;
+}
+
+/* The traffic lights sit at the left of this row. */
+.clu-ob-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 44px;
+  padding: 0 16px;
+  flex: none;
+}
+
+.clu-ob-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 24px 64px;
+}
+.clu-ob-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  max-width: 100%;
+  min-height: 360px;
+  padding: 32px;
+  border-radius: var(--pop-r);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  -webkit-app-region: no-drag;
+}
+.clu-ob-icon {
+  align-self: flex-start;
+  /* The app icon keeps the macOS grid's 100/1024 inset around its body: line the body up with the text. */
+  margin: -7px 0 9px -7px;
+}
+.clu-ob-card h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.clu-ob-card h1:focus {
+  outline: none;
+}
+.clu-ob-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.clu-ob-body p {
+  margin: 0;
+}
+.clu-ob-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+}
+.clu-ob-actions-end {
+  display: flex;
+  gap: 8px;
+}
+/* Three moves */
+.clu-ob-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-ob-moves li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: var(--control-r);
+  background: var(--control-fill);
+  color: var(--ink);
+}
+.clu-ob-moves li > span:nth-child(2) {
+  flex: 1;
+}
+.clu-ob-keys {
+  display: flex;
+  gap: 4px;
+  width: 84px;
+  flex: none;
+}
+.clu-ob-keys kbd {
+  min-width: 26px;
+  height: 26px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-1), inset 0 -1px 0 var(--hover-ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+.clu-ob-mini {
+  position: relative;
+  display: flex;
+  gap: 3px;
+  width: 64px;
+  height: 40px;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: var(--surface-2);
+  flex: none;
+}
+.clu-ob-mini-sidebar {
+  width: 18px;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.6;
+  transition: width var(--t-slow) var(--ease-out), opacity var(--t-slow) var(--ease-out);
+}
+.clu-ob-mini-page {
+  flex: 1;
+  border-radius: 3px;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+.clu-ob-mini[data-toggled='true'] .clu-ob-mini-sidebar {
+  width: 0;
+  opacity: 0;
+}
+.clu-ob-hint {
+  color: var(--ink-2);
+}
+
+/* Default browser and import */
+.clu-ob-sources {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.clu-ob-note {
+  font-size: var(--fs-2);
+}
+
+.clu-ob-dots {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-ob-dots li {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.25;
+  transition: opacity var(--t-base) var(--ease-out), width var(--t-base) var(--ease-out);
+}
+.clu-ob-dots li[data-current='true'] {
+  width: 18px;
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+/* Pick a look: the whole space theme editor sits left of the title and the buttons and takes the card's full
+   height, zoomed to fit; at the smallest window (560 x 400) the card is 512 x 324 and the editor zoom 0.574 (rounded down, so nothing crops). */
+.clu-ob[data-step='look'] .clu-ob-center {
+  min-height: 0;
+  gap: 10px;
+  padding-bottom: 16px;
+}
+.clu-ob[data-step='look'] .clu-ob-card {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: 20px;
+  width: 640px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: calc(508px + 32px);
+  padding: 16px;
+}
+.clu-ob[data-step='look'] .clu-ob-card h1 {
+  grid-column: 2;
+  grid-row: 1;
+  margin-top: 8px;
+}
+.clu-ob[data-step='look'] .clu-ob-body {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-height: 0;
+}
+.clu-ob[data-step='look'] .clu-ob-actions {
+  grid-column: 2;
+  grid-row: 3;
+  margin-top: 0;
+}
+.clu-ob-look {
+  /* The slot never sets its own size from the editor: its height is the card's, its width the zoomed editor's. */
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: calc(356px * var(--clu-ob-look-zoom, 1));
+}
+.clu-ob-look > .clu-theme-picker[data-inline] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  zoom: var(--clu-ob-look-zoom, 1);
+}

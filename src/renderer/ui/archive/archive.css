@@ -1,0 +1,783 @@
+/* Archive panel (02-tabs F7, design.md rows). */
+.clu-archive {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+/* The Library's header: the search field and, in the Library, the Filter button 3.5 to its right (field
+   x 120 to 332.5, Filter x 336 to 408.5, both 36 tall). */
+.clu-library-head {
+  display: flex;
+  flex: none;
+  gap: 3.5px;
+  min-width: 0;
+}
+.clu-library-filter {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 72.5px;
+  max-width: 120px;
+  height: var(--lib-search-h);
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--lib-search-r);
+  background: var(--button-hover);
+  color: var(--label);
+  font: inherit;
+  font-size: var(--fs-lib-title);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform var(--t-press) var(--ease-out);
+}
+.clu-library-filter span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clu-library-filter:active {
+  transform: scale(var(--press-scale));
+}
+.clu-library-filter:focus-visible {
+  outline: var(--focus);
+  outline-offset: -2px;
+}
+.clu-library-filter-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+.clu-archive-blank {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  /* A touch lighter than the list. */
+  background: rgb(255 255 255 / 18%);
+}
+.clu-archive-search-field {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  height: var(--lib-search-h);
+  padding: 0 12px;
+  border-radius: var(--lib-search-r);
+  background: var(--row-multi);
+  color: var(--glyph);
+}
+/* The caret is the field's focus mark, as in Rio's command bar: no ring (a text field
+   matches :focus-visible on every focus, so a ring would show each time the Library opens). */
+.clu-archive-search:focus-visible {
+  outline: none;
+}
+.clu-archive-search {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-lib-title);
+  outline: none;
+}
+.clu-archive-search::placeholder {
+  color: var(--text-on-tint);
+}
+.clu-archive-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.clu-archive-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-archive-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding-right: 4px;
+  border-radius: var(--row-r);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.clu-archive-row:hover {
+  background: var(--hover-ink);
+  transition-duration: var(--t-fast);
+}
+.clu-archive-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--row-gap);
+  height: var(--lib-row-h);
+  padding: 0 var(--row-px);
+  border: 0;
+  border-radius: var(--row-r);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-row);
+  text-align: left;
+  transition: transform var(--t-press) var(--ease-out);
+}
+.clu-archive-open:active {
+  transform: scale(var(--press-scale));
+}
+.clu-archive-open:focus-visible {
+  outline: var(--focus);
+  outline-offset: -2px;
+}
+.clu-archive-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.clu-archive-title,
+.clu-archive-meta {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-archive-title {
+  font-size: var(--fs-lib-title);
+}
+.clu-archive-meta {
+  font-size: var(--fs-lib-sub);
+  color: var(--text-on-tint);
+}
+/* Rows show the URL only; the reason is kept for assistive tech. */
+.clu-archive-reason {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+/* Restore and delete reserve no width at rest and fade in on hover or keyboard focus (design.md section 2). */
+.clu-archive-row .clu-tooltip-anchor {
+  display: none;
+}
+.clu-archive-row:hover .clu-tooltip-anchor,
+.clu-archive-row:focus-within .clu-tooltip-anchor {
+  display: inline-flex;
+}
+.clu-archive-action {
+  width: 24px;
+  height: 24px;
+  animation: clu-archive-fade 80ms var(--ease-out);
+}
+@keyframes clu-archive-fade {
+  from {
+    opacity: 0;
+  }
+}
+.clu-archive-empty {
+  margin: 16px var(--row-px);
+  font-size: var(--fs-2);
+  color: var(--ink-2);
+}
+.clu-archive-button[aria-pressed='true'] {
+  background: var(--active-surface);
+  box-shadow: var(--shadow-1);
+  color: var(--ink);
+}
+/* The library glyph rests as a closed box. Hover, or the Library opening from it, tips the lid open and
+   brings out the sparkles; leaving closes it again. */
+.clu-library-lid {
+  transform-box: view-box;
+  transform-origin: 3.15px 9px;
+  transition: transform 220ms var(--ease-out);
+}
+.clu-library-sparkles {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 220ms var(--ease-out);
+}
+.clu-archive-button:hover:not(:disabled) .clu-library-lid,
+.clu-archive-button[aria-pressed='true'] .clu-library-lid {
+  transform: translate(-0.55px, -0.5px) rotate(-14deg) scaleX(0.82);
+}
+.clu-archive-button:hover:not(:disabled) .clu-library-sparkles,
+.clu-archive-button[aria-pressed='true'] .clu-library-sparkles {
+  opacity: 1;
+  transform: none;
+}
+:root[data-reduced-motion='true'] .clu-library-lid,
+:root[data-reduced-motion='true'] .clu-library-sparkles {
+  transition: none;
+}
+
+/* Library hover peek: no panel; rows on a 56 pitch end just above the
+   bottom bar (or the media bar), a 40 x 40 tile at the content's left edge, the name 12.5 right of it, the time below.
+   Rows rise 34 into place bottom first, 17 ms apart, over 210 ms; closing drops them 30 over 70 ms, 33 ms apart. The
+   tab list fades out under them, to 30% on the row above. */
+.clu-library-peek-anchor {
+  position: relative;
+  flex: none;
+  height: 0;
+}
+.clu-library-peek {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-library-peek > li {
+  animation: clu-library-rise 210ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 17ms);
+}
+.clu-library-peek[data-state='closing'] > li {
+  animation: clu-library-drop 70ms cubic-bezier(0.4, 0, 1, 1) both;
+  animation-delay: calc(var(--i) * 33ms);
+}
+:root[data-reduced-motion='true'] .clu-library-peek > li {
+  animation: none;
+}
+@keyframes clu-library-rise {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+}
+@keyframes clu-library-drop {
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+.clu-library-peek-row {
+  display: flex;
+  align-items: center;
+  gap: 12.5px;
+  width: 100%;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+.clu-library-peek-row:focus-visible {
+  outline: var(--focus);
+  outline-offset: -2px;
+  border-radius: var(--row-r);
+}
+.clu-library-peek-tile {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 22%), 0 0 0 0.5px rgb(0 0 0 / 8%);
+  color: rgb(0 0 0 / 40%);
+}
+/* A real thumbnail fills the tile (40 x 40, radius 4). */
+.clu-library-peek-tile {
+  overflow: hidden;
+}
+.clu-library-peek-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.clu-library-peek-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.clu-library-peek-title,
+.clu-library-peek-time {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-library-peek-title {
+  font-size: 14px;
+  line-height: 18px;
+}
+.clu-library-peek-time {
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--glyph);
+}
+.clu-sidebar:has(.clu-library-peek[data-state='open']) {
+  --library-peek-h: 56px;
+}
+.clu-sidebar:has(.clu-library-peek[data-state='open'] > li:nth-child(2)) {
+  --library-peek-h: 112px;
+}
+.clu-sidebar:has(.clu-library-peek[data-state='open'] > li:nth-child(3)) {
+  --library-peek-h: 168px;
+}
+.clu-sidebar:has(.clu-library-peek[data-state='open'] > li:nth-child(4)) {
+  --library-peek-h: 224px;
+}
+.clu-sidebar:has(.clu-library-peek[data-state='open']) .clu-space-slider {
+  mask-image: linear-gradient(to top, transparent calc(var(--library-peek-h) - 6px), rgb(0 0 0 / 30%) calc(var(--library-peek-h) + 14px), #000 calc(var(--library-peek-h) + 41px));
+}
+
+/* The Library: the widened sidebar holds a section rail, icon over an 11 pt bold
+   label, the selected section on a tint x 0.93 plate, then the list column with its search field 10 from the top.
+   The rail's top keeps clear of the window buttons; the back arrow sits at its foot. */
+.clu-sidebar.clu-sidebar-library {
+  padding: 0;
+}
+/* The open Library's host: no box of its own, so the Library lays out in the sidebar as before. */
+.clu-library-host {
+  display: contents;
+}
+/* The Library a swipe closed, drawn just left of the sidebar while both slide on. */
+.clu-sidebar.clu-library-exit {
+  left: auto;
+  right: 100%;
+  pointer-events: none;
+}
+.clu-library {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  -webkit-app-region: no-drag;
+}
+.clu-library-rail {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: var(--lib-rail-w);
+  padding: 0 var(--sidebar-inset);
+  box-sizing: border-box;
+  /* A touch lighter than the list column (#e4babb over #e1b8b9). */
+  background: rgb(255 255 255 / 4%);
+}
+/* Items start at the top: the first one's center at y 144, then a 100 pitch. */
+.clu-library-rail-items {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+  padding-top: 104px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.clu-library-rail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--lib-rail-item-h);
+  border: 0;
+  border-radius: var(--lib-rail-item-r);
+  background: transparent;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: var(--fs-lib-rail);
+  font-weight: 700;
+}
+.clu-library-rail-item span {
+  color: var(--label);
+}
+/* A plain plate marks the selected tile and keyboard focus; never Chromium's blue ring on a clicked tile. */
+.clu-library-rail-item:focus {
+  outline: none;
+}
+.clu-library-rail-item[aria-selected='true'],
+.clu-library-rail-item:focus-visible {
+  background: var(--button-hover);
+}
+.clu-library-rail-item[aria-selected='true'] span {
+  color: var(--ink);
+}
+.clu-library-rail-foot {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  flex: none;
+}
+.clu-library-list {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  padding: 10px var(--sidebar-inset) 0;
+}
+.clu-library-list .clu-archive-open {
+  padding-left: calc(var(--lib-icon-x) - var(--sidebar-inset));
+  gap: var(--lib-title-gap);
+}
+.clu-library-list .clu-archive-day .clu-section-label {
+  margin: 14px 4.5px 4px;
+  font-size: var(--fs-2);
+  font-weight: 600;
+  color: var(--text-on-tint);
+}
+
+/* Library Downloads and Media: a 24 icon slot before the name on
+   the 56 row pitch; Media is a two-column grid of tiles under the same day headers. Show in Finder fades in on hover
+   like the archive's actions. */
+.clu-library-icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 2px;
+}
+.clu-library-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--glyph);
+}
+.clu-library-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin: 0;
+  padding: 0 var(--row-px) 8px;
+  list-style: none;
+}
+.clu-library-tile {
+  position: relative;
+  min-width: 0;
+}
+.clu-library-tile-open {
+  display: flex;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  transition: transform var(--t-press) var(--ease-out);
+}
+.clu-library-tile-open:active {
+  transform: scale(var(--press-scale));
+}
+.clu-library-tile-open:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+/* A square tile, radius 12, tinted 5% over the sidebar (10% on hover); the thumbnail spans
+   the tile 9 in from its edges at its own aspect (a tall one fits the height), in a 3.5 white frame. No name under it: the tooltip carries it. */
+.clu-library-thumb {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 9px;
+  border-radius: 12px;
+  background: var(--row-hover);
+  color: var(--glyph);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.clu-library-tile:hover .clu-library-thumb {
+  background: var(--row-multi);
+}
+.clu-library-thumb img {
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+  border: 3.5px solid #fff;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+}
+.clu-library-tile > .clu-tooltip-anchor:has(> .clu-library-tile-reveal) {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: none;
+}
+.clu-library-tile:hover > .clu-tooltip-anchor:has(> .clu-library-tile-reveal),
+.clu-library-tile:focus-within > .clu-tooltip-anchor:has(> .clu-library-tile-reveal) {
+  display: inline-flex;
+}
+/* The tile's own anchor carries its full name as a tooltip and fills the grid cell. */
+.clu-library-tile > .clu-tooltip-anchor:has(> .clu-library-tile-open) {
+  display: flex;
+  width: 100%;
+}
+/* Rename… edits the name in place. */
+.clu-archive-row[data-renaming] .clu-archive-title {
+  visibility: hidden;
+}
+.clu-archive-row {
+  position: relative;
+}
+.clu-library-rename {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-width: 0;
+  padding: 1px 4px;
+  border: 0;
+  border-radius: 4px;
+  outline: var(--focus);
+  background: var(--active-surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-lib-sub);
+}
+.clu-archive-row > .clu-library-rename {
+  top: 6px;
+  bottom: auto;
+  left: 40px;
+  right: 8px;
+  font-size: inherit;
+}
+.clu-library-tile-reveal {
+  width: 24px;
+  height: 24px;
+  background: var(--active-surface);
+}
+
+/* Library Spaces: each space a 163 pt card tinted with its
+   own theme and grain, 16 apart in a row that scrolls sideways; a 26 header (icon slot, name, profile pill, brush),
+   the pinned rows on the 28 pitch, and the move handle and "…" at the foot; a round "+" after the last card. */
+.clu-library-spaces {
+  margin: 0 calc(-1 * var(--sidebar-inset));
+}
+.clu-space-cards {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 16px;
+  margin: 0;
+  padding: 0 var(--sidebar-inset) 10px;
+  list-style: none;
+  overflow: auto hidden;
+}
+.clu-space-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 163px;
+  min-height: 0;
+  border-radius: 8px;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 6%), 0 1px 3px rgb(0 0 0 / 6%);
+  overflow: hidden;
+}
+.clu-space-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--clu-grain-tile, none);
+  background-size: 64px 64px;
+  opacity: var(--clu-grain-opacity, 0);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.clu-space-card[data-drop] {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.clu-space-card button {
+  color: inherit;
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.clu-space-card-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  margin: 5px 5px 2px;
+  padding: 0 3px;
+  border-radius: 6px;
+  color: var(--card-muted);
+}
+.clu-space-card-head:hover {
+  background: rgb(255 255 255 / 18%);
+}
+.clu-space-card-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px dashed transparent;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.clu-space-card-head:hover .clu-space-card-icon {
+  border-color: currentColor;
+}
+.clu-space-card-name {
+  flex: 0 1 auto;
+  /* Short names ("Home") show whole; long ones truncate after the pill has given way. */
+  min-width: 44px;
+  margin-right: auto;
+  font-size: var(--fs-2);
+  font-weight: 600;
+}
+.clu-space-card-name button {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-space-card-name input {
+  width: 100%;
+}
+.clu-space-card-profile {
+  display: flex;
+  /* The pill gives way before the name does. */
+  flex: 0 100 auto;
+  min-width: 26px;
+  align-items: center;
+  gap: 3px;
+  max-width: 64px;
+  height: 18px;
+  padding: 0 6px 0 5px;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 35%);
+  font-size: 11px;
+  font-weight: 500;
+}
+.clu-space-card-profile > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-space-card-profile svg {
+  flex: none;
+}
+.clu-space-card-brush,
+.clu-space-card-more,
+.clu-space-card-move {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  color: var(--card-muted);
+}
+.clu-space-card-brush:hover,
+.clu-space-card-more:hover,
+.clu-space-card-move:hover {
+  background: rgb(255 255 255 / 30%);
+}
+.clu-space-card-brush:active,
+.clu-space-card-more:active {
+  background: rgb(255 255 255 / 45%);
+}
+.clu-space-card-move {
+  cursor: grab;
+}
+.clu-space-card-rows {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0 5px;
+  list-style: none;
+  overflow: hidden auto;
+}
+.clu-space-card-row button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 6px;
+  font-size: var(--fs-2);
+  font-weight: 500;
+  text-align: left;
+}
+.clu-space-card-row[data-folder] button {
+  font-weight: 600;
+}
+.clu-space-card-row button:hover {
+  background: rgb(255 255 255 / 22%);
+}
+.clu-space-card-row-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+}
+.clu-space-card-row-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clu-space-card-foot {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  padding: 6px 8px 8px;
+}
+/* The "+" sits centered in its own column after the cards (about 67 pt to the Library's edge). */
+.clu-space-cards-add {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+}
+.clu-space-cards-add button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--accent-strong, var(--accent));
+  background: #fff;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 8%), 0 1px 2px rgb(0 0 0 / 12%);
+}
+.clu-space-cards-add button:hover {
+  background: rgb(255 255 255 / 85%);
+}

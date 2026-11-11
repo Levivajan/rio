@@ -1,0 +1,611 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The per-call guard of every Clu WebUI handler: the generated allow-list and payload checks
+# (scripts/chromium/gen-mojom.ts) and the helpers they call.
+source_set("bridge") {
+  sources = [
+    "bridge/bridge_handlers.cc",
+    "bridge/bridge_handlers.h",
+    "bridge/bridge_validators.cc",
+    "bridge/bridge_validators.h",
+    "bridge/call_result.cc",
+    "bridge/call_result.h",
+    "bridge/validation.cc",
+    "bridge/validation.h",
+  ]
+  public_deps = [
+    "//base",
+    "//clu/common/mojom",
+    "//content/public/browser",
+    "//mojo/public/cpp/bindings",
+  ]
+  deps = [ "//third_party/re2" ]
+}
+
+# The URL rules: which URLs the bridge opens and how state shows them. The tab model (//clu/browser/model) uses them
+# for its rows.
+source_set("url_policy") {
+  sources = [
+    "clu_url_policy.cc",
+    "clu_url_policy.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    ":bridge",
+    "//clu/common:urls",
+    "//content/public/common",
+    "//url",
+  ]
+}
+
+# CluState JSON and the overlay geometry. No browser objects, so the unit tests run without a profile.
+source_set("state") {
+  sources = [
+    "clu_overlay_rects.cc",
+    "clu_overlay_rects.h",
+    "clu_site_state.cc",
+    "clu_site_state.h",
+    "clu_state_builder.cc",
+    "clu_state_builder.h",
+  ]
+  public_deps = [
+    ":url_policy",
+    "//base",
+    "//clu/browser/capabilities:core",
+    "//clu/browser/model:core",
+    "//clu/browser/theme:core",
+    "//clu/browser/multitask:core",
+    "//clu/browser/ui/views/frame:layout_math",
+    "//clu/browser/updater:rules",
+    "//ui/gfx/geometry",
+  ]
+  deps = [
+    ":bridge",
+    "//clu/browser/spaces:core",
+    "//url",
+  ]
+}
+
+# The hover peek's timing rules (dwell, grace, guard) on a TickClock. No browser objects, so the unit tests run on a
+# mock clock.
+source_set("sidebar_peek") {
+  sources = [
+    "clu_sidebar_peek.cc",
+    "clu_sidebar_peek.h",
+  ]
+  public_deps = [
+    "//base",
+    "//clu/browser/ui/views/frame:layout_math",
+    "//ui/gfx/geometry",
+  ]
+}
+
+# clu::IsPlaceholderTab() for the extensions tabs and windows APIs (patches chrome-browser-extensions-*). No deps, so
+# //chrome/browser/extensions reaches no Clu code; //clu/browser/ui/webui implements it.
+source_set("tab_hooks") {
+  public = [ "clu_tab_hooks.h" ]
+}
+
+# The trackpad lift reports for the sidebar swipe. Only content and blink input types, so the unit tests link
+# it without the whole WebUI.
+source_set("wheel_lift_watcher") {
+  sources = [
+    "clu_wheel_lift_watcher.cc",
+    "clu_wheel_lift_watcher.h",
+  ]
+  public_deps = [
+    "//base",
+    "//content/public/browser",
+    "//third_party/blink/public/common",
+  ]
+  if (is_mac) {
+    sources += [ "clu_wheel_lift_watcher_mac.mm" ]
+    frameworks = [ "AppKit.framework" ]
+  }
+}
+
+# chrome://clu-frame and chrome://clu-overlay: controllers, the state publisher, the window's rows and pages, the native
+# sidebar menus and the handlers. Reached from //chrome/browser/ui/webui:configs and
+# //chrome/browser:chrome_browser_interface_binders_webui_parts_desktop.
+source_set("webui") {
+  sources = [
+    "clu_bridge_host.cc",
+    "clu_bridge_host.h",
+    "clu_capabilities_handlers.cc",
+    "clu_capabilities_handlers.h",
+    "clu_command_bar.cc",
+    "clu_command_bar.h",
+    "clu_platform_handler.cc",
+    "clu_platform_handler.h",
+    "clu_data_handlers.cc",
+    "clu_data_handlers.h",
+    "clu_default_browser.cc",
+    "clu_default_browser.h",
+    "clu_extension_actions.cc",
+    "clu_extension_actions.h",
+    "clu_gmail_feed.cc",
+    "clu_gmail_feed.h",
+    "clu_icon_backfill.cc",
+    "clu_icon_backfill.h",
+    "clu_live_folders.cc",
+    "clu_live_folders.h",
+    "clu_site_handlers.cc",
+    "clu_site_handlers.h",
+    "clu_mini_windows.cc",
+    "clu_mini_windows.h",
+    "clu_multitask_handlers.cc",
+    "clu_peek.cc",
+    "clu_peek.h",
+    "clu_peek_hooks.cc",
+    "clu_settings_window.cc",
+    "clu_settings_window.h",
+    "clu_space_actions.cc",
+    "clu_space_actions.h",
+    "clu_space_menu.cc",
+    "clu_space_menu.h",
+    "clu_tab_id.cc",
+    "clu_tab_id.h",
+    "clu_tab_menu.cc",
+    "clu_tab_menu.h",
+    "clu_webui.cc",
+    "clu_webui.h",
+    "clu_window_app_state.cc",
+    "clu_window_app_state.h",
+    "clu_window_commands.cc",
+    "clu_window_handlers.cc",
+    "clu_window_handlers.h",
+    "clu_window_site.cc",
+    "clu_window_site.h",
+    "clu_window_multitask.cc",
+    "clu_window_multitask.h",
+    "clu_window_sidebar_peek.cc",
+    "clu_window_sidebar_peek.h",
+    "clu_window_spaces.cc",
+    "clu_window_state.cc",
+    "clu_window_state.h",
+    "clu_window_tabs.cc",
+  ]
+  public_deps = [
+    ":bridge",
+    ":sidebar_peek",
+    ":state",
+    ":tab_hooks",
+    ":wheel_lift_watcher",
+    "//chrome/browser/image_editor",
+    "//chrome/browser/ui/tabs:tab_strip_model_observer",
+    "//clu/browser/ai",
+    "//clu/browser/capabilities",
+    "//clu/browser/capabilities:library_files",
+    "//clu/browser/importer:service",
+    "//chrome/browser/ui/tabs:utils",
+    "//chrome/browser/ui/toolbar",
+    "//clu/browser/model:service",
+    "//clu/browser/settings:hooks",
+    "//clu/browser/settings:service",
+    "//clu/browser/site",
+    "//clu/browser/multitask:core",
+    "//clu/browser/multitask:hooks",
+    "//clu/browser/spaces:core",
+    "//clu/browser/spaces:service",
+    "//clu/browser/ui/views/frame",
+    "//clu/common/mojom",
+    "//components/omnibox/browser",
+    "//content/public/browser",
+    "//ui/base",
+    "//ui/events",
+    "//ui/menus",
+    "//ui/webui",
+  ]
+  deps = [
+    "//base",
+    "//base/version_info",
+    "//chrome/app:command_ids",
+    "//chrome/browser/autocomplete",
+    "//chrome/browser/content_settings",
+    "//chrome/browser/content_settings:content_settings_factory",
+    "//chrome/browser/extensions",
+    "//chrome/browser/favicon",
+    "//chrome/browser/picture_in_picture",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/profiles:profile_manager",
+    "//chrome/browser/search_engines",
+    "//chrome/browser/sessions",
+    "//chrome/browser:shell_integration",
+    "//chrome/browser/ui:browser_commands",
+    "//chrome/browser/ui:chrome_pages",
+    "//chrome/browser/ui/browser_window",
+    "//chrome/browser/ui/browser_window:create_browser_window",
+    "//chrome/browser/ui/extensions",
+    "//chrome/browser/ui/find_bar",
+    "//chrome/browser/ui/navigator",
+    "//chrome/browser/ui/tabs:tab_enums",
+    "//chrome/browser/ui/tabs:tab_model",
+    "//chrome/browser/ui/tabs:tab_strip",
+    "//chrome/browser/ui/toolbar",
+    "//chrome/browser/ui/tabs:tabs",
+    "//chrome/browser/ui/webui:favicon_source",
+    "//chrome/browser/ui/webui:webui_util",
+    "//chrome/common",
+    "//clu/browser/capabilities:site_permissions",
+    "//clu/browser/command:core",
+    "//clu/browser/command:history",
+    "//clu/browser/commands",
+    "//clu/browser/model:core",
+    "//clu/browser/model:row_stamp",
+    "//clu/browser/settings:prefs",
+    "//clu/browser/updater:service",
+    "//clu/browser/data:browsing_data",
+    "//clu/browser/theme:core",
+    "//clu/common:urls",
+    "//clu/resources",
+    "//components/favicon/core",
+    "//components/favicon_base",
+    "//components/history/core/common",
+    "//components/keyed_service/core",
+    "//components/prefs",
+    "//components/input",
+    "//components/content_settings/browser",
+    "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
+    "//components/find_in_page",
+    "//components/permissions",
+    "//components/search_engines",
+    "//components/sessions",
+    "//components/split_tabs",
+    "//components/tabs:public",
+    "//components/zoom",
+    "//extensions/browser",
+    "//extensions/common",
+    "//net",
+    "//mojo/public/cpp/bindings",
+    "//services/media_session/public/mojom",
+    "//services/data_decoder/public/cpp",
+    "//services/network/public/cpp",
+    "//services/network/public/mojom",
+    "//third_party/blink/public/common",
+    "//third_party/metrics_proto",
+    "//skia",
+    "//ui/base/clipboard",
+    "//ui/base/dragdrop:types",
+    "//ui/base/mojom:ui_base_types",
+    "//ui/compositor",
+    "//ui/content_accelerators",
+    "//ui/display",
+    "//ui/gfx",
+    "//ui/gfx/codec",
+    "//ui/native_theme",
+    "//ui/views",
+    "//ui/views/controls/webview",
+    "//url",
+  ]
+  if (is_mac) {
+    sources += [
+      "clu_haptic.h",
+      "clu_haptic_mac.mm",
+      "clu_library_drag.h",
+      "clu_library_drag_mac.mm",
+      "clu_menu_appearance.h",
+      "clu_menu_appearance_mac.mm",
+      "clu_quit_mac.mm",
+      "clu_settings_window_mac.mm",
+      "clu_share_services.h",
+      "clu_share_services_mac.mm",
+      "clu_text_recognizer.h",
+      "clu_text_recognizer_mac.mm",
+    ]
+    deps += [
+      "//clu/browser/ui/cocoa:main_menu",
+    ]
+    frameworks = [
+      "Cocoa.framework",
+      "Vision.framework",
+    ]
+  }
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "bridge/bridge_validators_unittest.cc",
+    "bridge/site_validators_unittest.cc",
+    "bridge/validation_unittest.cc",
+    "clu_overlay_rects_unittest.cc",
+    "clu_sidebar_peek_unittest.cc",
+    "clu_site_state_unittest.cc",
+    "clu_state_builder_unittest.cc",
+    "clu_url_policy_unittest.cc",
+    "clu_wheel_lift_watcher_unittest.cc",
+  ]
+  deps = [
+    ":bridge",
+    ":sidebar_peek",
+    ":state",
+    ":url_policy",
+    ":wheel_lift_watcher",
+    "//base",
+    "//base/test:test_support",
+    "//testing/gtest",
+    "//ui/gfx/geometry",
+    "//url",
+  ]
+}
+
+source_set("browser_tests") {
+  testonly = true
+  defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+  sources = [
+    "clu_ai_browsertest.cc",
+    "clu_blocker_browsertest.cc",
+    "clu_command_browsertest.cc",
+    "clu_data_browsertest.cc",
+    "clu_extensions_browsertest.cc",
+    "clu_library_browsertest.cc",
+    "clu_multitask_browsertest.cc",
+    "clu_motion_browsertest.cc",
+    "clu_native_browsertest.cc",
+    "clu_restore_browsertest.cc",
+    "clu_shell_browsertest.cc",
+    "clu_sidebar_browsertest.cc",
+    "clu_spaces_browsertest.cc",
+    "clu_tabs_browsertest.cc",
+    "clu_update_browsertest.cc",
+    "clu_theme_browsertest.cc",
+    "clu_tweaks_browsertest.cc",
+    "clu_zoom_browsertest.cc",
+  ]
+  data = [ "//clu/test/data/" ]
+  deps = [
+    ":sidebar_peek",
+    ":webui",
+    "//clu/browser/ai",
+    "//base",
+    "//base/test:test_support",
+    "//chrome/app:command_ids",
+    "//chrome/browser:browser_process",
+    "//chrome/browser:shell_integration",
+    "//chrome/browser/bookmarks",
+    "//chrome/browser/devtools:test_support",
+    "//chrome/browser/extensions",
+    "//chrome/browser/extensions:test_support",
+    "//chrome/browser/history",
+    "//chrome/browser/infobars",
+    "//chrome/browser/password_manager/factories",
+    "//chrome/browser/picture_in_picture",
+    "//chrome/browser/search_engines",
+    "//chrome/browser/profiles:profile",
+    "//chrome/browser/profiles:profile_manager",
+    "//chrome/browser/resource_coordinator",
+    "//chrome/browser/signin",
+    "//chrome/browser/ui:browser_command_controller",
+    "//chrome/browser/ui:browser_commands",
+    "//chrome/browser/ui/browser_window",
+    "//chrome/browser/ui/browser_window:create_browser_window",
+    "//chrome/browser/ui/find_bar",
+    "//chrome/browser/ui/navigator",
+    "//chrome/browser/ui/tabs:tab_enums",
+    "//chrome/browser/ui/side_panel",
+    "//chrome/browser/ui/tabs:tab_model",
+    "//chrome/browser/ui/tabs:tab_strip",
+    "//chrome/browser/ui/toolbar",
+    "//chrome/browser/ui/views:bubble_anchor_util_views",
+    "//chrome/browser/ui/views/side_panel",
+    "//chrome/browser/ui/tabs:tabs",
+    "//chrome/browser/ui/views/frame",
+    "//chrome/browser/ui/views/frame:browser_view_header",
+    "//chrome/browser/ui/views/frame:contents_container_view",
+    "//chrome/browser/ui/views/frame:contents_web_view",
+    "//chrome/browser/ui/views/frame:multi_contents_view",
+    "//chrome/browser/ui/views/frame:multi_contents_view_mini_toolbar",
+    "//chrome/browser/ui/views/frame:toolbar_button_provider",
+    "//chrome/browser/ui/views/frame:top_container_view",
+    "//chrome/browser/ui/views/infobars",
+    "//chrome/browser/ui/exclusive_access",
+    "//chrome/browser/themes",
+    "//chrome/common:constants",
+    "//chrome/common:non_code_constants",
+    "//chrome/common",
+    "//chrome/test:test_support",
+    "//chrome/test:test_support_ui",
+    "//clu/browser/command:core",
+    "//clu/browser/command:history",
+    "//clu/browser/commands",
+    "//clu/browser/importer:core",
+    "//clu/browser/importer:service",
+    "//clu/browser/importer:site_storage",
+    "//services/network:test_support",
+    "//clu/browser/importer:test_support",
+    "//components/password_manager/core/browser/password_store:password_store_interface",
+    "//components/password_manager/core/browser/password_store:test_support",
+    "//clu/browser/model:service",
+    "//clu/browser/settings:prefs",
+    "//clu/browser/settings:registry",
+    "//clu/browser/settings:service",
+    "//clu/browser/site",
+    "//clu/browser/multitask:core",
+    "//clu/browser/spaces:core",
+    "//clu/browser/spaces:service",
+    "//clu/browser/theme:core",
+    "//clu/browser/theme:overlay_scrollbars",
+    "//clu/browser/ui/views/frame",
+    "//clu/browser/updater:service",
+    "//clu/common:urls",
+    "//components/bookmarks/browser",
+    "//components/bookmarks/test",
+    "//components/history/core/browser",
+    "//components/find_in_page",
+    "//components/history/core/common",
+    "//components/history/core/test",
+    "//components/infobars/content",
+    "//components/infobars/core",
+    "//components/input",
+    "//components/javascript_dialogs",
+    "//components/keyed_service/core",
+    "//components/prefs",
+    "//components/search_engines",
+    "//components/services/storage/public/mojom",
+    "//components/split_tabs",
+    "//components/translate/core/browser:translate_pref_names",
+    "//components/tabs:public",
+    "//components/viz/common",
+    "//components/zoom",
+    "//content/public/browser",
+    "//content/test:test_support",
+    "//extensions/browser",
+    "//extensions/browser:test_support",
+    "//extensions/common",
+    "//media",
+    "//net",
+    "//net:test_support",
+    "//services/network/public/mojom",
+    "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/blink/public/common",
+    "//ui/base",
+    "//ui/base/clipboard",
+    "//ui/base/clipboard:clipboard_test_support",
+    "//ui/base/dragdrop:types",
+    "//ui/compositor",
+    "//skia",
+    "//ui/display",
+    "//ui/events",
+    "//ui/events:dom_keycode_converter",
+    "//ui/gfx",
+    "//ui/gfx/codec",
+    "//ui/gfx/geometry",
+    "//ui/menus",
+    "//ui/native_theme",
+    "//ui/native_theme:test_support",
+    "//ui/views",
+    "//ui/views:test_support",
+    "//ui/views/controls/webview",
+    "//url",
+
+    # The native Chrome layer (CluNative*, M9).
+    "//chrome/browser/autofill",
+    "//chrome/browser/autofill:test_support",
+    "//chrome/browser/content_settings:content_settings_factory",
+    "//chrome/browser/interstitials:test_support",
+    "//chrome/browser/password_manager:test_support",
+    "//chrome/browser/password_manager/factories",
+    "//chrome/browser/performance_manager/public/user_tuning",
+    "//chrome/browser/safe_browsing",
+    "//chrome/browser/safe_browsing:test_support",
+    "//chrome/browser/ui/passwords",
+    "//chrome/browser/ui/views/download",
+    "//chrome/browser/ui/views/passwords:password_bubble_view_base",
+    "//chrome/browser/webauthn",
+    "//chrome/test/permissions",
+    "//clu/browser/capabilities",
+    "//clu/browser/capabilities:library_files",
+    "//components/autofill/content/browser",
+    "//components/autofill/core/browser",
+    "//components/autofill/core/browser:test_support",
+    "//components/content_settings/core/browser",
+    "//components/content_settings/core/common",
+    "//components/download/public/common:public",
+    "//components/password_manager/core/browser",
+    "//components/password_manager/core/browser/password_store:test_support",
+    "//components/permissions",
+    "//components/permissions:test_support",
+    "//components/safe_browsing/content/browser:safe_browsing_blocking_page",
+    "//components/safe_browsing/core/browser/db:sb_protocol_manager_util",
+    "//components/safe_browsing/core/browser/db:test_database_manager",
+    "//components/safe_browsing/core/common:features",
+    "//components/safe_browsing/core/common:safe_browsing_prefs",
+    "//components/safe_browsing/core/common:switches",
+    "//components/security_interstitials/content:security_interstitial_page",
+    "//components/security_interstitials/core",
+    "//device/fido",
+    "//device/fido:test_support",
+    "//google_apis",
+
+    # Restored tabs back in their rows (CluRestore*, docs/chromium/fixes.md).
+    "//chrome/browser/prefs:util",
+    "//chrome/browser/sessions",
+    "//chrome/browser/ui:browser_live_tab_context",
+    "//clu/browser/model:row_stamp",
+    "//components/sessions",
+
+    # Passwords from a CSV file (CluNativeImportPasswords*): no file dialog on screen.
+    "//ui/shell_dialogs:test_support",
+  ]
+  if (is_mac) {
+    # The Mac key path with real NSEvents (CluKeys*), links from other apps through AppController (CluMini*), the
+    # look (CluLook*: window buttons, NSWindow geometry), and the app icon in the Dock (CluAppIcon*).
+    sources += [
+      "clu_app_icon_browsertest.mm",
+      "clu_keys_browsertest.mm",
+      "clu_look_browsertest.mm",
+      "clu_mini_browsertest.mm",
+      "clu_quit_browsertest.mm",
+    ]
+    deps += [
+      "//chrome/browser:app_controller_mac",
+      "//clu/browser/app_icon",
+      "//clu/browser/settings:hooks",
+      "//chrome/browser/themes",
+      "//chrome/browser:global_keyboard_shortcuts_mac",
+      "//chrome/browser/extensions",
+      "//chrome/browser/extensions:test_support",
+      "//chrome/browser/ui/cocoa",
+      "//chrome/browser/ui/find_bar",
+      "//components/policy/core/common",
+      "//components/web_modal",
+      "//extensions/common",
+      "//ui/base:test_support",
+      "//ui/color",
+      "//ui/events:test_support",
+    ]
+    frameworks = [ "Cocoa.framework" ]
+  }
+}
+
+# CluInteractive* (docs/chromium/interactive.md): real keyboard and mouse input through the WindowServer, so Mac only.
+source_set("interactive_ui_tests") {
+  testonly = true
+  if (is_mac) {
+    defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+    sources = [ "clu_interactive_uitest.mm" ]
+    data = [ "//clu/test/data/" ]
+    deps = [
+      ":sidebar_peek",
+      ":webui",
+      "//base",
+      "//base/test:test_support",
+      "//chrome/browser/picture_in_picture",
+      "//chrome/browser/profiles:profile",
+      "//chrome/browser/ui/browser_window",
+      "//chrome/browser/ui/views/overlay",
+      "//chrome/test:test_support",
+      "//chrome/test:test_support_ui",
+      "//chrome/test/base:interactive_test_utils",
+      "//clu/browser/model:service",
+      "//clu/browser/settings:service",
+      "//clu/browser/spaces:core",
+      "//clu/browser/spaces:service",
+      "//clu/browser/ui/views/frame",
+      "//clu/browser/ui/views/frame:layout_math",
+      "//components/tabs:public",
+      "//content/public/browser",
+      "//content/test:test_support",
+      "//media",
+      "//net",
+      "//net:test_support",
+      "//testing/gtest",
+      "//ui/base",
+      "//ui/base/clipboard",
+      "//ui/base/clipboard:clipboard_test_support",
+      "//ui/display",
+      "//ui/events",
+      "//ui/events:events_base",
+      "//ui/gfx/geometry",
+      "//ui/views",
+      "//url",
+    ]
+    frameworks = [
+      "ApplicationServices.framework",
+      "Carbon.framework",
+      "Cocoa.framework",
+    ]
+  }
+}

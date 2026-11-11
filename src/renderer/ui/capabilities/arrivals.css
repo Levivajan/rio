@@ -1,0 +1,93 @@
+/* The rows of what just landed, at the bottom left of the sidebar right above the bottom bar, in the Library
+   hover peek's row look (archive.css .clu-library-peek-row): no card, a 40 x 40 thumbnail, the
+   name at 14, "5 seconds ago" at 12 under it, on a 56 pitch, newest on top. A row rises 34 and fades in over 210 ms
+   (ease-out), and drops 30 while fading over 160 ms (ease-in). The tab list fades out under the rows as it does under
+   the peek, and the Library button sits on its tinted tile while they show. */
+.clu-arrivals-anchor {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  height: 0;
+}
+.clu-arrivals {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clu-arrival {
+  position: relative;
+  /* Backwards fill only: a transform animation that stays filled after it ends keeps the row a containing
+     block for fixed boxes in Blink, so the row's right-click menu laid out from the row and opened off the window. */
+  animation: clu-arrival-rise 210ms var(--ease-out) backwards;
+}
+.clu-arrival[data-leaving] {
+  animation: clu-arrival-drop 160ms cubic-bezier(0.4, 0, 1, 1) both;
+  pointer-events: none;
+}
+:root[data-reduced-motion='true'] .clu-arrival {
+  animation: none;
+}
+@keyframes clu-arrival-rise {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+}
+@keyframes clu-arrival-drop {
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+.clu-arrival-open {
+  padding-right: 28px;
+}
+.clu-arrival-close {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 7%);
+  color: var(--glyph);
+  opacity: 0;
+  transition: opacity 120ms var(--ease-out);
+}
+.clu-arrival:hover .clu-arrival-close,
+.clu-arrival-close:focus-visible {
+  opacity: 1;
+}
+.clu-sidebar:has(.clu-arrivals) {
+  --library-peek-h: 56px;
+}
+.clu-sidebar:has(.clu-arrivals > li:nth-child(2)) {
+  --library-peek-h: 112px;
+}
+.clu-sidebar:has(.clu-arrivals > li:nth-child(3)) {
+  --library-peek-h: 168px;
+}
+.clu-sidebar:has(.clu-arrivals > li:nth-child(4)) {
+  --library-peek-h: 224px;
+}
+.clu-sidebar:has(.clu-arrivals) .clu-space-slider {
+  mask-image: linear-gradient(to top, transparent calc(var(--library-peek-h) - 6px), rgb(0 0 0 / 30%) calc(var(--library-peek-h) + 14px), #000 calc(var(--library-peek-h) + 41px));
+}
+.clu-sidebar:has(.clu-arrivals) .clu-archive-button {
+  background: var(--hover-ink);
+  color: var(--ink);
+}
+/* A row that left while the pointer is on the list keeps its 56 slot until the pointer leaves. */
+.clu-arrival[data-gap] {
+  height: 56px;
+  animation: none;
+}

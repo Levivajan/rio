@@ -1,0 +1,52 @@
+/* Engine parts of the main UI: the page issue panel and the URL pill's bypass mark. */
+.clu-issue p {
+  margin: 0;
+  max-width: 420px;
+  text-align: center;
+  font-size: var(--fs-row);
+}
+.clu-issue-title {
+  margin: 0 24px;
+  max-width: 480px;
+  overflow-wrap: anywhere;
+  text-align: center;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+}
+.clu-issue .clu-issue-code {
+  font-size: var(--fs-2);
+  overflow-wrap: anywhere;
+}
+.clu-issue-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.clu-issue-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.clu-issue-proceed {
+  max-width: 420px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--fs-row);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
+.clu-url-pill[data-bypassed]::before {
+  content: 'Not secure';
+  order: -1;
+  flex: none;
+  margin-right: 6px;
+  color: var(--danger);
+  font-size: var(--fs-2);
+  font-weight: 600;
+}

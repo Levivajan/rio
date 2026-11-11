@@ -1,0 +1,123 @@
+/* Extensions page. A name of any length stays on one line. */
+.clu-extensions {
+  font-size: var(--fs-row);
+}
+.clu-extensions-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.clu-extensions-header h1 {
+  margin: 0;
+}
+.clu-extensions-header a {
+  color: color-mix(in oklab, var(--accent) 70%, var(--ink));
+  text-decoration: none;
+}
+.clu-extensions-header a:hover {
+  text-decoration: underline;
+}
+.clu-extensions-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--ink-2);
+}
+.clu-extensions-empty,
+.clu-extensions-note {
+  margin: 0;
+  color: var(--ink-2);
+}
+.clu-extensions-note {
+  margin-top: 12px;
+  font-size: var(--fs-2);
+}
+.clu-extensions-error {
+  margin: 0 0 8px;
+  color: var(--danger);
+}
+.clu-extensions-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--card-r);
+  box-shadow: inset 0 0 0 1px var(--hover-ink);
+}
+.clu-extension {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 12px;
+}
+.clu-extension + .clu-extension {
+  border-top: 1px solid var(--hover-ink);
+}
+.clu-extension-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+span.clu-extension-icon {
+  background: var(--hover-ink);
+}
+.clu-extension[data-state='off'] .clu-extension-icon,
+.clu-extension[data-state='off'] .clu-extension-text {
+  opacity: 0.5;
+}
+.clu-extension-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.clu-extension-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.clu-extension-name {
+  overflow: hidden;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.clu-extension-version {
+  flex: none;
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-extension-permissions {
+  color: var(--ink-2);
+  font-size: var(--fs-2);
+}
+.clu-extension > [role='switch'] {
+  flex: none;
+}
+.clu-extensions-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--scrim);
+}
+.clu-extensions-scrim .clu-dialog-title {
+  overflow-wrap: anywhere;
+}
+.clu-extensions-confirm-text {
+  margin: 0 0 16px;
+  color: var(--ink-2);
+}
+.clu-extensions-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

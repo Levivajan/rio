@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/startup/first_run_service.cc b/chrome/browser/ui/startup/first_run_service.cc
+--- a/chrome/browser/ui/startup/first_run_service.cc
++++ b/chrome/browser/ui/startup/first_run_service.cc
+@@ -298,6 +298,9 @@ FirstRunServiceFactory::BuildServiceInstanceForBrowserContext(
+ // Helpers ---------------------------------------------------------------------
+ 
+ bool ShouldOpenFirstRun(Profile* profile) {
+-  return IsFirstRunEligibleProcess() && IsFirstRunEligibleProfile(profile) &&
++  // Clu: a regular profile gets Clu's own onboarding in its window
++  // (docs/chromium/m8.md), never Chromium's intro.
++  return !profile->IsRegularProfile() && IsFirstRunEligibleProcess() &&
++         IsFirstRunEligibleProfile(profile) &&
+          !IsFirstRunMarkedFinishedInPrefs();
+ }

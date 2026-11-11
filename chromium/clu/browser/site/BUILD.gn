@@ -1,0 +1,111 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+# The built-in blocker and Site tweaks (docs/chromium/m7.md). `:core` is pure logic (site keys, tweak rules, the
+# blocker's data), `:store` its SQLite rows, `:service` the profile's rows in memory, `:site` the browser side (the
+# component extension, its rules, the page helper and the navigation throttle). Upstream reaches it only through
+# `:hooks`, a header with no deps, from //chrome/browser:core; //clu/browser/ui/webui links the implementation.
+
+source_set("hooks") {
+  sources = [ "clu_site_hooks.h" ]
+}
+
+source_set("core") {
+  sources = [
+    "clu_blocker_rules.cc",
+    "clu_blocker_rules.h",
+    "clu_instant_link.cc",
+    "clu_instant_link.h",
+    "clu_site_extension.h",
+    "clu_site_key.cc",
+    "clu_site_key.h",
+    "clu_tweak_rules.cc",
+    "clu_tweak_rules.h",
+  ]
+  public_deps = [ "//base" ]
+  deps = [ "//url" ]
+}
+
+source_set("store") {
+  sources = [
+    "clu_site_store.cc",
+    "clu_site_store.h",
+  ]
+  public_deps = [
+    ":core",
+    "//base",
+    "//sql",
+  ]
+}
+
+# The profile's rows in memory, with no browser objects: clu_unittests drives it on a temp store and a test clock.
+source_set("service") {
+  sources = [
+    "clu_site_service.cc",
+    "clu_site_service.h",
+  ]
+  public_deps = [
+    ":core",
+    ":store",
+    "//base",
+  ]
+}
+
+source_set("site") {
+  sources = [
+    "clu_blocker.cc",
+    "clu_blocker.h",
+    "clu_site_hooks.cc",
+    "clu_site_page.cc",
+    "clu_site_page.h",
+    "clu_site_profile.cc",
+    "clu_site_profile.h",
+  ]
+  public_deps = [
+    ":core",
+    ":hooks",
+    ":service",
+    "//base",
+    "//chrome/browser/extensions",
+    "//content/public/browser",
+    "//extensions/browser",
+  ]
+  deps = [
+    "//chrome/browser/profiles:profile",
+    "//clu/browser/settings:service",
+    "//clu/resources",
+    "//components/sessions",
+    "//extensions/browser/api/declarative_net_request",
+    "//extensions/common",
+    "//extensions/common:mojom",
+    "//extensions/common/api",
+    "//third_party/blink/public/mojom:script_type_mojo_bindings",
+    "//ui/base",
+    "//url",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "clu_blocker_rules_unittest.cc",
+    "clu_instant_link_unittest.cc",
+    "clu_site_key_unittest.cc",
+    "clu_site_service_unittest.cc",
+    "clu_site_store_unittest.cc",
+    "clu_tweak_rules_unittest.cc",
+  ]
+  data = [ "//clu/test/data/blocker/" ]
+  deps = [
+    ":core",
+    ":service",
+    ":store",
+    "//base",
+    "//base/test:test_support",
+    "//components/crx_file",
+    "//sql",
+    "//sql:test_support",
+    "//testing/gtest",
+    "//third_party/re2",
+    "//url",
+  ]
+}

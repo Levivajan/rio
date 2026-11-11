@@ -1,0 +1,39 @@
+diff --git a/chrome/installer/mac/signing/parts.py b/chrome/installer/mac/signing/parts.py
+index 0a3ba9233e99ef67afa8ea34d937f77032964852..cb00b65ea3d57ffbac40aee75e148060acb4c8ff 100644
+--- a/chrome/installer/mac/signing/parts.py
++++ b/chrome/installer/mac/signing/parts.py
+@@ -160,6 +160,14 @@ def get_parts(config):
+             sign_with_identifier=True,
+             verify_options=verify_options,
+         ),
++        # Clu: the Dock tile plug-in, a loadable bundle (docs/chromium/icons.md).
++        'dock-tile-plugin': CodeSignedProduct(
++            '{.app_product}.app/Contents/PlugIns/RioDockTile.docktileplugin'.format(
++                config
++            ),
++            '{}.docktile'.format(uncustomized_bundle_id),
++            verify_options=verify_options,
++        ),
+     }
+ 
+     if config.enable_updater:
+@@ -265,7 +273,8 @@ async def sign_chrome(paths, config, sign_framework=False):
+         # signing the Current version.
+         # https://developer.apple.com/library/content/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG13
+         for name, part in parts.items():
+-            if name in ('app', 'framework', 'privileged-helper'):
++            if name in ('app', 'framework', 'privileged-helper',
++                        'dock-tile-plugin'):
+                 continue
+             signing.sign_part(paths, config, part)
+ 
+@@ -291,6 +300,9 @@ async def sign_chrome(paths, config, sign_framework=False):
+     if 'privileged-helper' in parts:
+         signing.sign_part(paths, config, parts['privileged-helper'])
+ 
++    # Clu: the Dock tile plug-in sits outside the framework, so every pass signs it.
++    signing.sign_part(paths, config, parts['dock-tile-plugin'])
++
+     # Sign the outer app bundle.
+     signing.sign_part(paths, config, parts['app'])
+ 

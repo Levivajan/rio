@@ -1,0 +1,109 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+import("//build/config/mac/rules.gni")
+import("//build/util/branding.gni")
+import("//tools/grit/grit_rule.gni")
+
+assert(is_mac)
+
+# Rio's app icon (docs/chromium/icons.md). `:app_icon` shows the chosen icon in the Dock while Rio runs; the alternates'
+# PNGs (icons/, rendered by scripts/chromium/make-branding.mjs) ship in resources.pak (`:resources`, clu/build/paks.gni)
+# and in the Dock tile plug-in, which shows the choice while Rio is closed. Patch chrome-BUILD.gn copies the plug-in into
+# Rio.app/Contents/PlugIns, and patch chrome-app-app-Info.plist names it.
+
+_alternates = [
+  "icons/airySun.png",
+  "icons/dusk.png",
+  "icons/flatBlue.png",
+  "icons/ocean.png",
+  "icons/sunset.png",
+  "icons/warm.png",
+]
+
+grit("resources") {
+  source = "clu_app_icon_resources.grd"
+  inputs = _alternates
+  outputs = [
+    "grit/clu_app_icon_resources.h",
+    "clu_app_icon_resources.pak",
+  ]
+  output_dir = "$root_gen_dir/clu"
+}
+
+source_set("app_icon") {
+  sources = [
+    "clu_app_icon.h",
+    "clu_app_icon_mac.mm",
+  ]
+  public_deps = [ "//base" ]
+  deps = [
+    ":resources",
+    "//ui/base",
+  ]
+  frameworks = [
+    "AppKit.framework",
+    "Foundation.framework",
+  ]
+}
+
+# ---- the Dock tile plug-in ------------------------------------------------------------------------------------------
+
+_plugin_name = "RioDockTile"
+
+# Plain Objective-C on AppKit: the Dock loads it into its own process, where neither Chromium's libraries nor its libc++
+# (a shared library in a component build) can be found, so it takes none of the default deps.
+loadable_module("dock_tile_plugin_module") {
+  visibility = [ ":dock_tile_plugin_executable" ]
+  sources = [ "dock_tile/rio_dock_tile_plugin.m" ]
+  no_default_deps = true
+  output_name = _plugin_name
+  output_dir = target_out_dir
+  frameworks = [
+    "AppKit.framework",
+    "CoreFoundation.framework",
+    "Foundation.framework",
+  ]
+}
+
+mac_info_plist("dock_tile_plugin_plist") {
+  info_plist = "dock_tile/Info.plist"
+  executable_name = _plugin_name
+  extra_substitutions = [ "CLU_DOCK_TILE_BUNDLE_ID=$chrome_mac_bundle_id.docktile" ]
+}
+
+bundle_data("dock_tile_plugin_executable") {
+  sources = [ "$target_out_dir/$_plugin_name.so" ]
+  outputs = [ "{{bundle_executable_dir}}/$_plugin_name" ]
+  public_deps = [ ":dock_tile_plugin_module" ]
+}
+
+bundle_data("dock_tile_plugin_info_plist") {
+  sources = get_target_outputs(":dock_tile_plugin_plist")
+  outputs = [ "{{bundle_contents_dir}}/Info.plist" ]
+  public_deps = [ ":dock_tile_plugin_plist" ]
+}
+
+bundle_data("dock_tile_plugin_icons") {
+  sources = _alternates
+  outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+}
+
+create_bundle("dock_tile_plugin") {
+  product_type = "com.apple.product-type.bundle"
+  bundle_root_dir = "$root_out_dir/$_plugin_name.docktileplugin"
+  bundle_contents_dir = "$bundle_root_dir/Contents"
+  bundle_resources_dir = "$bundle_contents_dir/Resources"
+  bundle_executable_dir = "$bundle_contents_dir/MacOS"
+  deps = [
+    ":dock_tile_plugin_executable",
+    ":dock_tile_plugin_icons",
+    ":dock_tile_plugin_info_plist",
+  ]
+}
+
+# Into Rio.app (chrome_app's bundle_deps, patch chrome-BUILD.gn).
+bundle_data("dock_tile_plugin_bundle_data") {
+  sources = [ "$root_out_dir/$_plugin_name.docktileplugin" ]
+  outputs = [ "{{bundle_contents_dir}}/PlugIns/{{source_file_part}}" ]
+  public_deps = [ ":dock_tile_plugin" ]
+}

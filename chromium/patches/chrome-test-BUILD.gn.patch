@@ -1,0 +1,20 @@
+diff --git a/chrome/test/BUILD.gn b/chrome/test/BUILD.gn
+index b0ef6f56ecd6a27bbdb508455b79b783c389853e..1e1f5ed8eb2e2bcec6d691bd3707f9c0ed468e7c 100644
+--- a/chrome/test/BUILD.gn
++++ b/chrome/test/BUILD.gn
+@@ -1510,6 +1510,7 @@ if (!is_android) {
+       "//chrome/test/payments:test_support",
+       "//chrome/test/user_education:impl",
+       "//chrome/test/v8:browser_tests",
++      "//clu:browser_tests",
+       "//components/cdm/common:buildflags",
+       "//components/compose:buildflags",
+       "//components/lens:buildflags",
+@@ -2762,6 +2763,7 @@ test("unit_tests") {
+     "//chrome/test/base:chrome_render_view_host_test_harness",
+     "//chrome/test/base:testing_browser_process",
+     "//chrome/test/base:testing_browser_process_impl",
++    "//clu:unit_tests",
+     "//components/mirroring:mirroring_tests",
+     "//components/privacy_sandbox/privacy_sandbox_attestations",
+     "//components/privacy_sandbox/privacy_sandbox_attestations:metrics",

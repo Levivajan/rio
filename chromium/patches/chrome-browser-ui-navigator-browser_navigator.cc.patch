@@ -1,0 +1,29 @@
+diff --git a/chrome/browser/ui/navigator/browser_navigator.cc b/chrome/browser/ui/navigator/browser_navigator.cc
+index d5d5691f0b7dfdb1a8cc5671537826262c96addd..cf4f7f0691cbdd13a61e15ee500b02c9e5b923b5 100644
+--- a/chrome/browser/ui/navigator/browser_navigator.cc
++++ b/chrome/browser/ui/navigator/browser_navigator.cc
+@@ -109,6 +109,12 @@
+ #include "components/captive_portal/content/captive_portal_tab_helper.h"
+ #endif
+ 
++// Clu: declared here, not included, so this target needs no dependency on
++// Clu's hooks (patch budget); defined in clu/browser/multitask.
++namespace clu {
++bool InterceptNavigate(NavigateParams* params);
++}  // namespace clu
++
+ using content::GlobalRequestID;
+ using content::NavigationController;
+ using content::WebContents;
+@@ -732,6 +738,11 @@ base::WeakPtr<content::NavigationHandle> NavigateImpl(
+     return nullptr;
+   }
+ 
++  // Clu: Peek and Mini window links (docs/chromium/m6.md).
++  if (clu::InterceptNavigate(params)) {
++    return nullptr;
++  }
++
+ #if BUILDFLAG(IS_CHROMEOS)
+   // Block navigation requests when in locked fullscreen mode. We allow
+   // navigation requests in the webapp when locked for OnTask (only relevant for

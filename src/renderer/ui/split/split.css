@@ -1,0 +1,229 @@
+/* Split view: pane cards, pane bars, dividers, focus ring and the sidebar split row. */
+
+/* In split view every pane draws its own card, so the frame's single page card steps aside. */
+.clu-frame:has([data-split-view]:not([data-native])) > .clu-card {
+  visibility: hidden;
+}
+
+.clu-split-view {
+  position: absolute;
+  inset: 0;
+}
+
+.clu-split-pane {
+  position: absolute;
+  border-radius: var(--split-r);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  -webkit-app-region: no-drag;
+}
+
+/* The pane toolbar: 32 tall over a 1 pt divider, back and forward
+   from 14.5 in on a 37 pitch, glyphs #737373 (disabled #bfbfbf), the link glyph and URL (12.5 pt semibold #666666)
+   centered, close 13 in from the right. */
+.clu-split-bar {
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 5%, transparent);
+  border-radius: var(--split-r) var(--split-r) 0 0;
+  color: #737373;
+  user-select: none;
+}
+.clu-split-bar-nav,
+.clu-split-bar-end {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: none;
+}
+/* Centered between the button groups and cut with an ellipsis before it reaches them in a narrow pane. */
+.clu-split-bar-url {
+  flex: 1;
+  min-width: 0;
+  justify-content: center;
+  margin: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666666;
+  font-size: 12.5px;
+  font-weight: 590;
+  white-space: nowrap;
+}
+.clu-split-bar-url > svg {
+  flex: none;
+  color: #737373;
+}
+.clu-split-bar-url-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The port and path after the host are grey. */
+.clu-split-bar-url-rest {
+  color: #7f7f7f;
+}
+.clu-split-bar .clu-split-bar-button {
+  width: 28px;
+  height: 24px;
+  border-radius: 6px;
+  color: inherit;
+}
+.clu-split-bar .clu-split-bar-button:disabled {
+  color: #bfbfbf;
+}
+:root[data-theme='dark'] .clu-split-bar,
+:root[data-theme='dark'] .clu-split-bar-url > svg {
+  color: #a3a3a3;
+}
+:root[data-theme='dark'] .clu-split-bar-url {
+  color: #b3b3b3;
+}
+:root[data-theme='dark'] .clu-split-bar-url-rest {
+  color: #8a8a8e;
+}
+:root[data-theme='dark'] .clu-split-bar .clu-split-bar-button:disabled {
+  color: #5c5c5c;
+}
+
+.clu-split-ring {
+  position: absolute;
+  border: 2px solid var(--accent);
+  border-radius: calc(var(--split-r) + 3px);
+  pointer-events: none;
+}
+
+.clu-split-divider {
+  position: absolute;
+  -webkit-app-region: no-drag;
+  touch-action: none;
+}
+.clu-split-divider[data-dir='row'] {
+  cursor: col-resize;
+}
+.clu-split-divider[data-dir='col'] {
+  cursor: row-resize;
+}
+/* The handle: a neutral 2 x 24 pill
+   centered in the gap, there at rest and unchanged on hover and through the drag, which moves it 1:1 with the
+   divider. #a9a3a8 in light; in dark white at 38% over the gap. */
+.clu-split-divider::after {
+  content: '';
+  position: absolute;
+  border-radius: 1px;
+  background: #a9a3a8;
+  pointer-events: none;
+}
+:root[data-theme='dark'] .clu-split-divider::after {
+  background: rgb(255 255 255 / 38%);
+}
+.clu-split-divider[data-dir='row']::after {
+  top: calc(50% - 12px);
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 24px;
+}
+.clu-split-divider[data-dir='col']::after {
+  left: calc(50% - 12px);
+  top: calc(50% - 1px);
+  width: 24px;
+  height: 2px;
+}
+
+/* Sidebar row of a split: at rest the members share the row, split by 0.5 pt hairlines 16 tall;
+   the active split is a plate in the selected fill holding one 28 pt sub-pill per pane, 5 in from the plate and 8.5
+   apart. Titles end in an ellipsis. */
+.clu-split-row {
+  gap: 0;
+}
+.clu-split-member {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  gap: var(--row-gap);
+}
+.clu-split-member[data-first='false'] {
+  margin-left: var(--row-gap);
+  padding-left: var(--row-gap);
+}
+.clu-split-member[data-first='false']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.5px;
+  height: var(--split-hairline-h);
+  transform: translateY(-50%);
+  background: var(--split-hairline);
+}
+.clu-split-row[data-active='true'] {
+  gap: var(--split-pill-gap);
+  padding: 0 var(--split-pill-inset);
+}
+.clu-split-row[data-active='true'] .clu-split-member {
+  height: var(--split-pill-h);
+  margin-left: 0;
+  padding: 0 4px;
+  border-radius: var(--split-pill-r);
+  background: var(--split-pill);
+}
+.clu-split-row[data-active='true'] .clu-split-member::before {
+  content: none;
+}
+.clu-split-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Sidebar media bar: 33 tall across the content width, 25 above the bottom bar's icon line, radius
+   8.75, the media bar fill with no border; the favicon centered 22 in, the mute button 21.5 from the right end and
+   play or pause midway. Glyphs: transport in the toolbar glyph, mute in #7c7c7d gray. */
+.clu-media-card {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 33px;
+  margin-bottom: calc(25px - var(--tool-box) / 2 + 0.5px);
+  padding: 0 calc(21.5px - var(--close-box) / 2) 0 calc(22px - var(--close-box) / 2);
+  border-radius: 8.75px;
+  background: var(--media-bar-bg);
+  -webkit-app-region: no-drag;
+}
+.clu-media-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--close-box);
+  height: var(--close-box);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  transition: transform var(--t-press) var(--ease-out);
+}
+.clu-media-title:active {
+  transform: scale(var(--press-scale));
+}
+.clu-media-card .clu-icon-button {
+  width: var(--close-box);
+  height: var(--close-box);
+  border-radius: 6px;
+  color: var(--glyph);
+}
+.clu-media-card .clu-icon-button.clu-media-mute {
+  color: var(--label);
+}
+.clu-media-card .clu-icon-button:hover:not(:disabled),
+.clu-media-title:hover {
+  background: var(--close-hover);
+}
+.clu-media-card .clu-icon-button:focus-visible {
+  outline-offset: -2px;
+}

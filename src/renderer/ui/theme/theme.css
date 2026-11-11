@@ -1,0 +1,38 @@
+/* Frame theme layer. The three stops are registered colors so a space switch transitions them
+   (the gradient cross-fades) and a swipe can set them directly. */
+@property --clu-theme-c0 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --clu-theme-c1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --clu-theme-c2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+.clu-theme-bg {
+  /* The gradient's middle stop: the flat color for 1 color, the midpoint for 2. The gradient runs at 120 degrees. */
+  background-color: var(--clu-theme-c1);
+  background-image: linear-gradient(120deg, var(--clu-theme-c0), var(--clu-theme-c1), var(--clu-theme-c2));
+  overflow: hidden;
+}
+/* Three colors sit in corner regions: the first top left, the second top right,
+   the third across both bottom corners. */
+.clu-theme-bg[data-colors='3'] {
+  background-image:
+    linear-gradient(to bottom, transparent 15%, var(--clu-theme-c2) 90%),
+    linear-gradient(to right, var(--clu-theme-c0), var(--clu-theme-c1));
+}
+.clu-theme-grain {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 64px 64px;
+  pointer-events: none;
+}

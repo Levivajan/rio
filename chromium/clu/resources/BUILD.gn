@@ -1,0 +1,68 @@
+# Copyright 2026 The Rio Authors. All rights reserved.
+
+import("//clu/build/config.gni")
+import("//tools/grit/grit_rule.gni")
+
+# The Vite bundles of the frame, overlay and settings WebUIs (scripts/chromium/build-webui.mjs writes the .grd files next to
+# them), copied into the gen dir: grit keys resource ids by .grd path, and tools/gritsettings/resource_ids.spec names
+# these under <(SHARED_INTERMEDIATE_DIR)/clu/resources/webui.
+_bundle_grds = [
+  "clu_frame_resources.grd",
+  "clu_overlay_resources.grd",
+  "clu_settings_resources.grd",
+]
+
+action("copy_webui") {
+  script = "copy_webui.py"
+  inputs = []
+  outputs = []
+  foreach(grd, _bundle_grds) {
+    inputs += [ "$clu_webui_dir/$grd" ]
+    outputs += [ "$target_gen_dir/webui/$grd" ]
+  }
+  args = [
+           rebase_path(clu_webui_dir, root_build_dir),
+           rebase_path("$target_gen_dir/webui", root_build_dir),
+         ] + _bundle_grds
+}
+
+# Headers land in $root_gen_dir/clu/grit, paks in $root_gen_dir/clu.
+template("clu_webui_bundle") {
+  grit(target_name) {
+    source = "$target_gen_dir/webui/${invoker.grd_name}.grd"
+    deps = [ ":copy_webui" ]
+
+    # The bundle files are listed in the generated .grd, outside the source tree.
+    enable_input_discovery_for_gn_analyze = false
+    outputs = [
+      "grit/${invoker.grd_name}.h",
+      "grit/${invoker.grd_name}_map.cc",
+      "grit/${invoker.grd_name}_map.h",
+      "${invoker.grd_name}.pak",
+    ]
+    output_dir = "$root_gen_dir/clu"
+    public_deps = [ "//ui/base:webui_resource_path" ]
+  }
+}
+
+clu_webui_bundle("frame_resources") {
+  grd_name = "clu_frame_resources"
+}
+
+clu_webui_bundle("overlay_resources") {
+  grd_name = "clu_overlay_resources"
+}
+
+# M8: chrome://clu-settings (rio://settings), Clu's settings page in a tab.
+clu_webui_bundle("settings_resources") {
+  grd_name = "clu_settings_resources"
+}
+
+group("resources") {
+  public_deps = [
+    ":frame_resources",
+    ":overlay_resources",
+    ":settings_resources",
+    "//clu/resources/mojom:resources",
+  ]
+}

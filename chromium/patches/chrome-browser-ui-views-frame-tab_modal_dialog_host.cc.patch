@@ -1,0 +1,23 @@
+diff --git a/chrome/browser/ui/views/frame/tab_modal_dialog_host.cc b/chrome/browser/ui/views/frame/tab_modal_dialog_host.cc
+index 7ad0e2b5aa68192110b721666509c2bc97d285da..4984f0e9a11d85bfa4ca4c94ab7e198bddc584fa 100644
+--- a/chrome/browser/ui/views/frame/tab_modal_dialog_host.cc
++++ b/chrome/browser/ui/views/frame/tab_modal_dialog_host.cc
+@@ -14,6 +14,7 @@
+ #include "chrome/browser/ui/views/frame/multi_contents_view.h"
+ #include "chrome/browser/ui/views/frame/top_container_view.h"
+ #include "chrome/browser/ui/views/toolbar/toolbar_view.h"
++#include "clu/browser/ui/views/frame/clu_shell_hooks.h"
+ #include "components/split_tabs/split_tab_visual_data.h"
+ #include "components/web_modal/modal_dialog_host.h"
+ #include "components/web_modal/web_contents_modal_dialog_host.h"
+@@ -128,6 +129,10 @@ void TabModalDialogHost::OnWidgetBoundsChanged(views::Widget* browser_widget,
+ }
+ 
+ int TabModalDialogHost::GetToolbarOverlappingYCoordinate() {
++  // Clu: no toolbar; tab-modal dialogs drop from the page card's top edge.
++  if (int y = 0; clu::GetTabModalDialogTop(browser_view_->browser(), &y)) {
++    return y;
++  }
+   gfx::Rect toolbar_coordinates_in_browser =
+       browser_view_->toolbar()->ConvertRectToWidget(
+           browser_view_->toolbar()->GetLocalBounds());

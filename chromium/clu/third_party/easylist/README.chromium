@@ -1,0 +1,29 @@
+Name: EasyList and EasyPrivacy
+URL: https://easylist.to/
+Version: fetched at build time
+Update Mechanism: Manual
+License: CC-BY-SA-3.0
+License File: LICENSE
+Security Critical: no
+Shipped: yes
+
+Description:
+Rio's ad and tracker blocker (docs/chromium/m7.md) is compiled from EasyList
+(https://easylist.to/easylist/easylist.txt) and EasyPrivacy
+(https://easylist.to/easylist/easyprivacy.txt). scripts/chromium/fetch-filter-lists.mjs
+fetches both before each build, and scripts/chromium/blocker/build.ts turns them
+into the rules the overlay pak carries. Credit: The EasyList authors
+(https://easylist.to/).
+
+The lists are dual licensed under GPL-3.0-or-later and CC BY-SA 3.0 Unported or
+later; Rio uses them under CC BY-SA 3.0, as Chromium's own copy of EasyList does
+(third_party/subresource-filter-ruleset). LICENSE is that copy's licence file:
+the EasyList repository notice followed by the CC BY-SA 3.0 legal code.
+
+This directory holds no code. It exists so tools/licenses/licenses.py, which
+lists every directory under a third_party directory, puts the lists on
+chrome://credits.
+
+Local Modifications:
+The rules are converted to declarativeNetRequest rules and cosmetic selectors;
+filters the converter cannot express are dropped.

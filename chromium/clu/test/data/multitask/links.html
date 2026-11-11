@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Links</title>
+    <style>
+      body { font: 16px -apple-system, sans-serif; margin: 24px; }
+      a { display: block; width: 320px; padding: 12px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Links</h1>
+    <!-- Other-host links point at the paired loopback host (127.0.0.1 and localhost), filled in below. -->
+    <a id="cross" href="/multitask/target.html?n=1">Other host</a>
+    <a id="cross-2" href="/multitask/target.html?n=2">Other host, second page</a>
+    <a id="same" href="/multitask/target.html?same=1">Same host</a>
+    <script>
+      // Load counter per tab (sessionStorage survives reloads and history moves in one webContents).
+      sessionStorage.setItem('loads', String(Number(sessionStorage.getItem('loads') || 0) + 1))
+      const other = location.hostname === 'localhost' ? '127.0.0.1' : 'localhost'
+      for (const id of ['cross', 'cross-2']) {
+        const a = document.getElementById(id)
+        a.href = `${location.protocol}//${other}:${location.port}${a.getAttribute('href')}`
+      }
+    </script>
+  </body>
+</html>

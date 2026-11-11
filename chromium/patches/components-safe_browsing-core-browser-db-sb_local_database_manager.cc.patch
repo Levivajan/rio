@@ -1,0 +1,31 @@
+diff --git a/components/safe_browsing/core/browser/db/sb_local_database_manager.cc b/components/safe_browsing/core/browser/db/sb_local_database_manager.cc
+index dcf3a97cc1d66034c0404f3dfa6df359f39d637f..b64f4316f30a46f8339dc518612bec7f1c4ff29a 100644
+--- a/components/safe_browsing/core/browser/db/sb_local_database_manager.cc
++++ b/components/safe_browsing/core/browser/db/sb_local_database_manager.cc
+@@ -89,6 +89,8 @@
+   const bool kSyncAlways = true;
+   const bool kSyncNever = false;
+ 
++  // Clu: a Safe Browsing API key outside Google Chrome gets only the public
++  // lists (se, mw, uws), and one unknown list fails the whole update with 404.
+   return ListInfos({
+       ListInfo(kSyncAlways, "UrlSoceng", GetUrlSocEngId(),
+                SB_THREAT_TYPE_URL_PHISHING),
+@@ -96,13 +98,13 @@
+                SB_THREAT_TYPE_URL_MALWARE),
+       ListInfo(kSyncAlways, "UrlUws", GetUrlUwsId(),
+                SB_THREAT_TYPE_URL_UNWANTED),
+-      ListInfo(kSyncOnDesktopBuilds, "UrlMalBin", GetUrlMalBinId(),
++      ListInfo(kSyncOnChromeDesktopBuilds, "UrlMalBin", GetUrlMalBinId(),
+                SB_THREAT_TYPE_URL_BINARY_MALWARE),
+-      ListInfo(kSyncOnDesktopBuilds, "ChromeExtMalware",
++      ListInfo(kSyncOnChromeDesktopBuilds, "ChromeExtMalware",
+                GetChromeExtMalwareId(), SB_THREAT_TYPE_EXTENSION),
+-      ListInfo(kSyncAlways, "UrlBilling", GetUrlBillingId(),
++      ListInfo(kIsChromeBranded || kSyncOnIos, "UrlBilling", GetUrlBillingId(),
+                SB_THREAT_TYPE_BILLING),
+-      ListInfo(kSyncOnDesktopBuilds, "UrlCsdDownloadAllowlist",
++      ListInfo(kSyncOnChromeDesktopBuilds, "UrlCsdDownloadAllowlist",
+                GetUrlCsdDownloadAllowlistId(),
+                SB_THREAT_TYPE_CSD_DOWNLOAD_ALLOWLIST),
+       ListInfo(kSyncOnChromeDesktopBuilds || kSyncOnIos, "UrlCsdAllowlist",

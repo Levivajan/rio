@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Post</title>
+  </head>
+  <body>
+    <h1>Post</h1>
+    <!-- A form that POSTs to the paired loopback host: Peek never takes it (docs/plan/05-multitask.md T4). -->
+    <form id="form" method="post" action="/multitask/target.html?posted=1">
+      <input name="q" value="clu" />
+      <button id="submit" type="submit">Send</button>
+    </form>
+    <script>
+      const other = location.hostname === 'localhost' ? '127.0.0.1' : 'localhost'
+      const form = document.getElementById('form')
+      form.action = `${location.protocol}//${other}:${location.port}${form.getAttribute('action')}`
+    </script>
+  </body>
+</html>
