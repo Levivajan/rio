@@ -11,6 +11,7 @@
 // card on the sidebar just under the tile, 230 ms into a hover; every other preview site (previewSite) opens its card
 // beside the sidebar, level with the tile;
 // other tiles show nothing on hover.
+import { memo } from 'react'
 import type { TabState } from '../../../shared/state'
 import { sameItems, useCluState, useWindowId } from '../../common/useCluState'
 import { hoverEnter, hoverLeave, hoverPointerLeave } from './hoverCard'
@@ -25,7 +26,8 @@ import { SIDEBAR_WIDTH } from '../../../shared/shell/layout'
 import { favoriteColumns } from '../../../shared/shell/sidebarMetrics'
 import { HOVER_CARD, LIVE_PREVIEW, mailCardAnchor, MAIL_PREVIEW, previewSite } from '../../../shared/tabs'
 
-function FavoriteTile({ tab, active }: { tab: TabState; active: boolean }) {
+// Memoized: a patch to one favorite's tab re-renders that tile only.
+const FavoriteTile = memo(function FavoriteTile({ tab, active }: { tab: TabState; active: boolean }) {
   const v = rowView(tab)
   const preview = previewSite(tab.url) !== null
   const mail = previewSite(tab.url) === 'Gmail'
@@ -89,7 +91,7 @@ function FavoriteTile({ tab, active }: { tab: TabState; active: boolean }) {
       </button>
     </div>
   )
-}
+})
 
 export function FavoritesGrid() {
   const windowId = useWindowId() ?? ''
@@ -98,9 +100,8 @@ export function FavoritesGrid() {
     const profileId = spaceId ? s.spaces[spaceId]?.profileId : undefined
     return (profileId ? s.favorites[profileId] : undefined) ?? []
   }, sameItems)
-  const tabs = useCluState((s) => s.tabs)
+  const shown = useCluState((s) => ids.map((id) => s.tabs[id]).filter((t): t is TabState => !!t), sameItems)
   const activeTabId = useCluState((s) => s.windows[windowId]?.activeTabId ?? null)
-  const shown = ids.map((id) => tabs[id]).filter((t): t is TabState => !!t)
   const width = useCluState((s) => s.windows[windowId]?.shell.layout.sidebarRect.width ?? SIDEBAR_WIDTH)
   const columns = Math.max(1, Math.min(favoriteColumns(width), shown.length))
   const dragging = useDrag((v) => v.dragging)

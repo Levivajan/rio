@@ -24,11 +24,28 @@ interface Parts { stops: Rgb[]; alpha: number; grain: number }
 /** The layer is opaque (M11): the tint plus grain, never the desktop through the window. */
 export const LAYER_ALPHA = 1
 
+// Every state patch reruns the layer selectors in each WebUI document, but a theme object only changes when the theme
+// does (patches share untouched objects), so its parts are cached per theme and mode. A space with no theme row
+// caches by color.
+const themeParts = new WeakMap<SpaceTheme, Partial<Record<ResolvedMode, Parts>>>()
+const legacyParts = new Map<string, Parts>()
+
 function partsOf(space: LayerSpace | undefined, input: LayerInput): Parts {
   // A space with no theme row keeps the muted default look; a theme from the editor follows the color wheel.
-  const legacy = !space?.theme
-  const theme = space ? (space.theme ?? defaultThemeFor(space.color)) : defaultThemeFor('blue')
-  return { stops: themeStops(theme, input.resolved, legacy), alpha: LAYER_ALPHA, grain: theme.grain }
+  if (space?.theme) {
+    let byMode = themeParts.get(space.theme)
+    if (!byMode) themeParts.set(space.theme, (byMode = {}))
+    return (byMode[input.resolved] ??= buildParts(space.theme, input.resolved, false))
+  }
+  const color = space ? space.color : 'blue'
+  const key = `${color}\u0000${input.resolved}`
+  let parts = legacyParts.get(key)
+  if (!parts) legacyParts.set(key, (parts = buildParts(defaultThemeFor(color), input.resolved, true)))
+  return parts
+}
+
+function buildParts(theme: SpaceTheme, resolved: ResolvedMode, legacy: boolean): Parts {
+  return { stops: themeStops(theme, resolved, legacy), alpha: LAYER_ALPHA, grain: theme.grain }
 }
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t

@@ -57,6 +57,20 @@ export const MAX_ACTIONS = 3
 /** Typing pause before suggestions are asked for (04-command F7). */
 const SUGGEST_DEBOUNCE_MS = 60
 const NONE: readonly string[] = []
+const NO_CONTEXT: ContextRow[] = []
+
+/** Context rows are a few small plain objects, rebuilt from state on every patch. */
+const sameJson = <T,>(a: T, b: T): boolean => a === b || JSON.stringify(a) === JSON.stringify(b)
+
+type TabList = ReturnType<typeof tabEntries>
+
+function sameTabList(a: TabList, b: TabList): boolean {
+  if (a.activeSpaceId !== b.activeSpaceId || a.activeTabId !== b.activeTabId || a.entries.length !== b.entries.length) return false
+  return a.entries.every((e, i) => {
+    const f = b.entries[i]
+    return !!f && e.tabId === f.tabId && e.spaceId === f.spaceId && e.url === f.url && e.title === f.title && e.pinned === f.pinned && e.split === f.split && e.lastActiveAt === f.lastActiveAt
+  })
+}
 const NO_ACTIONS: readonly ActionRow[] = []
 const NO_HISTORY = buildHistoryIndex([])
 /** History rows this overlay view already holds; each open syncs only what changed since. */
@@ -243,10 +257,15 @@ function compose(ranked: readonly RankedRow[], actions: readonly BarRow[], sugge
 
 export function useCommandBar(windowId: string) {
   const session = useCluState((s) => s.windows[windowId]?.command ?? null)
-  const tabs = useCluState((s) => s.tabs)
   const spaces = useCluState((s) => s.spaces)
-  const win = useCluState((s) => s.windows[windowId])
-  const folders = useCluState((s) => s.folders)
+  // The bar's tab index: only the fields the matcher reads, so a background tab's loading or favicon patch keeps it.
+  const tabList = useCluState((s) => tabEntries(s, windowId), sameTabList)
+  const target = useCluState((s) => {
+    const id = s.windows[windowId]?.command?.targetTabId
+    return id ? s.tabs[id] : undefined
+  })
+  const currentUrl = target?.url ?? null
+  const currentTitle = target ? (target.titleOverride ?? target.title) || null : null
   // The profile's engine labels the search rows; main reads the same setting when it runs one.
   const engineId = useCluState((s) => {
     const profileId = s.spaces[s.windows[windowId]?.activeSpaceId ?? '']?.profileId
@@ -344,15 +363,10 @@ export function useCommandBar(windowId: string) {
     return st.actionsOnly ? matched : matched.filter((a) => namesQueryAtWord(a, q))
   }, [actionPool, custom, query, st.actionsOnly])
 
-  const tabIndex = useMemo(() => {
-    const { entries, activeSpaceId, activeTabId } = tabEntries({ tabs, spaces, windows: win ? { [windowId]: win } : {} }, windowId)
-    return buildTabIndex(entries, { activeSpaceId, activeTabId })
-  }, [tabs, spaces, win, windowId])
+  const tabIndex = useMemo(() => buildTabIndex(tabList.entries, { activeSpaceId: tabList.activeSpaceId, activeTabId: tabList.activeTabId }), [tabList])
 
   const ranked = useMemo(() => {
     if (!session) return null
-    const target = session.targetTabId ? tabs[session.targetTabId] : undefined
-    const currentUrl = target?.url ?? null
     const out = rank(
       {
         text: st.typed,
@@ -363,19 +377,18 @@ export function useCommandBar(windowId: string) {
         history,
         targetTabId: session.targetTabId,
         currentUrl,
-        currentTitle: target ? (target.titleOverride ?? target.title) || null : null,
+        currentTitle,
         complete: st.complete
       },
       prevRank.current
     )
     prevRank.current = out.state
     return out
-  }, [st.typed, st.complete, session, tabIndex, history, tabs, engineId])
+  }, [st.typed, st.complete, session, tabIndex, history, currentUrl, currentTitle, engineId])
 
-  const context = useMemo<BarRow[]>(() => {
-    if (st.actionsOnly || st.askMode) return []
-    return contextRows({ tabs, spaces, folders, windows: win ? { [windowId]: win } : {} }, windowId, query.slice(0, MAX_SUGGEST_QUERY)).map((c) => contextRow(c, custom))
-  }, [tabs, spaces, folders, win, windowId, query, custom, st.actionsOnly, st.askMode])
+  const contextQuery = st.actionsOnly || st.askMode ? null : query.slice(0, MAX_SUGGEST_QUERY)
+  const contextList = useCluState((s) => (contextQuery === null ? NO_CONTEXT : contextRows(s, windowId, contextQuery)), sameJson)
+  const context = useMemo<BarRow[]>(() => contextList.map((c) => contextRow(c, custom)), [contextList, custom])
 
   const modeAssistant = st.askMode ? assistantById(st.askMode) : null
   const rows = useMemo<BarRow[]>(() => {

@@ -2,11 +2,11 @@
 // Actions, History and Suggestions, or Recent tabs for an empty input. State and keys live in useCommandBar; this view
 // places the bar on the page frame, tints it with the space accent, plays the open and close animations (instant with
 // reduced motion), keeps the inline completion selected and records the keystroke-to-paint measure.
-import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ChangeEvent, type CSSProperties } from 'react'
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type CSSProperties } from 'react'
 import { ASSISTANTS } from '../../../shared/command/ask'
 import { MAX_INPUT } from '../../../shared/command/classify'
 import { markAfterPaint } from '../../common/perf'
-import { useCluState } from '../../common/useCluState'
+import { sameItems, useCluState } from '../../common/useCluState'
 import type { SurfaceProps } from '../core/types'
 import { AssistantIcon } from './AssistantIcon'
 import { historyFavicon, ResultRow, RowIcon, safeFavicon } from './ResultRow'
@@ -39,7 +39,9 @@ export function CommandBar({ windowId }: SurfaceProps) {
   const bar = useCommandBar(windowId)
   const { session, text, rows, active, completionRange, closing, resetSeq, finishClose } = bar
   const accent = useCluState((s) => s.spaces[s.windows[windowId]?.activeSpaceId ?? '']?.accent ?? null)
-  const favicons = useCluState((s) => s.tabs)
+  // Only the listed tabs' favicons: a patch to any other tab leaves the bar alone.
+  const rowTabIds = useMemo(() => rows.flatMap((r) => (r.result.kind === 'tab' || r.result.kind === 'reload' ? [r.result.tabId] : [])), [rows])
+  const rowFavicons = useCluState((s) => rowTabIds.map((id) => s.tabs[id]?.favicon ?? null), sameItems)
   const pageRect = useCluState((s) => s.windows[windowId]?.shell.layout.pageRect ?? null)
   const pageRadius = useCluState((s) => s.windows[windowId]?.shell.layout.radius ?? 0)
   const [brokenFavicons, setBrokenFavicons] = useState<ReadonlySet<string>>(() => new Set())
@@ -118,7 +120,7 @@ export function CommandBar({ windowId }: SurfaceProps) {
 
   if (!session) return null
   const faviconOf = (tabId: string): string | null => {
-    const src = safeFavicon(favicons[tabId]?.favicon)
+    const src = safeFavicon(rowFavicons[rowTabIds.indexOf(tabId)])
     return src && !brokenFavicons.has(src) ? src : null
   }
   const historyIcon = (url: string): string | null => {
