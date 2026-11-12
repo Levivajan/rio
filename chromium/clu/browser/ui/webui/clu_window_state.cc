@@ -6,6 +6,8 @@
 #include <tuple>
 #include <utility>
 
+#include "base/auto_reset.h"
+#include "base/check.h"
 #include "base/containers/flat_map.h"
 #include "base/functional/bind.h"
 #include "base/hash/hash.h"
@@ -380,6 +382,10 @@ void CluWindowState::Flush() {
 }
 
 tabs::TabInterface* CluWindowState::FindTab(std::string_view tab_id) {
+  if (tab_index_) {
+    const auto it = tab_index_->find(tab_id);
+    return it == tab_index_->end() ? nullptr : it->second.get();
+  }
   TabStripModel* strip = browser_->GetTabStripModel();
   for (int i = 0; i < strip->count(); ++i) {
     content::WebContents* contents = strip->GetWebContentsAt(i);
@@ -1381,6 +1387,24 @@ TabSnapshot CluWindowState::PageSnapshot(content::WebContents* contents) {
 }
 
 WindowSnapshot CluWindowState::TakeSnapshot() {
+  // A snapshot looks up the page of every row of the profile (FindTab, FindContents), each a search of the tab
+  // strips: answer them from one pass instead. Nothing here changes a tab strip.
+  std::map<std::string, raw_ptr<tabs::TabInterface>, std::less<>> tab_index;
+  TabStripModel* index_strip = browser_->GetTabStripModel();
+  for (int i = 0; i < index_strip->count(); ++i) {
+    content::WebContents* contents = index_strip->GetWebContentsAt(i);
+    if (!CluPlaceholder::Is(contents) && CluTabId::Has(contents)) {
+      tab_index.try_emplace(CluTabId::Get(contents), index_strip->GetTabAtIndex(i));
+    }
+  }
+  const base::AutoReset<raw_ptr<const std::map<
+      std::string, raw_ptr<tabs::TabInterface>, std::less<>>>>
+      tab_index_scope(&tab_index_, &tab_index);
+  std::optional<CluModelService::ContentsIndexScope> contents_index;
+  if (CluModelService* m = model()) {
+    contents_index.emplace(*m);
+  }
+
   WindowSnapshot s;
   s.version = std::string(version_info::GetVersionNumber());
   s.window_id = window_id_;
@@ -1598,19 +1622,20 @@ void CluWindowState::Publish() {
   publish_timer_.Stop();
   dirty_ = false;
   const WindowSnapshot snapshot = TakeSnapshot();
-  base::DictValue next = BuildCluState(snapshot);
+  // Rebuilds and compares only the tabs whose snapshot changed; the rest of state is small and built whole.
+  base::ListValue ops =
+      UpdateCluState(published_, published_tabs_, snapshot);
+  // The incremental update lands on the state a full build gives (dev builds run with DCHECKs on).
+  DCHECK(published_ == BuildCluState(snapshot));
   app_state_->Apply(snapshot);
   if (rev_ == 0) {
     // Nothing went out yet: every subscriber starts from the snapshot.
-    published_ = std::move(next);
     rev_ = 1;
     return;
   }
-  base::ListValue ops = DiffState(published_, next);
   if (ops.empty()) {
     return;
   }
-  published_ = std::move(next);
   ++rev_;
   if (observers_.empty()) {
     return;

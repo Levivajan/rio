@@ -419,12 +419,32 @@ void CluModelService::BumpArchive() {
 }
 
 content::WebContents* CluModelService::FindContents(std::string_view node_id) {
+  if (contents_index_) {
+    const auto it = contents_index_->find(node_id);
+    return it == contents_index_->end() ? nullptr : it->second.get();
+  }
   for (WindowLink* window : windows_) {
     if (content::WebContents* contents = window->LinkContents(node_id)) {
       return contents;
     }
   }
   return nullptr;
+}
+
+CluModelService::ContentsIndexScope::ContentsIndexScope(CluModelService& model)
+    : model_(model), previous_(model.contents_index_) {
+  // The first window, and its first page, that has a row wins: FindContents' order.
+  for (WindowLink* window : model_->windows_) {
+    window->LinkEachContents(
+        [this](std::string_view node_id, content::WebContents* contents) {
+          index_.try_emplace(std::string(node_id), contents);
+        });
+  }
+  model_->contents_index_ = &index_;
+}
+
+CluModelService::ContentsIndexScope::~ContentsIndexScope() {
+  model_->contents_index_ = previous_;
 }
 
 CluModelService::WindowLink* CluModelService::WindowShowing(

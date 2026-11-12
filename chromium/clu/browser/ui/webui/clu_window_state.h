@@ -416,6 +416,9 @@ class CluWindowState : public CluShell::Client,
   std::string LinkActiveNodeId() override;
   std::vector<std::string> LinkMru() override;
   content::WebContents* LinkContents(std::string_view node_id) override;
+  void LinkEachContents(
+      base::FunctionRef<void(std::string_view node_id,
+                             content::WebContents* contents)> each) override;
   void LinkActivate(const std::optional<std::string>& node_id) override;
   void LinkDropPage(const std::string& node_id) override;
   void LinkRowsRemoved(const std::vector<std::string>& ids) override;
@@ -657,6 +660,11 @@ class CluWindowState : public CluShell::Client,
   std::unique_ptr<image_editor::ScreenshotFlow> capture_text_flow_;
 
   base::DictValue published_;
+  // The tab snapshots published_ holds the values of, so a publish rebuilds only the tabs that changed.
+  PublishedTabs published_tabs_;
+  // Set while TakeSnapshot runs: FindTab answers from one pass over the tab strip instead of a search per row.
+  raw_ptr<const std::map<std::string, raw_ptr<tabs::TabInterface>, std::less<>>>
+      tab_index_ = nullptr;
   int rev_ = 0;
   bool dirty_ = false;
   base::OneShotTimer publish_timer_;
