@@ -5,7 +5,7 @@
 // The empty area below the rows is no-drag: a right-click opens the empty-area menu and a double-click does nothing
 // (design.md 3); a private window's + beside the divider opens the + menu (PLAN 8.2). Scrolling hides the hover card.
 // The window's multi-selection drops rows that leave the sidebar order, and Esc clears it.
-import { useEffect, useLayoutEffect, useMemo, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import type { NodeRef, TabState } from '../../../shared/state'
 import { IconButton } from '../../common/IconButton'
 import { PlusIcon } from '../../common/icons'
@@ -24,9 +24,17 @@ import { pressRow, useDrag, useDropFlip } from './useSidebarDrag'
 import { useRowFlip } from './useRowFlip'
 import { clu } from '../../common/clu'
 
-function DraggableTabRow({ tab, active, dragEnabled, level }: { tab: TabState; active: boolean; dragEnabled: boolean; level: number }) {
-  const drag = useMemo(() => ({ onPointerDown: (e: ReactPointerEvent<HTMLElement>) => dragEnabled && pressRow(e, tab.id, actingTabs(tab.id)) }), [tab.id, dragEnabled])
-  return <TabRow tab={tab} active={active} level={level} drag={drag} />
+// Each row reads its own tab, so a title, favicon or loading patch re-renders that row only, not the list.
+const DraggableTabRow = memo(function DraggableTabRow({ id, active, dragEnabled, level }: { id: string; active: boolean; dragEnabled: boolean; level: number }) {
+  const tab = useCluState((s) => s.tabs[id])
+  const drag = useMemo(() => ({ onPointerDown: (e: ReactPointerEvent<HTMLElement>) => dragEnabled && pressRow(e, id, actingTabs(id)) }), [id, dragEnabled])
+  return tab ? <TabRow tab={tab} active={active} level={level} drag={drag} /> : null
+})
+
+/** A split's row over its members' current tabs. */
+function SplitRow({ ids, activeTabId, level }: { ids: string[]; activeTabId: string | null; level: number }) {
+  const members = useCluState((s) => ids.map((x) => s.tabs[x]).filter((t): t is TabState => !!t), sameItems)
+  return <SplitSidebarRow tabs={members} activeTabId={activeTabId} level={level} />
 }
 
 /** Keyed by space: useCluState caches a selector's value per state object, so a list whose spaceId prop changes
@@ -50,7 +58,7 @@ function SpaceTabList({ spaceId, dragEnabled, answersAsks, floating }: { spaceId
   const composing = useCluState((s) => s.windows[windowId]?.command?.mode === 'new-tab')
   const today = useCluState((s) => s.spaces[spaceId]?.today ?? [], sameItems)
   const folders = useCluState((s) => s.folders)
-  const tabs = useCluState((s) => s.tabs)
+  const tabs = useCluState((s) => rowShapes(s.tabs), sameShapes)
   const activeTabId = useCluState((s) => s.windows[windowId]?.activeTabId ?? null)
   const isPrivate = useCluState((s) => s.windows[windowId]?.private ?? false)
   const dragging = useDrag((v) => v.dragging)
@@ -100,11 +108,11 @@ function SpaceTabList({ spaceId, dragEnabled, answersAsks, floating }: { spaceId
       if (tab.splitId) {
         if (seenSplits.has(tab.splitId)) continue
         seenSplits.add(tab.splitId)
-        const members = ids.map((x) => tabs[x]).filter((t): t is TabState => !!t && t.splitId === tab.splitId)
-        out.push(<SplitSidebarRow key={tab.splitId} tabs={members} activeTabId={activeTabId} level={level} />)
+        const members = ids.filter((x) => tabs[x]?.splitId === tab.splitId)
+        out.push(<SplitRow key={tab.splitId} ids={members} activeTabId={activeTabId} level={level} />)
         continue
       }
-      out.push(<DraggableTabRow key={id} tab={tab} active={id === activeTabId} dragEnabled={dragEnabled} level={level} />)
+      out.push(<DraggableTabRow key={id} id={id} active={id === activeTabId} dragEnabled={dragEnabled} level={level} />)
     }
     return out
   }
@@ -112,7 +120,7 @@ function SpaceTabList({ spaceId, dragEnabled, answersAsks, floating }: { spaceId
   /** The active tab, or its whole split (a split's members sit together in one list), for a collapsed folder. */
   const activeRun = (id: string): string[] => {
     const splitId = tabs[id]?.splitId
-    return splitId ? Object.values(tabs).filter((t) => t.splitId === splitId).map((t) => t.id) : [id]
+    return splitId ? Object.keys(tabs).filter((x) => tabs[x]?.splitId === splitId) : [id]
   }
 
   /** F3: a collapsed folder (or Pinned section) still shows the window's active tab beneath it. */
@@ -228,6 +236,26 @@ function SpaceTabList({ spaceId, dragEnabled, answersAsks, floating }: { spaceId
 const NO_REFS: NodeRef[] = []
 /** How long faded rows wait for the state push after the reply before they show again (nothing was cleared). */
 const CLEAR_HOLD_MS = 1000
+
+/** What the list needs of a tab: its split, plus every field that changes a row's height. useRowFlip slides rows after
+ * the list renders, so the list must render whenever a row's place can move, and only then. */
+interface RowShape {
+  splitId: string | null
+  key: string
+}
+
+export function rowShapes(tabs: Readonly<Record<string, TabState>>): Record<string, RowShape> {
+  const out: Record<string, RowShape> = {}
+  for (const [id, t] of Object.entries(tabs)) {
+    out[id] = { splitId: t.splitId, key: `${t.splitId ?? ''}\u0000${t.section}\u0000${t.offPinned}\u0000${t.subtitle !== null && t.subtitle !== ''}\u0000${t.titleOverride ?? ''}` }
+  }
+  return out
+}
+
+export function sameShapes(a: Record<string, RowShape>, b: Record<string, RowShape>): boolean {
+  const ka = Object.keys(a)
+  return ka.length === Object.keys(b).length && ka.every((k) => a[k]?.key === b[k]?.key)
+}
 
 /** Folder id to collapsed, for the row motion's timing. */
 function folderStates(folders: Readonly<Record<string, { collapsed: boolean }>>): Record<string, boolean> {
