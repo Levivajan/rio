@@ -23,7 +23,7 @@ Arc stops working on December 22, 2026. Rio imports your Arc spaces, pinned tabs
 
 ## Why Rio
 
-Rio puts your tabs in a sidebar and gives each kind of work its own space. If you used Arc, the layout will look familiar, and Rio brings your Arc spaces, pinned tabs, folders and favorites over in one step. It runs on Chromium 158, so your Chrome extensions work, including current MV3 extensions from the Chrome Web Store. Updates arrive through Sparkle from [rio-releases](https://github.com/Levivajan/rio-releases). The source is here under GPL-3.0, with commercial licenses for closed-source use.
+Rio puts your tabs in a sidebar and gives each kind of work its own space. If you used Arc, the layout will look familiar, and Rio brings your Arc spaces, pinned tabs, folders and favorites over in one step. It runs on Chromium 158, so your Chrome extensions work, including current MV3 extensions from the Chrome Web Store. Updates arrive through Sparkle from [rio-releases](https://github.com/Levivajan/rio-releases). The source is here under GPL-3.0.
 
 On the same Mac, Rio scored 97.8 on Speedometer 3.1 against Chrome 156.0.8078.81 at 100, and in one run opened 6 sites in 3,880 MB where Chrome used 6,465 MB. The numbers and how we got them are [below](#speed-and-memory).
 
@@ -110,9 +110,9 @@ That is 2,585 MB less than Chrome (3,880 against 6,465, 40% lower). This is one 
 
 ## Open source
 
-Rio is a patch set of 60 files against Chromium 158 plus new code under `chromium/clu`, released under the [GPL-3.0 license](LICENSE). "Clu" is the code name that directories, namespaces and targets keep. Forks are welcome under the GPL: if you distribute one, you release its source under GPL-3.0 too. If you want to ship a closed-source fork, see [COMMERCIAL.md](COMMERCIAL.md). Whatever you ship, rename it and use your own bundle id, update feed and update key.
+Rio is a patch set of 60 files against Chromium 158 plus new code under `chromium/clu`, released under the [GPL-3.0 license](LICENSE). "Clu" is the code name that directories, namespaces and targets keep. Forks are welcome under the GPL: if you distribute one, you release its source under GPL-3.0 too. Whatever you ship, rename it and use your own bundle id, update feed and update key.
 
-To report a bug, open an [issue](https://github.com/Levivajan/rio/issues/new/choose) and fill in the template. For a question or an idea, use [Discussions](https://github.com/Levivajan/rio/discussions). Security problems go through the private form described in [SECURITY.md](SECURITY.md). Code changes are covered in [CONTRIBUTING.md](CONTRIBUTING.md); contributors sign a short [CLA](CLA.md) first.
+To report a bug, open an [issue](https://github.com/Levivajan/rio/issues/new/choose) and fill in the template. For a question or an idea, use [Discussions](https://github.com/Levivajan/rio/discussions). Security problems go through the private form described in [SECURITY.md](SECURITY.md). Code changes are covered in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## FAQ
 
@@ -132,7 +132,7 @@ Rio checks for updates itself through Sparkle, using the feed in [rio-releases](
 The build is self-signed and not notarized yet. See [Install](#install) for the steps.
 
 **Can I fork it?**
-Yes, under GPL-3.0, which means you publish the source of what you distribute. A closed-source fork needs a [commercial license](COMMERCIAL.md). Rename your fork and change the bundle id, update feed and update key.
+Yes, under GPL-3.0, which means you publish the source of what you distribute. Rename your fork and change the bundle id, update feed and update key.
 
 **Where is "clu" from?**
 Clu is the code name. You see it in `chromium/clu`, `chrome://clu-frame` and test target names.
@@ -212,7 +212,7 @@ Notes on what a source build does not have:
 
 ## Licensing
 
-Rio is licensed under the GNU General Public License v3.0 only (GPL-3.0-only), see [LICENSE](LICENSE). Commercial licenses are available for closed-source use, see [COMMERCIAL.md](COMMERCIAL.md).
+Rio is licensed under the GNU General Public License v3.0 only (GPL-3.0-only), see [LICENSE](LICENSE).
 
 Chromium and the third-party components in the app keep their own licenses, see [NOTICE](NOTICE).
 

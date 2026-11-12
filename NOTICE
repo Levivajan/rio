@@ -1,8 +1,7 @@
 Rio
 ===
 
-Rio's own code is licensed under the GNU General Public License v3.0 only (LICENSE). Commercial licenses for closed-source use
-are described in COMMERCIAL.md. The commercial license covers only Rio's own code, not the components named below.
+Rio's own code is licensed under the GNU General Public License v3.0 only (LICENSE).
 
 Rio is built on Chromium, the open source browser project, and ships Chromium's code under Chromium's licenses (BSD-3-Clause
 for the project itself, plus the licenses of the third-party components listed below).

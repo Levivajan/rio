@@ -27,7 +27,3 @@ Changes under `chromium/` need a Chromium build to test; say in the pull request
 - Do not use names, logos, icons or copy from other browsers in UI strings, assets or bundle ids. `scripts/chromium/check-brand.sh` and `src/shared/banned-words.test.ts` enforce this.
 - Commit messages use Conventional Commits: `feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`.
 - Never commit API keys, signing identities, provisioning profiles or update keys.
-
-## Contributor License Agreement
-
-Rio is released under GPL-3.0-only and also offered under commercial licenses (see COMMERCIAL.md). To offer your contribution under both, the maintainer needs your agreement in [CLA.md](CLA.md). You keep your copyright. Sign the CLA before your first pull request can merge; a bot (CLA Assistant) will ask you to on the pull request. If you contribute for an employer, make sure you may agree to it.

@@ -8,7 +8,6 @@
 
 ## Checklist
 
-- [ ] I signed the CLA (the CLA bot comments on the first pull request)
 - [ ] Tests added or updated next to the code
 - [ ] `npm run verify` passes (or I say below why it was not run)
 - [ ] No generated file edited by hand; no API key, signing identity or update key committed
