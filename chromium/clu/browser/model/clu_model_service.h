@@ -15,7 +15,9 @@
 
 #include "base/files/file_path.h"
 #include "base/functional/callback.h"
+#include "base/functional/function_ref.h"
 #include "base/memory/raw_ptr.h"
+#include "base/memory/raw_ref.h"
 #include "base/memory/weak_ptr.h"
 #include "base/observer_list.h"
 #include "base/observer_list_types.h"
@@ -86,6 +88,10 @@ class CluModelService : public KeyedService {
     virtual std::vector<std::string> LinkMru() = 0;
     // The window's live page for `node_id`, or null.
     virtual content::WebContents* LinkContents(std::string_view node_id) = 0;
+    // Calls `each` with every live page of the window and its row id, in the order LinkContents searches them.
+    virtual void LinkEachContents(
+        base::FunctionRef<void(std::string_view node_id,
+                               content::WebContents* contents)> each) = 0;
     // Shows `node_id` (loading it when it has no page), or the empty state for nullopt.
     virtual void LinkActivate(const std::optional<std::string>& node_id) = 0;
     // Closes the row's page, if this window has it, without the close rules: the row already changed.
@@ -182,6 +188,24 @@ class CluModelService : public KeyedService {
 
   // The live page of `node_id` in any window, or null.
   content::WebContents* FindContents(std::string_view node_id);
+
+  // While one is alive, FindContents answers from one pass over every window's pages instead of searching each
+  // window's tab strip per call: a state snapshot looks up every row of the profile. Only for code that changes no
+  // tab strip while it runs.
+  class ContentsIndexScope {
+   public:
+    explicit ContentsIndexScope(CluModelService& model);
+    ContentsIndexScope(const ContentsIndexScope&) = delete;
+    ContentsIndexScope& operator=(const ContentsIndexScope&) = delete;
+    ~ContentsIndexScope();
+
+   private:
+    const raw_ref<CluModelService> model_;
+    std::map<std::string, raw_ptr<content::WebContents>, std::less<>> index_;
+    raw_ptr<const std::map<std::string, raw_ptr<content::WebContents>,
+                           std::less<>>>
+        previous_;
+  };
   // The window that shows `node_id` as its active row, other than `except`.
   WindowLink* WindowShowing(std::string_view node_id, WindowLink* except);
 
@@ -441,6 +465,10 @@ class CluModelService : public KeyedService {
 
   base::ObserverList<Observer> observers_;
   std::vector<raw_ptr<WindowLink>> windows_;
+  // Set while a ContentsIndexScope is alive.
+  raw_ptr<const std::map<std::string, raw_ptr<content::WebContents>,
+                         std::less<>>>
+      contents_index_ = nullptr;
   base::WeakPtrFactory<CluModelService> weak_ptr_factory_{this};
 };
 

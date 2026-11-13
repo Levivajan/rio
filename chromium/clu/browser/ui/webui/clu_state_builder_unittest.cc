@@ -2,10 +2,13 @@
 
 #include "clu/browser/ui/webui/clu_state_builder.h"
 
+#include <algorithm>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "base/json/json_reader.h"
+#include "base/json/json_writer.h"
 #include "base/values.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -17,6 +20,8 @@ constexpr char kProfile[] = "00000000-0000-4000-8000-000200000001";
 constexpr char kSpace[] = "00000000-0000-4000-8000-000300000001";
 constexpr char kTabA[] = "00000000-0000-4000-8000-000500000001";
 constexpr char kTabB[] = "00000000-0000-4000-8000-000500000002";
+constexpr char kTabC[] = "00000000-0000-4000-8000-000500000003";
+constexpr char kSecondSpace[] = "00000000-0000-4000-8000-000300000002";
 
 TabSnapshot Tab(const char* id, const char* url) {
   TabSnapshot tab;
@@ -131,6 +136,82 @@ TEST(CluStateBuilderTest, DiffSetsChangedLeavesAndDeletesRemovedKeys) {
   EXPECT_TRUE(renamed);
   EXPECT_TRUE(removed);
   EXPECT_TRUE(DiffState(BuildCluState(before), BuildCluState(before)).empty());
+}
+
+// The ops as sorted JSON strings: UpdateCluState may order them differently from DiffState, never differ in them.
+std::vector<std::string> OpSet(const base::ListValue& ops) {
+  std::vector<std::string> out;
+  for (const base::Value& op : ops) {
+    out.push_back(*base::WriteJson(op));
+  }
+  std::ranges::sort(out);
+  return out;
+}
+
+// Publishes `steps` in turn through UpdateCluState and checks each against BuildCluState plus DiffState.
+void ExpectUpdatesMatchFullBuilds(const std::vector<WindowSnapshot>& steps) {
+  base::DictValue published;
+  PublishedTabs last;
+  std::optional<base::DictValue> full;
+  for (size_t i = 0; i < steps.size(); ++i) {
+    SCOPED_TRACE(i);
+    const base::ListValue ops = UpdateCluState(published, last, steps[i]);
+    base::DictValue next = BuildCluState(steps[i]);
+    EXPECT_EQ(published, next);
+    if (full) {
+      EXPECT_EQ(OpSet(ops), OpSet(DiffState(*full, next)));
+    }
+    full = std::move(next);
+  }
+}
+
+TEST(CluStateBuilderTest, UpdateGivesTheOpsAndStateOfAFullBuild) {
+  WindowSnapshot start = Window();
+  // A title change, a page loading, a closed tab, a new tab, and the window's own fields at once.
+  WindowSnapshot changed = start;
+  changed.tabs[0].title = u"Renamed";
+  changed.tabs[0].loading = true;
+  changed.tabs[0].site.blocked_count = 3;
+  changed.tabs.pop_back();
+  changed.tabs.push_back(Tab(kTabC, "https://c.test/"));
+  changed.active_tab_id = kTabA;
+  changed.focused = true;
+  // Nothing changed: no ops.
+  WindowSnapshot same = changed;
+  // A tab's value reads the window's space: every tab without its own takes the new one.
+  WindowSnapshot moved = changed;
+  moved.space_id = kSecondSpace;
+  // Every tab closed, then one back.
+  WindowSnapshot empty = moved;
+  empty.tabs.clear();
+  WindowSnapshot back = empty;
+  back.tabs.push_back(Tab(kTabA, "https://a.test/"));
+  ExpectUpdatesMatchFullBuilds({start, changed, same, moved, empty, back});
+}
+
+TEST(CluStateBuilderTest, UpdateSendsNothingForUnchangedTabs) {
+  base::DictValue published;
+  PublishedTabs last;
+  WindowSnapshot s = Window();
+  UpdateCluState(published, last, s);
+  EXPECT_TRUE(UpdateCluState(published, last, s).empty());
+
+  s.tabs[1].favicon = "chrome://favicon2/?size=16&pageUrl=b";
+  const base::ListValue ops = UpdateCluState(published, last, s);
+  ASSERT_EQ(ops.size(), 1u);
+  const base::ListValue& path = *ops[0].GetDict().FindList("path");
+  ASSERT_EQ(path.size(), 3u);
+  EXPECT_EQ(path[0].GetString(), "tabs");
+  EXPECT_EQ(path[1].GetString(), kTabB);
+  EXPECT_EQ(path[2].GetString(), "favicon");
+}
+
+TEST(CluStateBuilderTest, ADuplicateTabIdKeepsTheLastSnapshot) {
+  WindowSnapshot s = Window();
+  s.tabs.push_back(Tab(kTabA, "https://a2.test/"));
+  WindowSnapshot later = s;
+  later.tabs.back().title = u"Later";
+  ExpectUpdatesMatchFullBuilds({s, later});
 }
 
 TEST(CluStateBuilderTest, MessagesAreStateMessages) {

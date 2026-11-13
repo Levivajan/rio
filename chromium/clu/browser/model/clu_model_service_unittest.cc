@@ -39,6 +39,9 @@ class FakeWindow : public CluModelService::WindowLink {
   content::WebContents* LinkContents(std::string_view node_id) override {
     return nullptr;
   }
+  void LinkEachContents(
+      base::FunctionRef<void(std::string_view, content::WebContents*)> each)
+      override {}
   void LinkActivate(const std::optional<std::string>& node_id) override {
     active_ = node_id.value_or(std::string());
     activations_.push_back(active_);

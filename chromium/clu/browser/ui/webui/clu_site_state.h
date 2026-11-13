@@ -21,6 +21,9 @@ struct TweakSummarySnapshot {
   bool has_js = false;
   bool has_controls = false;
   int zap_count = 0;
+
+  friend bool operator==(const TweakSummarySnapshot&,
+                         const TweakSummarySnapshot&) = default;
 };
 
 struct SiteTabSnapshot {
@@ -37,6 +40,10 @@ struct SiteTabSnapshot {
   std::optional<TweakSummarySnapshot> tweak;
   bool zap_active = false;
   std::optional<std::string> zap_last_result;
+
+  // Field by field: a publish skips a tab whose snapshot is unchanged (UpdateCluState).
+  friend bool operator==(const SiteTabSnapshot&,
+                         const SiteTabSnapshot&) = default;
 };
 
 // One entry of windows[id].actionRow.actions (ActionButton).

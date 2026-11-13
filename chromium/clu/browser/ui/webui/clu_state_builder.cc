@@ -3,8 +3,10 @@
 #include "clu/browser/ui/webui/clu_state_builder.h"
 
 #include <algorithm>
+#include <map>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -629,12 +631,13 @@ MiniSnapshot::MiniSnapshot(const MiniSnapshot&) = default;
 MiniSnapshot& MiniSnapshot::operator=(const MiniSnapshot&) = default;
 MiniSnapshot::~MiniSnapshot() = default;
 
-base::DictValue BuildCluState(const WindowSnapshot& s) {
-  base::DictValue tabs;
+namespace {
+
+// Everything BuildCluState returns but "tabs", which TabValue builds tab by tab.
+base::DictValue StateWithoutTabs(const WindowSnapshot& s) {
   std::vector<std::string> strip_order;
   for (const TabSnapshot& tab : s.tabs) {
     strip_order.push_back(tab.id);
-    tabs.Set(tab.id, TabValue(s, tab));
   }
 
   base::DictValue profiles;
@@ -699,7 +702,6 @@ base::DictValue BuildCluState(const WindowSnapshot& s) {
       .Set("app", AppValue(s))
       .Set("profiles", std::move(profiles))
       .Set("spaces", std::move(spaces))
-      .Set("tabs", std::move(tabs))
       .Set("windows", base::DictValue().Set(s.window_id, WindowValue(s)))
       .Set("splits", SplitsValue(s.splits))
       .Set("folders", std::move(folders))
@@ -714,6 +716,103 @@ base::DictValue BuildCluState(const WindowSnapshot& s) {
                            .Set("global", s.global_settings.values.Clone())
                            .Set("byProfile", std::move(settings_by_profile)))
       .Set("historyRevision", 0);
+}
+
+}  // namespace
+
+PublishedTabs::PublishedTabs() = default;
+PublishedTabs::~PublishedTabs() = default;
+
+base::DictValue BuildCluState(const WindowSnapshot& s) {
+  base::DictValue tabs;
+  for (const TabSnapshot& tab : s.tabs) {
+    tabs.Set(tab.id, TabValue(s, tab));
+  }
+  base::DictValue state = StateWithoutTabs(s);
+  state.Set("tabs", std::move(tabs));
+  return state;
+}
+
+base::ListValue UpdateCluState(base::DictValue& published,
+                               PublishedTabs& last,
+                               const WindowSnapshot& s) {
+  base::ListValue ops;
+  std::vector<std::string> path;
+  // Everything but the tabs is small: build it whole and diff it as DiffState does.
+  std::optional<base::Value> old_tabs = published.Extract("tabs");
+  base::DictValue next = StateWithoutTabs(s);
+  DiffInto(published, next, path, ops);
+
+  const bool had_tabs = old_tabs && old_tabs->is_dict();
+  base::DictValue tabs =
+      had_tabs ? std::move(*old_tabs).TakeDict() : base::DictValue();
+  if (!had_tabs) {
+    last.tabs.clear();
+  }
+  // TabValue reads the window's profile and space: when either changed, every tab is rebuilt (and still diffed).
+  const bool same_window =
+      last.profile_id == s.profile_id && last.space_id == s.space_id;
+
+  // The last snapshot of an id wins, as in BuildCluState.
+  std::map<std::string_view, const TabSnapshot*, std::less<>> now;
+  for (const TabSnapshot& tab : s.tabs) {
+    now.insert_or_assign(tab.id, &tab);
+  }
+
+  path.assign({"tabs"});
+  std::vector<std::string> gone;
+  for (const auto [id, value] : tabs) {
+    if (!now.contains(id)) {
+      gone.push_back(id);
+    }
+  }
+  for (const std::string& id : gone) {
+    tabs.Remove(id);
+    path.push_back(id);
+    ops.Append(base::DictValue().Set("op", "del").Set("path", PathValue(path)));
+    path.pop_back();
+  }
+  std::erase_if(last.tabs,
+                [&now](const auto& entry) { return !now.contains(entry.first); });
+
+  for (const auto& [id, tab] : now) {
+    auto cached = last.tabs.find(id);
+    base::DictValue* old_value = tabs.FindDict(id);
+    if (same_window && old_value && cached != last.tabs.end() &&
+        cached->second == *tab) {
+      continue;
+    }
+    base::DictValue value = TabValue(s, *tab);
+    if (had_tabs) {
+      path.emplace_back(id);
+      if (old_value) {
+        DiffInto(*old_value, value, path, ops);
+      } else {
+        ops.Append(base::DictValue()
+                       .Set("op", "set")
+                       .Set("path", PathValue(path))
+                       .Set("value", value.Clone()));
+      }
+      path.pop_back();
+    }
+    tabs.Set(id, std::move(value));
+    if (cached != last.tabs.end()) {
+      cached->second = *tab;
+    } else {
+      last.tabs.emplace(std::string(id), *tab);
+    }
+  }
+  if (!had_tabs) {
+    ops.Append(base::DictValue()
+                   .Set("op", "set")
+                   .Set("path", PathValue(path))
+                   .Set("value", tabs.Clone()));
+  }
+  last.profile_id = s.profile_id;
+  last.space_id = s.space_id;
+  next.Set("tabs", std::move(tabs));
+  published = std::move(next);
+  return ops;
 }
 
 base::ListValue DiffState(const base::DictValue& before,

@@ -1352,6 +1352,18 @@ content::WebContents* CluWindowState::LinkContents(std::string_view node_id) {
   return tab ? tab->GetContents() : nullptr;
 }
 
+void CluWindowState::LinkEachContents(
+    base::FunctionRef<void(std::string_view, content::WebContents*)> each) {
+  // The pages FindTab finds, in its order.
+  TabStripModel* strip = browser_->GetTabStripModel();
+  for (int i = 0; i < strip->count(); ++i) {
+    content::WebContents* contents = strip->GetWebContentsAt(i);
+    if (!CluPlaceholder::Is(contents) && CluTabId::Has(contents)) {
+      each(CluTabId::Get(contents), contents);
+    }
+  }
+}
+
 void CluWindowState::LinkActivate(const std::optional<std::string>& node_id) {
   if (!node_id || !ActivateRow(*node_id)) {
     ShowEmpty();

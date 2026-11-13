@@ -907,7 +907,7 @@ std::vector<std::string> CluTabTree::SidebarOrder(
     out.push_back(id);
   }
   std::erase_if(out, [&](const std::string& id) {
-    return std::ranges::contains(skip, id) || !Get(id);
+    return skip.contains(id) || !Get(id);
   });
   return out;
 }

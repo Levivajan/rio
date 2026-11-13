@@ -3,6 +3,8 @@
 #ifndef CLU_BROWSER_UI_WEBUI_CLU_STATE_BUILDER_H_
 #define CLU_BROWSER_UI_WEBUI_CLU_STATE_BUILDER_H_
 
+#include <functional>
+#include <map>
 #include <optional>
 #include <string>
 #include <vector>
@@ -74,6 +76,9 @@ struct TabSnapshot {
   // picture-in-picture ("auto", "manual").
   bool media_playing = false;
   std::optional<std::string> pip;
+
+  // Field by field: a publish skips a tab whose snapshot is unchanged (UpdateCluState).
+  friend bool operator==(const TabSnapshot&, const TabSnapshot&) = default;
 };
 
 // One entry of a pinned list or a folder's children (NodeRef).
@@ -395,6 +400,27 @@ base::DictValue BuildCluState(const WindowSnapshot& snapshot);
 // anything else (arrays included) is replaced whole.
 base::ListValue DiffState(const base::DictValue& before,
                           const base::DictValue& after);
+
+// The tab snapshots a published state was built from, so the next publish rebuilds and compares only the tabs whose
+// snapshot changed. A tab's value also depends on the window's profile and space, so those are kept too.
+struct PublishedTabs {
+  PublishedTabs();
+  PublishedTabs(const PublishedTabs&) = delete;
+  PublishedTabs& operator=(const PublishedTabs&) = delete;
+  ~PublishedTabs();
+
+  std::string profile_id;
+  std::string space_id;
+  std::map<std::string, TabSnapshot, std::less<>> tabs;
+};
+
+// Turns `published` into BuildCluState(snapshot) and returns the patch ops that do it, the ops
+// DiffState(published, BuildCluState(snapshot)) gives. A tab whose snapshot equals its entry in `last` is neither
+// rebuilt nor compared, so one page's title or favicon changing costs that tab's value, not every row of the
+// profile. Updates `last`. A `published` without "tabs" (the first publish) gets every tab.
+base::ListValue UpdateCluState(base::DictValue& published,
+                               PublishedTabs& last,
+                               const WindowSnapshot& snapshot);
 
 // StateMessage JSON: {kind: 'snapshot', rev, state} with state.rev = rev, and {kind: 'patch', rev, ops}.
 std::string SnapshotMessage(const base::DictValue& state, int rev);
